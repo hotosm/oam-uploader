@@ -180,7 +180,7 @@ gulp.task('styles', function () {
     .pipe($.sass({
       outputStyle: 'nested', // libsass doesn't support expanded yet
       precision: 10,
-      includePaths: ['.'].concat(require('node-bourbon').includePaths)
+      includePaths: ['.'].concat(require('node-neat').includePaths)
     }))
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest('.tmp/assets/styles'))

@@ -46,6 +46,7 @@
     "gulp-util": "^3.0.5",
     "jshint-stylish": "^2.0.0",
     "node-bourbon": "^4.2.3",
+    "node-neat": "^1.7.2",
     "node-notifier": "^4.2.1",
     "opn": "^1.0.2",
     "require-globify": "^1.2.1",

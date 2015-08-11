@@ -14,5 +14,5 @@ var routes = (
 );
 
 Router.run(routes, function (Handler) {
-  React.render(<Handler/>, document.getElementById('site-canvas'));
+  React.render(<Handler/>, document.querySelector('.site-canvas'));
 });
