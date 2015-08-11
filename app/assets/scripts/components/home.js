@@ -93,6 +93,12 @@ var Home = module.exports = React.createClass({
                     </div>
                   </div>
                   <div className="form-group">
+                    <label className="form-label">Tile service</label>
+                    <div className="form-control-set">
+                      <input type="url" className="form-control" placeholder="URL" />
+                    </div>
+                  </div>
+                  <div className="form-group">
                     <label className="form-label">Provider</label>
                     <div className="form-control-set">
                       <input type="text" className="form-control" placeholder="Entity name" />
@@ -107,12 +113,6 @@ var Home = module.exports = React.createClass({
                       <div className="radio">
                         <label><input type="radio" name="contact-type" value="other" /> Other</label>
                       </div>
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Tile service</label>
-                    <div className="form-control-set">
-                      <input type="url" className="form-control" placeholder="URL" />
                     </div>
                   </div>
                 </fieldset>
