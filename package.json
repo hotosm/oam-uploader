@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "react": "^0.13.3",
-    "react-router": "^0.13.3"
+    "react-router": "^0.13.3",
+    "react-widgets": "^2.8.0"
   }
 }

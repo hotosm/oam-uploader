@@ -17,7 +17,7 @@ var Home = module.exports = React.createClass({
     return {
       'platform-type': 'satellite',
       'sensor': null,
-      'date-start': null,
+      'date-start': new Date().toISOString(),
       'date-end': null,
       'urls': null,
       'tile-url': null,
@@ -42,6 +42,11 @@ var Home = module.exports = React.createClass({
     var scenes = this.state.scenes;
     scenes[sceneIndex][fieldName] = fieldValue;
     this.setState({scenes: scenes});
+  },
+
+  onSubmit: function(event) {
+    event.preventDefault();
+    console.log(this.state);
   },
 
   render: function() {
@@ -100,7 +105,7 @@ var Home = module.exports = React.createClass({
                 </div>
 
                 <div className="form-actions">
-                  <button type="submit" className="bttn-submit"><span>Upload</span></button>
+                  <button type="submit" className="bttn-submit" onClick={this.onSubmit}><span>Upload</span></button>
                 </div>
 
               </form>

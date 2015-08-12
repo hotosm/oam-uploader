@@ -1,5 +1,6 @@
 'use strict';
 var React = require('react/addons');
+var DateTimePicker = require('react-widgets').DateTimePicker;
 
 var Scene = module.exports = React.createClass({
   displayName: 'Scene',
@@ -25,6 +26,23 @@ var Scene = module.exports = React.createClass({
         <button type="button" className={classes} onClick={this.props.removeScene.bind(null, this.props.index)}><span>Remove scene</span></button>
       </div>
     );
+  },
+
+  onDateChange: function(field, date, dateString) {
+    var val = date === null ? null : date.toISOString();
+    this.props.onValueChange(this.props.index, field, val);
+  },
+
+  getValueForDate: function(field) {
+    return this.props.data[field] === null ? null : new Date(this.props.data[field]);
+  },
+
+  dateOrUndefined: function(field) {
+    // When getting the value for min/max, if we don't want to set one
+    // we need to use undefined.
+    // Using null results in the date being the epoch time.
+    var val = this.getValueForDate(field);
+    return val === null ? undefined : val;
   },
 
   render: function() {
@@ -60,13 +78,29 @@ var Scene = module.exports = React.createClass({
         <div className="form-group">
           <label className="form-label">Date start</label>
           <div className="form-control-set">
-            <input type="datetime" className="form-control" placeholder="" name={this.getName('date-start')} onChange={this.onChange} value={this.props.data['date-start']} />
+
+            <DateTimePicker ref="dateStart"
+              max={this.dateOrUndefined('date-end')}
+              finalView="decade"
+              format={"yyyy-MM-dd HH:mm:ss"}
+              timeFormat={"HH:mm"}
+              value={this.getValueForDate('date-start')}
+              onChange={this.onDateChange.bind(null, 'date-start')} />
+
           </div>
         </div>
         <div className="form-group">
           <label className="form-label">Date end</label>
           <div className="form-control-set">
-            <input type="datetime" className="form-control" placeholder="" name={this.getName('date-end')} onChange={this.onChange} value={this.props.data['date-end']} />
+
+            <DateTimePicker ref="dateEnd"
+              min={this.dateOrUndefined('date-start')}
+              finalView="decade"
+              format={"yyyy-MM-dd HH:mm:ss"}
+              timeFormat={"HH:mm"}
+              value={this.getValueForDate('date-end')}
+              onChange={this.onDateChange.bind(null, 'date-end')} />
+
           </div>
         </div>
         <div className="form-group">
