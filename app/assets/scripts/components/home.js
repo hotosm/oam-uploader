@@ -2,6 +2,7 @@
 var React = require('react/addons');
 
 var Home = module.exports = React.createClass({
+  displayName: 'Home',
 
   getInitialState: function() {
     return {
@@ -30,10 +31,9 @@ var Home = module.exports = React.createClass({
     this.setState({scenes: scenes});
   },
 
-  nhe: function(e) {
+  removeScene: function(sceneIndex) {
     var scenes = this.state.scenes;
-    console.log( scenes.shift());
-    scenes.unshift();
+    scenes.splice(sceneIndex, 1);
     this.setState({scenes: scenes});
   },
 
@@ -44,13 +44,12 @@ var Home = module.exports = React.createClass({
   },
 
   render: function() {
-    console.log(this.state);
     return (
       <div>
         <header className="site-header" role="banner">
           <div className="inner">
             <div className="site-headline">
-              <h1 className="site-title" onClick={this.nhe}><img src="assets/graphics/layout/oam-logo-h-pos.svg" width="167" height="32" alt="OpenAerialMap logo" /><span>OpenAerialMap</span> <small>Uploader</small></h1>
+              <h1 className="site-title"><img src="assets/graphics/layout/oam-logo-h-pos.svg" width="167" height="32" alt="OpenAerialMap logo" /><span>OpenAerialMap</span> <small>Uploader</small></h1>
             </div>
             <div className="site-intro">
               <p>Welcome to the <a href="http://openaerialmap.org/" title="Visit OpenAerialMap">OpenAerialMap</a> Imagery Uploader. Use the form below to submit your imagery, if you have a valid upload token. Learn how to contribute with imagery by <a href="https://github.com/hotosm/oam-uploader" title="Go to the GitHub repo">reading the documentation</a>.</p>
@@ -88,7 +87,7 @@ var Home = module.exports = React.createClass({
                 </fieldset>
 
                 {this.state.scenes.map(function(o, i) {
-                  return <Scene index={i} data={o} key={i} onValueChange={this.onSceneValueChange}/>
+                  return <Scene total={this.state.scenes.length} index={i} data={o} key={i} onValueChange={this.onSceneValueChange} removeScene={this.removeScene}/>
                 }.bind(this))}
 
                 <div className="form-extra-actions">
@@ -116,6 +115,7 @@ var Home = module.exports = React.createClass({
 
 
 var Scene = React.createClass({
+  displayName: 'Scene',
 
   getName: function(fieldName) {
     return 'scene[' + this.props.index + '][' + fieldName + ']';
@@ -129,6 +129,15 @@ var Scene = React.createClass({
     var pieces = e.target.name.match(/scene\[([0-9]+)\]\[([a-z0-9-]+)\]/);
     // sceneIndex, fieldName, fieldValue
     this.props.onValueChange(pieces[1], pieces[2], e.target.value);
+  },
+
+  renderRemoveBtn: function() {
+    var classes = 'btt-remove-scene' + (this.props.total <= 1 ? ' disabled' : '');
+    return (
+      <div className="form-fieldset-actions">
+        <button type="button" className={classes} onClick={this.props.removeScene.bind(null, this.props.index)}><span>Remove scene</span></button>
+      </div>
+    );
   },
 
   render: function() {
@@ -203,6 +212,8 @@ var Scene = React.createClass({
             </div>
           </div>
         </div>
+
+        {this.renderRemoveBtn()}
 
       </fieldset>
     );
