@@ -28,6 +28,28 @@ var Scene = module.exports = React.createClass({
     );
   },
 
+  renderContact: function() {
+    if (this.props.data['contact-type'] != 'other') {
+      return null;
+    }
+    return (
+      <div>
+        <div className="form-group">
+          <label className="form-label none"><span className="visually-hidden">Contact name</span></label>
+          <div className="form-control-set">
+            <input type="text" className="form-control" placeholder="Name" name={this.getName('contact-name')} />
+          </div>
+        </div>
+        <div className="form-group">
+          <label className="form-label none"><span className="visually-hidden">Contact email</span></label>
+          <div className="form-control-set">
+            <input type="email" className="form-control" placeholder="Email" name={this.getName('contact-email')} />
+          </div>
+        </div>
+      </div>
+    );
+  },
+
   onDateChange: function(field, date, dateString) {
     var val = date === null ? null : date.toISOString();
     this.props.onValueChange(this.props.index, field, val);
@@ -133,6 +155,8 @@ var Scene = module.exports = React.createClass({
             </div>
           </div>
         </div>
+
+        {this.renderContact()}
 
         {this.renderRemoveBtn()}
 
