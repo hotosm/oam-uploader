@@ -32,6 +32,13 @@ var Home = module.exports = React.createClass({
 
   getInitialState: function() {
     return {
+      loading: false,
+      feedback: {
+        type: null,
+        message: null
+      },
+
+      // Form properties.
       'uploader-token': '',
       'uploader-name': '',
       'uploader-email': '',
@@ -80,6 +87,17 @@ var Home = module.exports = React.createClass({
     this.setState(data);
   },
 
+  resetForm: function() {
+    this.setState({
+      'uploader-token': null,
+      'uploader-name': null,
+      'uploader-email': null,
+      scenes: [
+        this.getSceneDataTemplate()
+      ]
+    });
+  },
+
   onSubmit: function(event) {
     event.preventDefault();
     
@@ -95,17 +113,52 @@ var Home = module.exports = React.createClass({
         console.log(validationErrors);
       } else {
 
+        if (this.state.loading) {
+          // Submit already in process.
+          return;
+        }
+        this.setState({loading: true});
+
         // All is well.
         // SUBMIT DATA.
+        // 
+        // 1 - Prepare data in state.
+        // 2 - Submit.
+        // 3 - Set form feedback with -- this.setFormFeedback(type, message);
+        //   - TYPE can be: alert success warning info
+        // 4 - Hide loading. -- this.setState({loading: false});
+        // 5 - Reset form when success. -- this.resetForm();
+
+        // Simulation
+        setTimeout(function() {
+          this.setFormFeedback('success', 'Data successfully submitted');
+          this.setState({loading: false});
+          this.resetForm();
+        }.bind(this), 2000);
+
         console.log(this.state);
 
       }
     }.bind(this));
   },
 
+  setFormFeedback: function(type, message) {
+    this.setState({feedback: {
+      type: type,
+      message: message
+    }});
+  },
+
+  clearFormFeedback: function() {
+    this.setState({feedback: {
+      type: null,
+      message: null
+    }});
+  },
+
   renderErrorMessage: function(message) {
     return (
-      <p className="message message-error">{message}</p>
+      <p className="message message-alert">{message}</p>
     );
   },
 
@@ -121,6 +174,19 @@ var Home = module.exports = React.createClass({
         handleValidation={this.handleValidation}
         getValidationMessages={this.getValidationMessages}
         renderErrorMessage={this.renderErrorMessage} />
+    );
+  },
+
+  renderFeedback: function() {
+    if (this.state.feedback.type === null) {
+      return null;
+    }
+    var classes = "notification notification-" + this.state.feedback.type;
+
+    return (
+      <div className={classes}>
+        <p>{this.state.feedback.message}</p>
+      </div>
     );
   },
 
@@ -150,21 +216,21 @@ var Home = module.exports = React.createClass({
                   <div className="form-group">
                     <label className="form-label">Token</label>
                     <div className="form-control-set">
-                      <input type="password" className="form-control" placeholder="Key" aria-describedby="help-1" name="uploader-token" onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} />
+                      <input type="password" className="form-control" placeholder="Key" aria-describedby="help-1" name="uploader-token" onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} value={this.state['uploader-token']} />
                       {this.renderErrorMessage(this.getValidationMessages('uploader-token')[0])}
                     </div>
                   </div>
                   <div className="form-group">
                     <label className="form-label">Uploader <span className="visually-hidden">name</span></label>
                     <div className="form-control-set">
-                      <input type="text" className="form-control" placeholder="Name" name="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} />
+                      <input type="text" className="form-control" placeholder="Name" name="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
                       {this.renderErrorMessage(this.getValidationMessages('uploader-name')[0])}
                     </div>
                   </div>
                   <div className="form-group">
                   <label className="form-label none"><span className="visually-hidden">Uploader email</span></label>
                     <div className="form-control-set">
-                      <input type="email" className="form-control" placeholder="Email" name="uploader-email" onBlur={this.handleValidation('uploader-email')} onChange={this.onValueChange} />
+                      <input type="email" className="form-control" placeholder="Email" name="uploader-email" onBlur={this.handleValidation('uploader-email')} onChange={this.onValueChange} value={this.state['uploader-email']} />
                       {this.renderErrorMessage(this.getValidationMessages('uploader-email')[0])}
                     </div>
                   </div>
@@ -190,6 +256,10 @@ var Home = module.exports = React.createClass({
 
           </div>
         </main>
+
+        {this.renderFeedback()}
+
+        {this.state.loading ? <p className="loading revealed">Loading</p> : null}
       </div>
     );
   }

@@ -171,7 +171,7 @@ a:active{
 
 .loading {
   @extend .antialiased;
-  position: absolute;
+  position: fixed;
   z-index: 9980;
   top: 50%;
   left: 50%;
