@@ -4,7 +4,7 @@
   "description": "Open aerial map uploader",
   "repository": {
     "type": "git",
-    "url": "https://github.com/developmentseed/project-seed.git"
+    "url": "https://github.com/developmentseed/oam-uploader.git"
   },
   "author": {
     "name": "Development Seed",

@@ -106,7 +106,7 @@ a:active{
     display: block;
     position: absolute;
     top: 0.45rem;
-    right: -0.25rem;
+    right: -0.5rem;
     @include transform(translate(100%, 0));
     background: rgba($base-color, 0.48);
     color: #fff;
