@@ -57,8 +57,10 @@
     "reactify": "^1.1.1"
   },
   "dependencies": {
+    "joi": "^6.6.1",
     "react": "^0.13.3",
     "react-router": "^0.13.3",
+    "react-validation-mixin": "^4.2.0",
     "react-widgets": "^2.8.0"
   }
 }

@@ -1,12 +1,40 @@
 'use strict';
 var React = require('react/addons');
 var Scene = require('../components/scene');
+var ValidationMixin = require('react-validation-mixin');
+var Joi = require('joi');
 
 var Home = module.exports = React.createClass({
   displayName: 'Home',
 
+  mixins: [ValidationMixin],
+
+  validatorTypes:  {
+    'uploader-name': Joi.string().allow('').label('Name'),
+    'uploader-token': Joi.string().required().hex().length(128).label('Token'),
+    'uploader-email': Joi.string().email().label('Email'),
+
+    'scenes': Joi.array().items(
+      Joi.object().keys({
+        'platform-type': Joi.string().required().valid('satellite', 'aircraft', 'uav', 'ballon', 'kite'),
+        'sensor': Joi.string().required().label('Sensor'),
+        'date-start': Joi.date().required().label('Date start'),
+        // 'date-end': non required,
+        'urls': Joi.string().required().label('Imagery location'),
+        'tile-url': Joi.string().required().label('Tile service'),
+        'provider': Joi.string().required().label('Provider'),
+        'contact-type': Joi.string().required().valid('uploader', 'other'),
+        'contact-name': Joi.string().allow('').label('Name'),
+        'contact-email': Joi.label('Email').when('contact-type', { is: 'other', then: Joi.string().email().required() })
+      })
+    )
+  },
+
   getInitialState: function() {
     return {
+      'uploader-token': '',
+      'uploader-name': '',
+      'uploader-email': '',
       scenes: [
         this.getSceneDataTemplate()
       ]
@@ -16,13 +44,15 @@ var Home = module.exports = React.createClass({
   getSceneDataTemplate: function() {
     return {
       'platform-type': 'satellite',
-      'sensor': null,
+      'sensor': '',
       'date-start': new Date().toISOString(),
       'date-end': null,
-      'urls': null,
-      'tile-url': null,
-      'provider': null,
-      'contact-type': 'uploader'
+      'urls': '',
+      'tile-url': '',
+      'provider': '',
+      'contact-type': 'uploader',
+      'contact-name': '',
+      'contact-email': ''
     };
   },
 
@@ -44,9 +74,54 @@ var Home = module.exports = React.createClass({
     this.setState({scenes: scenes});
   },
 
+  onValueChange: function(event) {
+    var data = {};
+    data[event.target.name] = event.target.value;
+    this.setState(data);
+  },
+
   onSubmit: function(event) {
     event.preventDefault();
-    console.log(this.state);
+    
+    // Warning... Controlled HACK.
+    // The state should never be changed in this way as it doesn't trigger
+    // a render, however it will be updated by the validate function later on.
+    // This is needed to clear previous errors as the plugin doesn't handle
+    // arrays of objects specially well.
+    this.state.errors = {};
+
+    this.validate(function(error, validationErrors) {
+      if (error) {
+        console.log(validationErrors);
+      } else {
+
+        // All is well.
+        // SUBMIT DATA.
+        console.log(this.state);
+
+      }
+    }.bind(this));
+  },
+
+  renderErrorMessage: function(message) {
+    return (
+      <p className="message message-error">{message}</p>
+    );
+  },
+
+  renderScene: function(data, index) {
+    return (
+      <Scene
+        key={index}
+        total={this.state.scenes.length}
+        index={index} data={data}
+        onValueChange={this.onSceneValueChange}
+        removeScene={this.removeScene}
+
+        handleValidation={this.handleValidation}
+        getValidationMessages={this.getValidationMessages}
+        renderErrorMessage={this.renderErrorMessage} />
+    );
   },
 
   render: function() {
@@ -75,26 +150,27 @@ var Home = module.exports = React.createClass({
                   <div className="form-group">
                     <label className="form-label">Token</label>
                     <div className="form-control-set">
-                      <input type="password" className="form-control" placeholder="Key" aria-describedby="help-1" />
+                      <input type="password" className="form-control" placeholder="Key" aria-describedby="help-1" name="uploader-token" onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} />
+                      {this.renderErrorMessage(this.getValidationMessages('uploader-token')[0])}
                     </div>
                   </div>
                   <div className="form-group">
                     <label className="form-label">Uploader <span className="visually-hidden">name</span></label>
                     <div className="form-control-set">
-                      <input type="text" className="form-control" placeholder="Name" />
+                      <input type="text" className="form-control" placeholder="Name" name="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} />
+                      {this.renderErrorMessage(this.getValidationMessages('uploader-name')[0])}
                     </div>
                   </div>
                   <div className="form-group">
                   <label className="form-label none"><span className="visually-hidden">Uploader email</span></label>
                     <div className="form-control-set">
-                      <input type="email" className="form-control" placeholder="Email" />
+                      <input type="email" className="form-control" placeholder="Email" name="uploader-email" onBlur={this.handleValidation('uploader-email')} onChange={this.onValueChange} />
+                      {this.renderErrorMessage(this.getValidationMessages('uploader-email')[0])}
                     </div>
                   </div>
                 </fieldset>
 
-                {this.state.scenes.map(function(o, i) {
-                  return <Scene total={this.state.scenes.length} index={i} data={o} key={i} onValueChange={this.onSceneValueChange} removeScene={this.removeScene}/>
-                }.bind(this))}
+                {this.state.scenes.map(this.renderScene)}
 
                 <div className="form-extra-actions">
                   <button type="button" className="bttn-add-scene" onClick={this.addScene}><span>Add another scene</span></button>

@@ -32,18 +32,23 @@ var Scene = module.exports = React.createClass({
     if (this.props.data['contact-type'] != 'other') {
       return null;
     }
+
+    // Just to shorten.
+    var i = this.props.index;
     return (
       <div>
         <div className="form-group">
           <label className="form-label none"><span className="visually-hidden">Contact name</span></label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Name" name={this.getName('contact-name')} />
+            <input type="text" className="form-control" placeholder="Name" name={this.getName('contact-name')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-name')} />
+            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.contact-name')[0])}
           </div>
         </div>
         <div className="form-group">
           <label className="form-label none"><span className="visually-hidden">Contact email</span></label>
           <div className="form-control-set">
-            <input type="email" className="form-control" placeholder="Email" name={this.getName('contact-email')} />
+            <input type="email" className="form-control" placeholder="Email" name={this.getName('contact-email')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-email')} />
+            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.contact-email')[0])}
           </div>
         </div>
       </div>
@@ -68,9 +73,12 @@ var Scene = module.exports = React.createClass({
   },
 
   render: function() {
+    // Just to shorten.
+    var i = this.props.index;
+
     return (
       <fieldset className="form-fieldset scene">
-        <legend className="form-legend">Scene {this.props.index > 0 ? this.props.index + 1 : ''}</legend>
+        <legend className="form-legend">Scene {i > 0 ? i + 1 : ''}</legend>
         <div className="form-group">
           <label className="form-label">Platform</label>
           <div className="form-options-set">
@@ -94,7 +102,8 @@ var Scene = module.exports = React.createClass({
         <div className="form-group">
           <label className="form-label">Sensor</label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Device name/model" name={this.getName('sensor')} onChange={this.onChange} value={this.props.data.sensor} />
+            <input type="text" className="form-control" placeholder="Device name/model" name={this.getName('sensor')} onBlur={this.props.handleValidation('scenes.' + i + '.sensor')} onChange={this.onChange} value={this.props.data.sensor} />
+            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.sensor')[0])}
           </div>
         </div>
         <div className="form-group">
@@ -108,6 +117,8 @@ var Scene = module.exports = React.createClass({
               timeFormat={"HH:mm"}
               value={this.getValueForDate('date-start')}
               onChange={this.onDateChange.bind(null, 'date-start')} />
+
+            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.date-start')[0])}
 
           </div>
         </div>
@@ -123,25 +134,30 @@ var Scene = module.exports = React.createClass({
               value={this.getValueForDate('date-end')}
               onChange={this.onDateChange.bind(null, 'date-end')} />
 
+            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.date-end')[0])}
+
           </div>
         </div>
         <div className="form-group">
           <label className="form-label">Imagery location</label>
           <div className="form-control-set">
-            <textarea className="form-control" placeholder="URL" aria-describedby="help-1" rows="4" name={this.getName('urls')} onChange={this.onChange} value={this.props.data.urls} />
+            <textarea className="form-control" placeholder="URL" aria-describedby="help-1" rows="4" name={this.getName('urls')} onBlur={this.props.handleValidation('scenes.' + i + '.urls')} onChange={this.onChange} value={this.props.data.urls} />
+            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.urls')[0])}
             <p id="help-1" className="form-help">One URL per line.</p>
           </div>
         </div>
         <div className="form-group">
           <label className="form-label">Tile service</label>
           <div className="form-control-set">
-            <input type="url" className="form-control" placeholder="URL" name={this.getName('tile-url')} onChange={this.onChange} value={this.props.data['tile-url']} />
+            <input type="url" className="form-control" placeholder="URL" name={this.getName('tile-url')} onBlur={this.props.handleValidation('scenes.' + i + '.tile-url')} onChange={this.onChange} value={this.props.data['tile-url']} />
+            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.tile-url')[0])}
           </div>
         </div>
         <div className="form-group">
           <label className="form-label">Provider</label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Entity name" name={this.getName('provider')} onChange={this.onChange} value={this.props.data['provider']} />
+            <input type="text" className="form-control" placeholder="Entity name" name={this.getName('provider')} onBlur={this.props.handleValidation('scenes.' + i + '.provider')} onChange={this.onChange} value={this.props.data['provider']} />
+            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.provider')[0])}
           </div>
         </div>
         <div className="form-group">
