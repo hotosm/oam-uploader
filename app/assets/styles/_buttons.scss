@@ -230,7 +230,7 @@ input[type=submit] {
 // EXTENDS
 
 .bttn-submit {
-  @extend .bttn, .bttn-base-light, .bttn-m;
+  @extend .bttn, .bttn-base-dark, .bttn-l;
   min-width: 12rem;
 }
 

@@ -256,7 +256,8 @@ input[type=radio] {
   }
 }
 
-.form-horizontal .form-actions {
+.form-horizontal .form-actions,
+.form-horizontal .form-extra-actions {
   @include media(medium-up) {
     @include span-columns(6 of 8);
     @include shift(2);
@@ -297,7 +298,6 @@ input[type=radio] {
 
 .form-horizontal .form-extra-actions {
   margin-bottom: 2rem;
-  text-align: right;
 }
 
 // UPLOAD FORM

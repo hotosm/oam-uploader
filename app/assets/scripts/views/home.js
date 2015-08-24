@@ -239,7 +239,7 @@ var Home = module.exports = React.createClass({
                 {this.state.scenes.map(this.renderScene)}
 
                 <div className="form-extra-actions">
-                  <button type="button" className="bttn-add-scene" onClick={this.addScene}><span>Add another scene</span></button>
+                  <button type="button" className="bttn-add-scene" onClick={this.addScene} title="Add new scene"><span>New scene</span></button>
                 </div>
 
                 <div className="form-note">
