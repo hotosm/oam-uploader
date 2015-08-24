@@ -20,10 +20,10 @@ var Scene = module.exports = React.createClass({
   },
 
   renderRemoveBtn: function() {
-    var classes = 'btt-remove-scene' + (this.props.total <= 1 ? ' disabled' : '');
+    var classes = 'bttn-remove-scene' + (this.props.total <= 1 ? ' disabled' : '');
     return (
       <div className="form-fieldset-actions">
-        <button type="button" className={classes} onClick={this.props.removeScene.bind(null, this.props.index)}><span>Remove scene</span></button>
+        <button type="button" className={classes} onClick={this.props.removeScene.bind(null, this.props.index)} title="Remove scene"><span>Remove scene</span></button>
       </div>
     );
   },

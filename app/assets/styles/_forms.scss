@@ -300,7 +300,15 @@ input[type=radio] {
   text-align: right;
 }
 
-.bttn-add-scene {
-  background: none;
-  border: none;
+// UPLOAD FORM
+
+#upload-form {
+  .form-fieldset {
+    position: relative;
+  }
+  .form-fieldset-actions {
+    position: absolute;
+    right: 0;
+    top: 0.25rem;
+  }
 }
