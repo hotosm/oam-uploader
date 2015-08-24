@@ -223,7 +223,7 @@ var Home = module.exports = React.createClass({
                   <div className="form-group">
                     <label className="form-label">Uploader <span className="visually-hidden">name</span></label>
                     <div className="form-control-set">
-                      <input type="text" className="form-control" placeholder="Name" name="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
+                      <input type="text" className="form-control" placeholder="Name (optional)" name="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
                       {this.renderErrorMessage(this.getValidationMessages('uploader-name')[0])}
                     </div>
                   </div>

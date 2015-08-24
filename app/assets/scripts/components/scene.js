@@ -40,7 +40,7 @@ var Scene = module.exports = React.createClass({
         <div className="form-group">
           <label className="form-label none"><span className="visually-hidden">Contact name</span></label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Name" name={this.getName('contact-name')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-name')} />
+            <input type="text" className="form-control" placeholder="Name (optional)" name={this.getName('contact-name')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-name')} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.contact-name')[0])}
           </div>
         </div>
@@ -149,7 +149,7 @@ var Scene = module.exports = React.createClass({
         <div className="form-group">
           <label className="form-label">Tile service</label>
           <div className="form-control-set">
-            <input type="url" className="form-control" placeholder="URL" name={this.getName('tile-url')} onBlur={this.props.handleValidation('scenes.' + i + '.tile-url')} onChange={this.onChange} value={this.props.data['tile-url']} />
+            <input type="url" className="form-control" placeholder="URL (optional)" name={this.getName('tile-url')} onBlur={this.props.handleValidation('scenes.' + i + '.tile-url')} onChange={this.onChange} value={this.props.data['tile-url']} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.tile-url')[0])}
           </div>
         </div>
