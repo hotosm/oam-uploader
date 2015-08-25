@@ -92,23 +92,22 @@ a:active{
 }
 
 .site-title {
-  display: inline-block;;
   position: relative;
   margin: 0;
+  * {
+    vertical-align: top;
+  }
   img {
-    display: block;
+    display: inline-block;
   }
   span {
     @extend .visually-hidden;
   }
   small {
     @extend .antialiased;
-    display: block;
-    position: absolute;
-    top: 0.45rem;
-    right: -0.5rem;
-    @include transform(translate(100%, 0));
-    background: rgba($base-color, 0.48);
+    display: inline-block;
+    margin: 0.45rem 0 0 0.5rem;
+    background: rgba($base-color, 0.64);
     color: #fff;
     border-radius: $global-radius;
     padding: 0 0.25rem;
@@ -151,7 +150,10 @@ a:active{
 }
 
 .section-title {
-  @extend .visually-hidden;
+  @include heading(1.25rem, large-up);
+  .upload-section & {
+    @extend .visually-hidden;
+  }
 }
 
 .upload-section {

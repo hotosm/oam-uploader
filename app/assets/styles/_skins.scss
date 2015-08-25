@@ -8,7 +8,7 @@
 
 %press-box-skin {
   background: tint($base-color, 92%);
-  box-shadow: 0 0 0 1px $brdr-rgba, 0 2px 6px 2px rgba($base-color, 0.24);
+  box-shadow: 0 0 0 1px $brdr-rgba, 0 2px 2px 2px rgba($base-color, 0.08);
   border-radius: $global-radius;
 }
 
@@ -19,7 +19,7 @@
 }
 
 %base-framed {
-	position: relative;
+  position: relative;
   &:before {
     position: absolute;
     top: 0;
