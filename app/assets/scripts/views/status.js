@@ -3,10 +3,65 @@ var React = require('react/addons');
 var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
 
+var util = require('util');
+var url = require('url');
+var nets = require('nets');
+var apiUrl = require('../config.js').OAMUploaderApi;
+
 var App = module.exports = React.createClass({
   displayName: 'Status',
 
+  mixins: [Router.State],
+
+  getInitialState: function () {
+    return {
+      loading: true
+    };
+  },
+
+  componentWillMount: function () {
+    var id = this.getParams().id;
+    nets(url.resolve(apiUrl, '/uploads/' + id), function (err, resp, body) {
+      if (err) {
+        return this.setState({
+          loading: false,
+          errored: true,
+          message: err.message,
+          data: err
+        });
+      }
+
+      try {
+        var data = JSON.parse(body.toString());
+        this.setState({
+          loading: false,
+          errored: resp.statusCode < 200 || resp.statusCode >= 400,
+          message: 'API responded with ' + resp.statusCode,
+          data: data
+        });
+      } catch (err) {
+        return this.setState({
+          loading: false,
+          errored: true,
+          message: 'Error parsing API response; statusCode: ' + resp.statusCode,
+          data: body
+        })
+      }
+    }.bind(this));
+  },
+
   render: function() {
+    if (this.state.errored) {
+      console.log(this.state);
+      return (
+        <div>
+          <h1>There was an error.</h1>
+          <div>{this.state.message}</div>
+          <pre>{util.inspect(this.state.data)}</pre>
+        </div>
+      );
+    }
+
     return (
       <div>
 

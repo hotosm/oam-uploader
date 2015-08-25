@@ -1,8 +1,11 @@
 'use strict';
+var url = require('url');
 var React = require('react/addons');
 var Scene = require('../components/scene');
 var ValidationMixin = require('react-validation-mixin');
 var Joi = require('joi');
+var nets = require('nets');
+var apiUrl = require('../config.js').OAMUploaderApi;
 
 var Home = module.exports = React.createClass({
   displayName: 'Home',
@@ -16,12 +19,13 @@ var Home = module.exports = React.createClass({
 
     'scenes': Joi.array().items(
       Joi.object().keys({
+        'title': Joi.string().min(1).required(),
         'platform-type': Joi.string().required().valid('satellite', 'aircraft', 'uav', 'ballon', 'kite'),
         'sensor': Joi.string().required().label('Sensor'),
         'date-start': Joi.date().required().label('Date start'),
         // 'date-end': non required,
         'urls': Joi.string().required().label('Imagery location'),
-        'tile-url': Joi.string().required().label('Tile service'),
+        'tile-url': Joi.string().allow('').label('Tile service'),
         'provider': Joi.string().required().label('Provider'),
         'contact-type': Joi.string().required().valid('uploader', 'other'),
         'contact-name': Joi.string().allow('').label('Name'),
@@ -31,6 +35,24 @@ var Home = module.exports = React.createClass({
   },
 
   getInitialState: function() {
+    if (process.env.DS_DEBUG) {
+      return {
+        loading: false,
+        feedback: {
+          type: null,
+          message: null
+        },
+
+        // Form properties.
+        'uploader-token': '',
+        'uploader-name': 'Dummy Dum Dum',
+        'uploader-email': 'zimmy@fake.com',
+        scenes: [
+          this.getSceneDataTemplate()
+        ]
+      };
+    }
+
     return {
       loading: false,
       feedback: {
@@ -49,6 +71,22 @@ var Home = module.exports = React.createClass({
   },
 
   getSceneDataTemplate: function() {
+    if (process.env.DS_DEBUG) {
+      return {
+        'title': 'An imaginary scene',
+        'platform-type': 'satellite',
+        'sensor': 'x',
+        'date-start': new Date().toISOString(),
+        'date-end': new Date().toISOString(),
+        'urls': 'http://fake-imagery.net/fake.tif',
+        'tile-url': '',
+        'provider': 'Mocks R Us',
+        'contact-type': 'uploader',
+        'contact-name': '',
+        'contact-email': ''
+      };
+    }
+
     return {
       'platform-type': 'satellite',
       'sensor': '',
@@ -100,7 +138,7 @@ var Home = module.exports = React.createClass({
 
   onSubmit: function(event) {
     event.preventDefault();
-    
+
     // Warning... Controlled HACK.
     // The state should never be changed in this way as it doesn't trigger
     // a render, however it will be updated by the validate function later on.
@@ -121,7 +159,7 @@ var Home = module.exports = React.createClass({
 
         // All is well.
         // SUBMIT DATA.
-        // 
+        //
         // 1 - Prepare data in state.
         // 2 - Submit.
         // 3 - Set form feedback with -- this.setFormFeedback(type, message);
@@ -129,15 +167,59 @@ var Home = module.exports = React.createClass({
         // 4 - Hide loading. -- this.setState({loading: false});
         // 5 - Reset form when success. -- this.resetForm();
 
-        // Simulation
-        setTimeout(function() {
-          this.setFormFeedback('success', 'Data successfully submitted');
+        var token = this.state['uploader-token'];
+
+        var uploader = {
+          name: this.state['uploader-name'],
+          email: this.state['uploader-email']
+        };
+        var data = {
+          uploader: uploader,
+          scenes: this.state.scenes.map(function (scene) {
+            var other = scene['contact-type'] === 'other';
+            var contact = {
+              name: other ? scene['contact-name'] : uploader.name,
+              email: other ? scene['contact-email'] : uploader.email
+            }
+
+            var tms = scene['tile-url'].trim();
+            tms = tms.length === 0 ? undefined : tms;
+
+            return {
+              contact: contact,
+              title: scene.title,
+              provider: scene.provider,
+              platform: scene['platform-type'],
+              sensor: scene.sensor,
+              acquisition_start: scene['date-start'],
+              acquisition_end: scene['date-end'],
+              tms: tms,
+              urls: scene.urls.split('\n')
+            };
+          })
+        };
+        console.log('valid', data);
+
+        nets({
+          url: url.resolve(apiUrl, '/uploads?access_token=' + token),
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }, function (err, resp, body) {
           this.setState({loading: false});
-          this.resetForm();
-        }.bind(this), 2000);
 
-        console.log(this.state);
-
+          if (resp.statusCode >= 200 && resp.statusCode < 400) {
+            this.setFormFeedback('success', 'Data successfully submitted');
+            this.resetForm();
+          } else {
+            var message = 'There was a problem with the request.\n'
+            message += 'The OAM Upload server responded with: ' +
+              resp.statusCode + '\n' + body
+            this.setFormFeedback('alert', message);
+          }
+        }.bind(this));
       }
     }.bind(this));
   },
