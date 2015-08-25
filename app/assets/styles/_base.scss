@@ -150,6 +150,7 @@ a:active{
 }
 
 .section-title {
+  @include heading(1.25rem, large-up);
   .upload-section & {
     @extend .visually-hidden;
   }
