@@ -256,7 +256,8 @@ input[type=radio] {
   }
 }
 
-.form-horizontal .form-actions {
+.form-horizontal .form-actions,
+.form-horizontal .form-extra-actions {
   @include media(medium-up) {
     @include span-columns(6 of 8);
     @include shift(2);
@@ -297,10 +298,17 @@ input[type=radio] {
 
 .form-horizontal .form-extra-actions {
   margin-bottom: 2rem;
-  text-align: right;
 }
 
-.bttn-add-scene {
-  background: none;
-  border: none;
+// UPLOAD FORM
+
+#upload-form {
+  .form-fieldset {
+    position: relative;
+  }
+  .form-fieldset-actions {
+    position: absolute;
+    right: 0;
+    top: 0.25rem;
+  }
 }

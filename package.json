@@ -4,7 +4,7 @@
   "description": "Open aerial map uploader",
   "repository": {
     "type": "git",
-    "url": "https://github.com/developmentseed/project-seed.git"
+    "url": "https://github.com/developmentseed/oam-uploader.git"
   },
   "author": {
     "name": "Development Seed",
@@ -22,6 +22,7 @@
     "autoprefixer-core": "^5.2.0",
     "browser-sync": "^2.7.6",
     "browserify": "^10.2.3",
+    "collecticons-processor": "^1.0.2",
     "del": "^1.2.0",
     "envify": "^3.4.0",
     "gulp": "^3.9.0",
@@ -57,7 +58,10 @@
     "reactify": "^1.1.1"
   },
   "dependencies": {
+    "joi": "^6.6.1",
     "react": "^0.13.3",
-    "react-router": "^0.13.3"
+    "react-router": "^0.13.3",
+    "react-validation-mixin": "^4.2.0",
+    "react-widgets": "^2.8.0"
   }
 }

@@ -22,10 +22,11 @@
 @import "buttons";
 @import "forms";
 @import "overlays";
-@import "modals";
 @import "icons";
 @import "base";
-@import "results-pane";
+
+// Widgets
+@import "react-widgets";
 
 // Utils
 @import "utils";

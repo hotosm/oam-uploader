@@ -17,6 +17,7 @@ var rev = require('gulp-rev');
 var revReplace = require('gulp-rev-replace');
 var notifier = require('node-notifier');
 var rename = require('gulp-rename');
+var cp = require('child_process');
 
 ////////////////////////////////////////////////////////////////////////////////
 //--------------------------- Variables --------------------------------------//
@@ -24,6 +25,27 @@ var rename = require('gulp-rename');
 
 // The package.json
 var pkg;
+
+////////////////////////////////////////////////////////////////////////////////
+//------------------------- Collecticon tasks --------------------------------//
+//--------------------- (Font generation related) ----------------------------//
+//----------------------------------------------------------------------------//
+gulp.task('collecticons', function (done) {
+  var args = [
+    'node_modules/collecticons-processor/bin/collecticons.js',
+    'compile',
+    'app/assets/graphics/collecticons/',
+    '--font-embed',
+    '--font-dest', 'app/assets/fonts',
+    '--font-types', 'woff',
+    '--style-format', 'sass',
+    '--style-dest', 'app/assets/styles/',
+    '--no-preview'
+  ];
+
+  return cp.spawn('node', args, {stdio: 'inherit'})
+    .on('close', done);
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------- Helper functions ---------------------------------//
@@ -74,7 +96,7 @@ gulp.task('serve', ['vendorScripts', 'javascript', 'styles'], function () {
 
 gulp.task('clean', require('del').bind(null, ['.tmp', 'dist']));
 
-gulp.task('build', ['vendorScripts', 'javascript'], function () {
+gulp.task('build', ['vendorScripts', 'javascript', 'collecticons'], function () {
   gulp.start(['html', 'images', 'extras'], function () {
     return gulp.src('dist/**/*')
       .pipe($.size({title: 'build', gzip: true}))

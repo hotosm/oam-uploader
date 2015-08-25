@@ -2,18 +2,30 @@
 
 Oam uploader
 
-## Overview
+## Development environment
+To set up the development environment for this website, you'll need to install the following on your system:
 
-## Gulp for building
-The gulpfile is based on the [gulp-webapp](https://github.com/yeoman/generator-gulp-webapp) yeoman generator. The build system currently supports:
+- [Node and npm](http://nodejs.org/)
+- Gulp ( $ npm install -g gulp )
 
-- Image optimization
-- Sass compilation
-- Watchify for JS bundling
-- Minification/uglification where appropriate
-- Serving and live reloading of pages
+After these basic requirements are met, run the following commands in the website's folder:
+```
+$ npm install
+```
 
-There are two commands, both run via npm.
+### Getting started
 
-- `npm run build` or `gulp build` or `gulp` - clean & build everything and put it into dist folder
-- `npm run serve` or `gulp serve` - serve the pages and utilize live reload on changes to styles, fonts, images, scripts and HTML.
+```
+$ gulp collecticons
+$ gulp serve
+```
+Compiles the sass files, javascript, and launches the server making the site available at `http://localhost:3000/`
+The system will watch files and execute tasks whenever one of them changes.
+The site will automatically refresh since it is bundled with livereload.
+NOTE: To save time collecticons are not compiled by the serve command.
+
+### Other commands
+Compile the sass files, javascript, collecticons... Use this instead of ```gulp serve``` if you don't want to watch.
+```
+$ gulp
+```
