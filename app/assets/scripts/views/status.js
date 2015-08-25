@@ -51,6 +51,10 @@ var App = module.exports = React.createClass({
   },
 
   render: function() {
+    if (this.state.loading) {
+      return (<div><h1>Loading...</h1></div>);
+    }
+
     if (this.state.errored) {
       console.log(this.state);
       return (
@@ -61,6 +65,8 @@ var App = module.exports = React.createClass({
         </div>
       );
     }
+
+    console.log('Got status:', this.state);
 
     return (
       <div>
