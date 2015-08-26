@@ -58,9 +58,9 @@ var App = module.exports = React.createClass({
     if (this.state.errored) {
       console.log(this.state);
       return (
-        <div>
+        <div className="intro-block">
           <h1>There was an error.</h1>
-          <div>{this.state.message}</div>
+          <p>{this.state.message}</p>
           <pre>{util.inspect(this.state.data)}</pre>
         </div>
       );
