@@ -113,9 +113,9 @@ var App = module.exports = React.createClass({
               <dd><span>Edgar Ilaga</span> <span>edgarilaga@skyeyeproject.com</span></dd>
             </dl>
 
-            <div>
-              <h2>Image 1.1</h2>
-              <dl>
+            <div className="image-block">
+              <h2 className="image-block-title">Image 1</h2>
+              <dl className="status-details">
                 <dt>Status</dt>
                 <dd>Initial</dd>
                 <dt>Started</dt>
