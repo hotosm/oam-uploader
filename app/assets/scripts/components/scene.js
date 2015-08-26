@@ -80,6 +80,13 @@ var Scene = module.exports = React.createClass({
       <fieldset className="form-fieldset scene">
         <legend className="form-legend">Scene {i > 0 ? i + 1 : ''}</legend>
         <div className="form-group">
+          <label className="form-label">Title</label>
+          <div className="form-control-set">
+            <input type="text" className="form-control" placeholder="Scene title" name={this.getName('title')} onBlur={this.props.handleValidation('scenes.' + i + '.title')} onChange={this.onChange} value={this.props.data.title} />
+            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.title')[0])}
+          </div>
+        </div>
+        <div className="form-group">
           <label className="form-label">Platform</label>
           <div className="form-options-set">
             <div className="radio">

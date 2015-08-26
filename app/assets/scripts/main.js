@@ -14,7 +14,7 @@ var UhOh = require('./views/uhoh');
 var routes = (
   <Route handler={App}>
     <Route name="home" path="/" handler={ Home } />
-    <Route name="status" path="/status" handler={ Status } />
+    <Route name="status" path="/status/:id" handler={ Status } />
     <Route name="404" path="/404" handler={ UhOh } />
     {/* Redirects */}
     <Redirect from="*" to="/404" />
@@ -24,3 +24,4 @@ var routes = (
 Router.run(routes, function (Handler) {
   React.render(<Handler/>, document.querySelector('.site-canvas'));
 });
+
