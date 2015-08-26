@@ -98,12 +98,15 @@
     padding: 0;
     min-height: 1rem;
   }
+  .status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
 }
 
 .status-details {
   margin: 0 -1rem 1rem -1rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
   @extend .clearfix;
   dt, dd {
     float: left;
@@ -119,7 +122,8 @@
     text-transform: uppercase;
     clear: left;
     padding-right: 0.5rem;
-    font-size: 0.775rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
     color: tint($base-color, 32%)
   }
   dd {
@@ -129,12 +133,19 @@
     word-break: break-word;
   }
   .name {
-    font-weight: $base-font-bold;
+    font-weight: $base-font-regular;
     display: block;
+  }
+  .info-detail {
+    font-style: italic;
+    strong {
+      font-weight: $base-font-regular;
+    }
   }
 }
 
 .image-block {
+  position: relative;
   background: tint($base-color, 88%);
   margin: 0 -1rem -1rem -1rem !important;
   padding: 1rem;

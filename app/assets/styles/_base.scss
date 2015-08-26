@@ -213,6 +213,50 @@ a:active{
   }
 }
 
+.status {
+  position: relative;
+  @extend .antialiased;
+  display: inline-block;
+  background: $base-font-color;
+  color: #fff;
+  border-radius: $global-radius;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.5rem;
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: $base-font-bold;
+  font-style: normal;
+  &:before {
+    font-size: 1rem;
+    margin-right: 0.25rem;
+  }
+  &.status-active {
+    background: $secondary-color;
+  }
+  &.status-blocked {
+    background: $alert-color;
+  }
+  &.status-processing {
+    background: $info-color;
+    &:before {
+      @extend .collecticon-circle-information;
+    }
+  }
+  &.status-error {
+    background: $alert-color;
+    &:before {
+      @extend .collecticon-circle-xmark;
+    }
+  }
+  &.status-success {
+    background: $secondary-color;
+    &:before {
+      @extend .collecticon-circle-tick;
+    }
+  }
+}
+
 .loading {
   @extend .antialiased;
   position: fixed;

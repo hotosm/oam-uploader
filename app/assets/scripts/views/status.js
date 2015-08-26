@@ -88,7 +88,7 @@ var App = module.exports = React.createClass({
               <dt>Uploader</dt>
               <dd><span className="name">Lady Stardust</span> <span className="email">lady@stardust.xyz</span></dd>
               <dt>Date</dt>
-              <dd>2015-08-25 12:19:21</dd>
+              <dd>2015-08-25 at 12:19</dd>
             </dl>
           </div>
           <footer className="panel-footer"></footer>
@@ -110,7 +110,7 @@ var App = module.exports = React.createClass({
               <dt>Provider</dt>
               <dd>SkyEye Inc.</dd>
               <dt>Acquisition Date</dt>
-              <dd>2015-08-25 12:19:21 - 2015-08-25 12:19:21</dd>
+              <dd>2015-08-25 at 12:19 - 2015-08-25 at 12:19</dd>
               <dt>Tile service</dt>
               <dd>http://a.tiles.mapbox.com/v4/openroads.n6p4np8h</dd>
               <dt>Contact</dt>
@@ -119,21 +119,34 @@ var App = module.exports = React.createClass({
 
             <div className="image-block">
               <h2 className="image-block-title">Image 1</h2>
+              <p className="status status-error">Failed</p>
               <dl className="status-details">
-                <dt>Status</dt>
-                <dd>Initial</dd>
                 <dt>Started</dt>
-                <dd>2015-08-24T21:08:44.108Z</dd>
+                <dd>2015-08-24 at 21:08</dd>
+                <dt>Info</dt>
+                <dd className="info-detail"><strong>Upload failed:</strong> Error message lorem ipsum dolor sit amet.</dd>
               </dl>
             </div>
 
             <div className="image-block">
-              <h2 className="image-block-title">Image 1</h2>
+              <h2 className="image-block-title">Image 2</h2>
+              <p className="status status-processing">Processing</p>
               <dl className="status-details">
-                <dt>Status</dt>
-                <dd>Initial</dd>
                 <dt>Started</dt>
-                <dd>2015-08-24T21:08:44.108Z</dd>
+                <dd>2015-08-24 at 21:08</dd>
+                <dt>Info</dt>
+                <dd className="info-detail">Upload in progress.</dd>
+              </dl>
+            </div>
+
+            <div className="image-block">
+              <h2 className="image-block-title">Image 2</h2>
+              <p className="status status-success">Uploaded</p>
+              <dl className="status-details">
+                <dt>Started</dt>
+                <dd>2015-08-24 at 21:08</dd>
+                <dt>Info</dt>
+                <dd className="info-detail"><strong>Successfully uploaded:</strong> <a href="#" title="View image on OpenAerialMap" className="v">View image on OAM</a>.</dd>
               </dl>
             </div>
 
