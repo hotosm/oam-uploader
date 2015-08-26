@@ -146,7 +146,7 @@ var App = module.exports = React.createClass({
                 <dt>Started</dt>
                 <dd>2015-08-24 at 21:08</dd>
                 <dt>Info</dt>
-                <dd className="info-detail"><strong>Successfully uploaded:</strong> <a href="#" title="View image on OpenAerialMap" className="v">View image on OAM</a>.</dd>
+                <dd className="info-detail"><a href="#" title="View image on OpenAerialMap" className="bttn-view-image">View image</a></dd>
               </dl>
             </div>
 
