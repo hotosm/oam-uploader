@@ -129,27 +129,12 @@ a:active{
   text-align: center;
   margin-bottom: 2rem;
 
+  pre {
+    text-align: left;
+  }
+
   @include media(medium-up) {
     margin-bottom: 3rem;
-    @include span-columns(10 of 12);
-    @include shift(1);
-  }
-
-  @include media(xlarge-up) {
-    @include span-columns(8 of 12);
-    @include shift(2);
-  }
-}
-
-.section-title {
-  @include heading(1.25rem, large-up);
-  .upload-section & {
-    @extend .visually-hidden;
-  }
-}
-
-.upload-panel {
-  @include media(medium-up) {
     @include span-columns(10 of 12);
     @include shift(1);
   }
