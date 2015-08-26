@@ -54,6 +54,9 @@
   position: relative;
   z-index: 1;
   padding: 1rem;
+  > *:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .panel-blank-message {
@@ -97,10 +100,9 @@
 }
 
 .status-details {
-  margin: 0 -1rem;
+  margin: 0 -1rem 1rem -1rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  // box-shadow: inset 0 1px 0 0 $brdr-rgba;
   @extend .clearfix;
   dt, dd {
     float: left;
@@ -129,4 +131,15 @@
     font-weight: $base-font-bold;
     display: block;
   }
+}
+
+.image-block {
+  background: tint($base-color, 88%);
+  margin: 0 -1rem -1rem -1rem !important;
+  padding: 1rem;
+  box-shadow: inset 0 1px 0 0 $brdr-rgba;
+}
+
+.image-block-title {
+  margin: 0 0 0.5rem 0;
 }
