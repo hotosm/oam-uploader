@@ -116,7 +116,7 @@ var App = module.exports = React.createClass({
               <dd><span className="name">Edgar Ilaga</span> <span className="email">edgarilaga@skyeyeproject.com</span></dd>
             </dl>
 
-            <div className="image-block">
+            <div className="image-block status-error">
               <h2 className="image-block-title">Image 1</h2>
               <p className="status status-error">Failed</p>
               <dl className="status-details">
@@ -127,7 +127,7 @@ var App = module.exports = React.createClass({
               </dl>
             </div>
 
-            <div className="image-block">
+            <div className="image-block status-processing">
               <h2 className="image-block-title">Image 2</h2>
               <p className="status status-processing">Processing</p>
               <dl className="status-details">
@@ -138,8 +138,8 @@ var App = module.exports = React.createClass({
               </dl>
             </div>
 
-            <div className="image-block">
-              <h2 className="image-block-title">Image 2</h2>
+            <div className="image-block status-success">
+              <h2 className="image-block-title">Image 3</h2>
               <p className="status status-success">Uploaded</p>
               <dl className="status-details">
                 <dt>Started</dt>

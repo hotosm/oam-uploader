@@ -153,6 +153,15 @@
   margin: 0 -1rem -1rem -1rem !important;
   padding: 1rem;
   box-shadow: inset 0 1px 0 0 $brdr-rgba;
+  &.status-processing {
+    background: tint($info-color, 88%);
+  }
+  &.status-error {
+    background: tint($alert-color, 88%);
+  }
+  &.status-success {
+    background: tint($secondary-color, 88%);
+  }
 }
 
 .image-block-title {
