@@ -97,8 +97,7 @@ var App = module.exports = React.createClass({
         <section className="panel status-panel">
           <header className="panel-header">
             <div className="panel-headline">
-              <h1 className="panel-title">Scene</h1>
-              <p className="panel-subtitle">Talisay Tanauan</p>
+              <h1 className="panel-title">Scene: <span className="given-title">Talisay Tanauan</span></h1>
             </div>
           </header>
           <div className="panel-body">
