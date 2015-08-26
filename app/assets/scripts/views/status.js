@@ -83,8 +83,6 @@ var App = module.exports = React.createClass({
           </header>
           <div className="panel-body">
             <dl className="status-details">
-              <dt>Token</dt>
-              <dd>120a81d1a235c3512fb85ab4fe67acb4e9cb8b0590789cc034d0da140a4a8ea8636f4788c4609c9bc727d5a91b1eabb31ff8b2a72d60354bf3d9d842e5f08e6b</dd>
               <dt>Uploader</dt>
               <dd><span className="name">Lady Stardust</span> <span className="email">lady@stardust.xyz</span></dd>
               <dt>Date</dt>
