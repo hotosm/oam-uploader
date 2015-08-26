@@ -79,6 +79,7 @@ var Scene = module.exports = React.createClass({
     return (
       <fieldset className="form-fieldset scene">
         <legend className="form-legend">Scene {i > 0 ? i + 1 : ''}</legend>
+        {this.renderRemoveBtn()}
         <div className="form-group">
           <label className="form-label">Title</label>
           <div className="form-control-set">
@@ -180,8 +181,6 @@ var Scene = module.exports = React.createClass({
         </div>
 
         {this.renderContact()}
-
-        {this.renderRemoveBtn()}
 
       </fieldset>
     );

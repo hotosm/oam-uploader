@@ -65,30 +65,15 @@
 }
 
 
-// MENAGER PANEL
+// UPLOAD PANEL
 
-.panel-tabular-data {
-  margin: -1rem;
-}
-
-// SIGIN PANEL
-.signin-panel {
-  @include span-columns(6 of 12);
-  @include shift(3);
-  text-align: center;
-
-  label {
-    @extend .visually-hidden;
-  }
-
-  .form-control {
-    @extend .input-l;
-  }
-
-  &.form-says-no {
-    @include animation(bounce-x 0.25s ease-in-out 0s);
+.upload-panel {
+  .panel-footer {
+    padding: 0;
+    min-height: 1rem;
   }
 }
+
 
 // STATUS PANEL
 

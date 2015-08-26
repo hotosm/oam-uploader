@@ -186,7 +186,7 @@ input[type=radio] {
 .form-legend {
   font-family: $base-font-family;
   font-weight: $base-font-bold;
-  @include heading(1.25rem, large-up);
+  @include heading(1.25rem);
 }
 
 .checkbox,
@@ -256,14 +256,6 @@ input[type=radio] {
   }
 }
 
-.form-horizontal .form-actions,
-.form-horizontal .form-extra-actions {
-  @include media(medium-up) {
-    @include span-columns(6 of 8);
-    @include shift(2);
-  }
-}
-
 .form-horizontal .form-options-set {
   @include media(small-up) {
     > * {
@@ -290,9 +282,15 @@ input[type=radio] {
   > *:last-child {
     margin-bottom: 0;
   }
+}
+
+.form-horizontal .form-actions,
+.form-horizontal .form-extra-actions,
+.form-horizontal .form-note {
   @include media(medium-up) {
     @include span-columns(6 of 8);
     @include shift(2);
+    margin-right: 0;
   }
 }
 
@@ -305,10 +303,27 @@ input[type=radio] {
 #upload-form {
   .form-fieldset {
     position: relative;
+    padding: 0 0 2rem 0;
+    margin: 0 0 2rem 0;
+    > *:last-child {
+      margin-bottom: 0;
+    }
+    &:after {
+      position: absolute;
+      bottom: 0;
+      left: -1rem;
+      right: -1rem;
+      height: 1px;
+      background: $brdr-rgba;
+      content: "";
+    }
+  }
+  .form-legend {
+    float: left;
   }
   .form-fieldset-actions {
     position: absolute;
     right: 0;
-    top: 0.25rem;
+    top: 0;
   }
 }

@@ -275,52 +275,59 @@ var Home = module.exports = React.createClass({
   render: function() {
     return (
       <div>
-        <section className="upload-section">
-          <h2 className="section-title">Upload</h2>
-
-          <form id="upload-form" className="form-horizontal">
-
-            <fieldset className="form-fieldset general">
-              <legend className="form-legend">General</legend>
-              <div className="form-group">
-                <label className="form-label">Token</label>
-                <div className="form-control-set">
-                  <input type="password" className="form-control" placeholder="Key" aria-describedby="help-1" name="uploader-token" onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} value={this.state['uploader-token']} />
-                  {this.renderErrorMessage(this.getValidationMessages('uploader-token')[0])}
-                </div>
-              </div>
-              <div className="form-group">
-                <label className="form-label">Uploader <span className="visually-hidden">name</span></label>
-                <div className="form-control-set">
-                  <input type="text" className="form-control" placeholder="Name (optional)" name="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
-                  {this.renderErrorMessage(this.getValidationMessages('uploader-name')[0])}
-                </div>
-              </div>
-              <div className="form-group">
-              <label className="form-label none"><span className="visually-hidden">Uploader email</span></label>
-                <div className="form-control-set">
-                  <input type="email" className="form-control" placeholder="Email" name="uploader-email" onBlur={this.handleValidation('uploader-email')} onChange={this.onValueChange} value={this.state['uploader-email']} />
-                  {this.renderErrorMessage(this.getValidationMessages('uploader-email')[0])}
-                </div>
-              </div>
-            </fieldset>
-
-            {this.state.scenes.map(this.renderScene)}
-
-            <div className="form-extra-actions">
-              <button type="button" className="bttn-add-scene" onClick={this.addScene} title="Add new scene"><span>New scene</span></button>
+        <section className="panel upload-panel">
+          <header className="panel-header">
+            <div className="panel-headline">
+              <h1 className="panel-title">Upload</h1>
             </div>
+          </header>
+          <div className="panel-body">
 
-            <div className="form-note">
-              <p>By uploading you agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque facilisis consequat felis, eget blandit augue ullamcorper sit amet.</p>
-            </div>
+            <form id="upload-form" className="form-horizontal">
 
-            <div className="form-actions">
-              <button type="submit" className="bttn-submit" onClick={this.onSubmit}><span>Upload</span></button>
-            </div>
+              <fieldset className="form-fieldset general">
+                <legend className="form-legend">General</legend>
+                <div className="form-group">
+                  <label className="form-label">Token</label>
+                  <div className="form-control-set">
+                    <input type="password" className="form-control" placeholder="Key" aria-describedby="help-1" name="uploader-token" onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} value={this.state['uploader-token']} />
+                    {this.renderErrorMessage(this.getValidationMessages('uploader-token')[0])}
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Uploader <span className="visually-hidden">name</span></label>
+                  <div className="form-control-set">
+                    <input type="text" className="form-control" placeholder="Name (optional)" name="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
+                    {this.renderErrorMessage(this.getValidationMessages('uploader-name')[0])}
+                  </div>
+                </div>
+                <div className="form-group">
+                <label className="form-label none"><span className="visually-hidden">Uploader email</span></label>
+                  <div className="form-control-set">
+                    <input type="email" className="form-control" placeholder="Email" name="uploader-email" onBlur={this.handleValidation('uploader-email')} onChange={this.onValueChange} value={this.state['uploader-email']} />
+                    {this.renderErrorMessage(this.getValidationMessages('uploader-email')[0])}
+                  </div>
+                </div>
+              </fieldset>
 
-          </form>
+              {this.state.scenes.map(this.renderScene)}
 
+              <div className="form-extra-actions">
+                <button type="button" className="bttn-add-scene" onClick={this.addScene} title="Add new scene"><span>New scene</span></button>
+              </div>
+
+              <div className="form-note">
+                <p>By uploading you agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque facilisis consequat felis, eget blandit augue ullamcorper sit amet.</p>
+              </div>
+
+              <div className="form-actions">
+                <button type="submit" className="bttn-submit" onClick={this.onSubmit}><span>Upload</span></button>
+              </div>
+
+            </form>
+
+          </div>
+          <footer className="panel-footer"></footer>
         </section>
 
         {this.renderFeedback()}
