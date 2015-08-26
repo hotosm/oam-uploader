@@ -59,8 +59,8 @@ var App = module.exports = React.createClass({
       console.log(this.state);
       return (
         <div className="intro-block">
-          <h1>There was an error.</h1>
-          <p>{this.state.message}</p>
+          <h2>Status upload</h2>
+          <p>There was an error: {this.state.message}.</p>
           <pre>{util.inspect(this.state.data)}</pre>
         </div>
       );
@@ -70,6 +70,10 @@ var App = module.exports = React.createClass({
 
     return (
       <div>
+
+        <div className="intro-block">
+          <h2>Status upload</h2>
+        </div>
 
         <section className="panel status-panel">
           <header className="panel-header">
