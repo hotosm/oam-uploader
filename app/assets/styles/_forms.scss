@@ -303,8 +303,8 @@ input[type=radio] {
 #upload-form {
   .form-fieldset {
     position: relative;
-    padding: 0 0 2rem 0;
-    margin: 0 0 2rem 0;
+    padding: 0 0 1.5rem 0;
+    margin: 0 0 1.5rem 0;
     > *:last-child {
       margin-bottom: 0;
     }
@@ -324,6 +324,9 @@ input[type=radio] {
   .form-fieldset-actions {
     position: absolute;
     right: 0;
-    top: 0;
+    top: -0.25rem;
+  }
+  .form-actions {
+    padding-bottom: 1rem;
   }
 }

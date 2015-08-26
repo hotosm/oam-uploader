@@ -275,6 +275,11 @@ var Home = module.exports = React.createClass({
   render: function() {
     return (
       <div>
+
+        <div className="intro-block">
+          <p>Welcome to the <a href="http://openaerialmap.org/" title="Visit OpenAerialMap">OpenAerialMap</a> Imagery Uploader. Use the form below to submit your imagery, if you have a valid upload token. Learn how to contribute with imagery by <a href="https://github.com/hotosm/oam-uploader" title="Go to the GitHub repo">reading the documentation</a>.</p>
+        </div>
+
         <section className="panel upload-panel">
           <header className="panel-header">
             <div className="panel-headline">
@@ -321,7 +326,7 @@ var Home = module.exports = React.createClass({
               </div>
 
               <div className="form-actions">
-                <button type="submit" className="bttn-submit" onClick={this.onSubmit}><span>Upload</span></button>
+                <button type="submit" className="bttn-submit" onClick={this.onSubmit}><span>Submit</span></button>
               </div>
 
             </form>
