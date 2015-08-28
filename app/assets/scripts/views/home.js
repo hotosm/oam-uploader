@@ -1,10 +1,10 @@
 'use strict';
 var url = require('url');
 var React = require('react/addons');
-var Scene = require('../components/scene');
 var ValidationMixin = require('react-validation-mixin');
 var Joi = require('joi');
 var nets = require('nets');
+var Scene = require('../components/scene');
 var apiUrl = require('../config.js').OAMUploaderApi;
 
 var Home = module.exports = React.createClass({
@@ -211,13 +211,19 @@ var Home = module.exports = React.createClass({
           this.setState({loading: false});
 
           if (resp.statusCode >= 200 && resp.statusCode < 400) {
-            this.setFormFeedback('success', 'Data successfully submitted');
+            var id = JSON.parse(body.toString()).upload;
+            this.setFormFeedback('success', (
+              <p>Your upload request was successfully submitted and is being
+              processed. <a href={'#/status/' + id}>Check upload status.</a></p>
+            ));
             this.resetForm();
           } else {
-            var message = 'There was a problem with the request.\n'
-            message += 'The OAM Upload server responded with: ' +
-              resp.statusCode + '\n' + body
-            this.setFormFeedback('alert', message);
+            this.setFormFeedback('alert', (
+              <p>There was a problem with the request.<br/>
+                The OAM Upload server responded with: {resp.statusCode}<br/>
+                {'' + body}
+              </p>
+            ));
           }
         }.bind(this));
       }
@@ -267,7 +273,7 @@ var Home = module.exports = React.createClass({
 
     return (
       <div className={classes}>
-        <p>{this.state.feedback.message}</p>
+        {this.state.feedback.message}
       </div>
     );
   },
