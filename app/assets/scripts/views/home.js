@@ -245,8 +245,13 @@ var Home = module.exports = React.createClass({
   },
 
   renderErrorMessage: function(message) {
+    message = message || '';
+    if (message.trim().length === 0) { return '' }
+
     return (
-      <p className="message message-alert">{message}</p>
+      <div className='message-wrapper'>
+        <p className="message message-alert">{message}</p>
+      </div>
     );
   },
 
