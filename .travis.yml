@@ -1,22 +1,18 @@
 language: node_js
 node_js:
-  - "0.12"
-
+- '0.12'
 env:
   global:
   - GH_REF=github.com/hotosm/oam-uploader.git
   - DEPLOY_BRANCH=master
-  - secure: 
-
+  - DS_ENV=staging
+  - secure: l3LbSdgrDzXabTFLsTBHRQmas+xLkGq1+K7AMJeuJJCGrxRVwg4roG09hGtjdJS9CBsV3oiPojMySmiZIsiBjzUxhWTuQYs1y12s1y5quxO/38vNwRgjRY2JvPVWG469YGvFnrdMS9ybj55iG7ABrQhUdBj2tn1YglBCTENJ9921FmeVo03dKqnAwTN0t1RYjruxGD6stCoyS0lqoFTBF9ZFHAxEpCIk0FFUqenvd7DCR7NtPnV5fovkGhW2tDY4M8gZ3ZpJNIq1vO1TMUHxYeR597pgCBZTQZXX2qM4DHxapnMlS9i5fBs5cyyamPKfZbg7o4BXiy6HZrn3Cn7I4RP4WhZy7ou0sX2g/Y1v0V+LcIf0P8uYRcMU9fLrWrMaXhk+kczXsZRBUAEmg6EG7Zv6+0WJft1d15XNA0U6VPvuFN532JS01JxbvSZKFf24cvFZZnQJw53mMQhIA5BizuRlG4J0gMv0Hn3oVH/X8y+xuFjWT7sUXqrsLHxGrAPQco8P6LOxnOwde0hs3v+wCVBDvvC2bJ8K9+WN5hAceOo4n9lNmC5vXRj+2egV4bkKqHCNVQhVdQlTSTRO5PTyk/hT5LQXPygJlxwcz0onsDrXTg8FQxLILeA4iBT9SF5VMVehfrAff11ZLMUnjSXisS2sSBl9lnIzQta3cmuGAdY=
 cache:
   directories:
-    - node_modules
-
+  - node_modules
 before_install:
 - chmod +x ./.build_scripts/deploy.sh
-
 script:
 - npm run build
-
 after_success:
-- ./.build_scripts/deploy.sh
+- "./.build_scripts/deploy.sh"
