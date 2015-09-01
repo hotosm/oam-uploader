@@ -16,6 +16,7 @@ input[type=submit] {
   display: inline-block;
   font-family: $base-font-family;
   font-weight: $base-font-bold;
+  font-style: normal;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
@@ -240,4 +241,8 @@ input[type=submit] {
 
 .bttn-remove-scene {
   @extend .bttn, .bttn-base-light, .bttn-m, .delete, .bttn-notxt;
+}
+
+.bttn-view-image {
+  @extend .bttn, .bttn-base-light, .bttn-s;
 }

@@ -2,11 +2,18 @@
 var React = require('react/addons');
 var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
+var moment = require('moment');
+var titlecase = require('titlecase');
 
 var util = require('util');
 var url = require('url');
 var nets = require('nets');
 var apiUrl = require('../config.js').OAMUploaderApi;
+
+function dateFormat (date) {
+  // http://momentjs.com/docs/#/displaying/
+  return moment(date).format('YYYY-M-D [at] H:mm')
+}
 
 var App = module.exports = React.createClass({
   displayName: 'Status',
@@ -40,14 +47,85 @@ var App = module.exports = React.createClass({
           data: data
         });
       } catch (err) {
+        console.error(err);
         return this.setState({
           loading: false,
           errored: true,
           message: 'Error parsing API response; statusCode: ' + resp.statusCode,
-          data: body
+          data: '' + body
         })
       }
     }.bind(this));
+  },
+
+  renderScene: function (scene) {
+    return (
+      <section className="panel status-panel">
+        <header className="panel-header">
+          <div className="panel-headline">
+            <h1 className="panel-title">Scene: <span className="given-title">{scene.title}</span></h1>
+          </div>
+        </header>
+        <div className="panel-body">
+          <dl className="status-details">
+            <dt>Platform</dt>
+            <dd>{scene.platform}</dd>
+            <dt>Sensor</dt>
+            <dd>{scene.sensor || ''}</dd>
+            <dt>Provider</dt>
+            <dd>{scene.provider}</dd>
+            <dt>Acquisition Date</dt>
+            <dd>{dateFormat(scene.acquisition_start)} - {dateFormat(scene.acquisition_end)}</dd>
+            { scene.tms ? [
+              <dt>Tile service</dt>,
+              <dd>{scene.tms}</dd>
+              ] : '' }
+            <dt>Contact</dt>
+            <dd><span className="name">{scene.contact.name}</span> <span className="email">{scene.contact.email}</span></dd>
+          </dl>
+
+          {scene.images.map(this.renderImage.bind(this))}
+
+        </div>
+        <footer className="panel-footer"></footer>
+      </section>
+      )
+  },
+
+  renderImage: function (image, i) {
+    var status;
+    var messages = image.messages.map(function (msg) { return <li>{msg}</li> });
+    if (image.status === 'finished') {
+      status = 'status-success'
+      messages.unshift(<li><a href="#" title="View image on OpenAerialMap" className="bttn-view-image">View image</a></li>)
+    } else if (image.status === 'processing') {
+      status = 'status-processing'
+      messages.unshift(<li>Upload in progress.</li>)
+    } else if (image.status === 'errored') {
+      status = 'status-error'
+      messages.unshift(<li><strong>Upload failed: </strong> {image.error.message}</li>)
+    }
+
+    status = ' ' + status + ' ';
+
+    return (
+      <div className={"image-block" + status}>
+        <h2 className="image-block-title">Image {i}</h2>
+        <p className={"status" + status}>{titlecase(image.status)}</p>
+        <dl className="status-details">
+          <dt>Started</dt>
+          <dd>{dateFormat(image.startedAt)}</dd>
+          { image.stoppedAt ? [
+            <dt>{image.status === 'finished' ? 'Finished' : 'Stopped'}</dt>,
+            <dd>{dateFormat(image.stoppedAt)}</dd>
+          ] : '' }
+          <dt>Info</dt>
+          <dd className="info-detail">
+            <ul>{messages}</ul>
+          </dd>
+        </dl>
+      </div>
+    )
   },
 
   render: function() {
@@ -56,20 +134,23 @@ var App = module.exports = React.createClass({
     }
 
     if (this.state.errored) {
-      console.log(this.state);
       return (
-        <div>
-          <h1>There was an error.</h1>
-          <div>{this.state.message}</div>
+        <div className="intro-block">
+          <h2>Status upload</h2>
+          <p>There was an error: {this.state.message}.</p>
           <pre>{util.inspect(this.state.data)}</pre>
         </div>
       );
     }
 
-    console.log('Got status:', this.state);
+    var data = this.state.data;
 
     return (
       <div>
+
+        <div className="intro-block">
+          <h2>Status upload</h2>
+        </div>
 
         <section className="panel status-panel">
           <header className="panel-header">
@@ -79,53 +160,16 @@ var App = module.exports = React.createClass({
           </header>
           <div className="panel-body">
             <dl className="status-details">
-              <dt>Token</dt>
-              <dd>120a81d1a235c3512fb85ab4fe67acb4e9cb8b0590789cc034d0da140a4a8ea8636f4788c4609c9bc727d5a91b1eabb31ff8b2a72d60354bf3d9d842e5f08e6b</dd>
               <dt>Uploader</dt>
-              <dd><span className="name">Lady Stardust</span> <span className="email">lady@stardust.xyz</span></dd>
-              <dt>When</dt>
-              <dd>August 14, 2015 at 4:30AM</dd>
-            </dl>
-          </div>
-          <footer className="panel-footer"></footer>
-        </section>
-
-        <section className="panel status-panel">
-          <header className="panel-header">
-            <div className="panel-headline">
-              <h1 className="panel-title">Scene</h1>
-              <p className="panel-subtitle">Talisay Tanauan</p>
-            </div>
-          </header>
-          <div className="panel-body">
-            <dl className="status-details">
-              <dt>Platform</dt>
-              <dd>UAV</dd>
-              <dt>Sensor</dt>
-              <dd>Blue Bird Drone 4K</dd>
-              <dt>Provider</dt>
-              <dd>SkyEye Inc.</dd>
+              <dd><span className="name">{data.uploader.name}</span> <span className="email">{data.uploader.email}</span></dd>
               <dt>Date</dt>
-              <dd>2015-08-25 12:19:21 - 2015-08-25 12:19:21</dd>
-              <dt>Tile service</dt>
-              <dd>http://a.tiles.mapbox.com/v4/openroads.n6p4np8h</dd>
-              <dt>Contact</dt>
-              <dd><span>Edgar Ilaga</span> <span>edgarilaga@skyeyeproject.com</span></dd>
+              <dd>{dateFormat(data.createdAt)}</dd>
             </dl>
-
-            <div className="image-block">
-              <h2 className="image-block-title">Image 1</h2>
-              <dl className="status-details">
-                <dt>Status</dt>
-                <dd>Initial</dd>
-                <dt>Started</dt>
-                <dd>2015-08-24T21:08:44.108Z</dd>
-              </dl>
-            </div>
-
           </div>
           <footer className="panel-footer"></footer>
         </section>
+
+        {data.scenes.map(function (scene) { return this.renderScene(scene) }.bind(this))}
 
       </div>
     );
