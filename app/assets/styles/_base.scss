@@ -118,10 +118,6 @@ a:active{
     @extend .row;
     @extend .centered;
   }
-  @include media(small-up) {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
-  }
 }
 
 .intro-block {
@@ -142,6 +138,19 @@ a:active{
   @include media(xlarge-up) {
     @include span-columns(8 of 12);
     @include shift(2);
+  }
+}
+
+.intro-ctas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  li {
+    display: inline-block;
+    margin: 0.25rem;
+  }
+  @include media(medium-up) {
+    margin: 0 0.25rem;
   }
 }
 

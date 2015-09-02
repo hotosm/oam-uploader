@@ -288,7 +288,8 @@ var Home = module.exports = React.createClass({
       <div>
 
         <div className="intro-block">
-          <p>Welcome to the <a href="http://openaerialmap.org/" title="Visit OpenAerialMap">OpenAerialMap</a> Imagery Uploader. Use the form below to submit your imagery, if you have a valid upload token. Learn how to contribute with imagery by <a href="https://github.com/hotosm/oam-uploader" title="Go to the GitHub repo">reading the documentation</a>.</p>
+        <p>Welcome to the <a href="http://openaerialmap.org/" title="Visit OpenAerialMap">OpenAerialMap</a> Imagery Uploader. Submit your imagery using the form below - a valid upload token is needed. <a href="https://github.com/hotosm/oam-uploader" title="Go to the GitHub repo">Read the documentation</a> to learn how to contribute.</p>
+        <p><a href="#" className="bttn bttn-l bttn-base-light" title="Request a token"><span>Request a token</span></a></p>
         </div>
 
         <section className="panel upload-panel">
@@ -304,7 +305,7 @@ var Home = module.exports = React.createClass({
               <fieldset className="form-fieldset general">
                 <legend className="form-legend">General</legend>
                 <div className="form-group">
-                  <label className="form-label">Token</label>
+                  <label className="form-label">Token <a href="#" title="Request a token" className="label-link">(request)</a></label>
                   <div className="form-control-set">
                     <input type="password" className="form-control" placeholder="Key" aria-describedby="help-1" name="uploader-token" onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} value={this.state['uploader-token']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-token')[0])}
