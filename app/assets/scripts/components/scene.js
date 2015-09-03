@@ -110,8 +110,9 @@ var Scene = module.exports = React.createClass({
         <div className="form-group">
           <label className="form-label">Sensor</label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Device name/model" name={this.getName('sensor')} onBlur={this.props.handleValidation('scenes.' + i + '.sensor')} onChange={this.onChange} value={this.props.data.sensor} />
+            <input type="text" className="form-control" placeholder="Type/model" name={this.getName('sensor')} onBlur={this.props.handleValidation('scenes.' + i + '.sensor')} onChange={this.onChange} value={this.props.data.sensor} aria-describedby={'help-sensor-' + i} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.sensor')[0])}
+            <p id="{'help-sensor-' + i}" className="form-help">Type or model of image sensor or camera used (ex: Worldview-3).</p>
           </div>
         </div>
         <div className="form-group">
@@ -149,23 +150,25 @@ var Scene = module.exports = React.createClass({
         <div className="form-group">
           <label className="form-label">Imagery location</label>
           <div className="form-control-set">
-            <textarea className="form-control" placeholder="URL" aria-describedby="help-1" rows="4" name={this.getName('urls')} onBlur={this.props.handleValidation('scenes.' + i + '.urls')} onChange={this.onChange} value={this.props.data.urls} />
+            <textarea className="form-control" placeholder="One URL per line" aria-describedby={'help-img-location-' + i} rows="4" name={this.getName('urls')} onBlur={this.props.handleValidation('scenes.' + i + '.urls')} onChange={this.onChange} value={this.props.data.urls} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.urls')[0])}
-            <p id="help-1" className="form-help">One URL per line.</p>
+            <p id="{'help-img-location-' + i}" className="form-help">See URL requirements for more details.</p>
           </div>
         </div>
         <div className="form-group">
           <label className="form-label">Tile service</label>
           <div className="form-control-set">
-            <input type="url" className="form-control" placeholder="URL (optional)" name={this.getName('tile-url')} onBlur={this.props.handleValidation('scenes.' + i + '.tile-url')} onChange={this.onChange} value={this.props.data['tile-url']} />
+            <input type="url" className="form-control" placeholder="URL (optional)" name={this.getName('tile-url')} onBlur={this.props.handleValidation('scenes.' + i + '.tile-url')} onChange={this.onChange} value={this.props.data['tile-url']} aria-describedby={'help-tile-' + i} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.tile-url')[0])}
+            <p id="{'help-tile-' + i}" className="form-help">Enter a tile URL template. Valid tokens are {'{z}, {x}, {y} for Z/X/Y, and {u}'} for quadtile scheme.</p>
           </div>
         </div>
         <div className="form-group">
           <label className="form-label">Provider</label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Entity name" name={this.getName('provider')} onBlur={this.props.handleValidation('scenes.' + i + '.provider')} onChange={this.onChange} value={this.props.data['provider']} />
+            <input type="text" className="form-control" placeholder="Entity name" name={this.getName('provider')} onBlur={this.props.handleValidation('scenes.' + i + '.provider')} onChange={this.onChange} value={this.props.data['provider']} aria-describedby={'help-provider-' + i}  />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.provider')[0])}
+            <p id="{'help-provider-' + i}" className="form-help">Name of company or individual that collected or provided the imagery.</p>
           </div>
         </div>
         <div className="form-group">
