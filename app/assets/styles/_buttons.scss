@@ -246,3 +246,7 @@ input[type=submit] {
 .bttn-view-image {
   @extend .bttn, .bttn-base-light, .bttn-s;
 }
+
+.bttn-request-token {
+  @extend .bttn, .bttn-base-light, .bttn-l;
+}

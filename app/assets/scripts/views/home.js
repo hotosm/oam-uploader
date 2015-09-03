@@ -5,6 +5,7 @@ var ValidationMixin = require('react-validation-mixin');
 var Joi = require('joi');
 var nets = require('nets');
 var Scene = require('../components/scene');
+var Dropdown = require('../components/dropdown');
 var apiUrl = require('../config.js').OAMUploaderApi;
 
 var Home = module.exports = React.createClass({
@@ -288,8 +289,13 @@ var Home = module.exports = React.createClass({
       <div>
 
         <div className="intro-block">
-        <p>Welcome to the <a href="http://openaerialmap.org/" title="Visit OpenAerialMap">OpenAerialMap</a> Imagery Uploader. Submit your imagery using the form below - a valid upload token is needed. <a href="https://github.com/hotosm/oam-uploader" title="Go to the GitHub repo">Read the documentation</a> to learn how to contribute.</p>
-        <p><a href="#" className="bttn bttn-l bttn-base-light" title="Request a token"><span>Request a token</span></a></p>
+          <p>Welcome to the <a href="http://openaerialmap.org/" title="Visit OpenAerialMap">OpenAerialMap</a> Imagery Uploader.<br /> Use the form below to submit your imagery - a valid upload token is needed. <a href="https://github.com/hotosm/oam-uploader" title="Go to the GitHub repo">Read the documentation</a> to learn how to contribute.</p>
+          <Dropdown element="div" className="drop dropdown center" triggerTitle="Request a token" triggerClassName="bttn-request-token" triggerText="Request a token">
+            <ul className="drop-menu request-token-menu" role="menu">
+              <li className="github has-icon-bef"><a href="https://github.com/hotosm/oam-uploader-admin/issues/new?title=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A" title="Open GitHub issue"><span>Open GitHub issue</span></a></li>
+              <li className="email has-icon-bef"><a href="mailto:email%40example.com?subject=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A" title="Send email"><span>Send email</span></a></li>
+            </ul>
+          </Dropdown>
         </div>
 
         <section className="panel upload-panel">
@@ -305,7 +311,7 @@ var Home = module.exports = React.createClass({
               <fieldset className="form-fieldset general">
                 <legend className="form-legend">General</legend>
                 <div className="form-group">
-                  <label className="form-label">Token <a href="#" title="Request a token" className="label-link">(request)</a></label>
+                  <label className="form-label">Token</label>
                   <div className="form-control-set">
                     <input type="password" className="form-control" placeholder="Key" aria-describedby="help-1" name="uploader-token" onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} value={this.state['uploader-token']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-token')[0])}
