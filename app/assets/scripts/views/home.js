@@ -1,4 +1,4 @@
-'use strict';
+  'use strict';
 var url = require('url');
 var React = require('react/addons');
 var ValidationMixin = require('react-validation-mixin');
@@ -7,6 +7,8 @@ var nets = require('nets');
 var Scene = require('../components/scene');
 var Dropdown = require('../components/dropdown');
 var apiUrl = require('../config.js').OAMUploaderApi;
+var AppActions = require('../actions/app-actions');
+var $ = require('jquery');
 
 var Home = module.exports = React.createClass({
   displayName: 'Home',
@@ -39,10 +41,6 @@ var Home = module.exports = React.createClass({
     if (process.env.DS_DEBUG) {
       return {
         loading: false,
-        feedback: {
-          type: null,
-          message: null
-        },
 
         // Form properties.
         'uploader-token': '',
@@ -56,10 +54,6 @@ var Home = module.exports = React.createClass({
 
     return {
       loading: false,
-      feedback: {
-        type: null,
-        message: null
-      },
 
       // Form properties.
       'uploader-token': '',
@@ -150,6 +144,8 @@ var Home = module.exports = React.createClass({
     this.validate(function(error, validationErrors) {
       if (error) {
         console.log(validationErrors);
+        AppActions.showNotification('alert', 'Form contains errors!');
+        this.scrollToError();
       } else {
 
         if (this.state.loading) {
@@ -157,6 +153,8 @@ var Home = module.exports = React.createClass({
           return;
         }
         this.setState({loading: true});
+
+        AppActions.clearNotification();
 
         // All is well.
         // SUBMIT DATA.
@@ -213,36 +211,33 @@ var Home = module.exports = React.createClass({
 
           if (resp.statusCode >= 200 && resp.statusCode < 400) {
             var id = JSON.parse(body.toString()).upload;
-            this.setFormFeedback('success', (
-              <p>Your upload request was successfully submitted and is being
-              processed. <a href={'#/status/' + id}>Check upload status.</a></p>
+
+            AppActions.showNotification('success', (
+              <span>
+                Your upload request was successfully submitted and is being processed. <a href={'#/status/' + id}>Check upload status.</a>
+              </span>
             ));
+
             this.resetForm();
           } else {
-            this.setFormFeedback('alert', (
-              <p>There was a problem with the request.<br/>
+
+            AppActions.showNotification('alert', (
+              <span>
+                There was a problem with the request.<br/>
                 The OAM Upload server responded with: {resp.statusCode}<br/>
                 {'' + body}
-              </p>
+              </span>
             ));
+
           }
         }.bind(this));
       }
     }.bind(this));
   },
 
-  setFormFeedback: function(type, message) {
-    this.setState({feedback: {
-      type: type,
-      message: message
-    }});
-  },
-
-  clearFormFeedback: function() {
-    this.setState({feedback: {
-      type: null,
-      message: null
-    }});
+  scrollToError: function() {
+    var topPos = $('.message-alert').first().offset().top;
+    $('html').animate({ scrollTop: topPos - 50 });
   },
 
   renderErrorMessage: function(message) {
@@ -266,19 +261,6 @@ var Home = module.exports = React.createClass({
         handleValidation={this.handleValidation}
         getValidationMessages={this.getValidationMessages}
         renderErrorMessage={this.renderErrorMessage} />
-    );
-  },
-
-  renderFeedback: function() {
-    if (this.state.feedback.type === null) {
-      return null;
-    }
-    var classes = "notification notification-" + this.state.feedback.type;
-
-    return (
-      <div className={classes}>
-        {this.state.feedback.message}
-      </div>
     );
   },
 
@@ -350,8 +332,6 @@ var Home = module.exports = React.createClass({
           </div>
           <footer className="panel-footer"></footer>
         </section>
-
-        {this.renderFeedback()}
 
         {this.state.loading ? <p className="loading revealed">Loading</p> : null}
       </div>

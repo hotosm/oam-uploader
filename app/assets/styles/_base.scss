@@ -169,6 +169,7 @@ a:active{
   @include transition(all 0.24s ease 0s);
   @include transform(translateZ(0));
   overflow: hidden;
+  z-index: 9999;
   &:before {
     position: absolute;
     top: 50%;
