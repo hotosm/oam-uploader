@@ -4,6 +4,7 @@ var Router = require('react-router');
 var RouteHandler = Router.RouteHandler;
 var moment = require('moment');
 var titlecase = require('titlecase');
+var turfCentroid = require('turf-centroid');
 
 var util = require('util');
 var url = require('url');
@@ -96,8 +97,23 @@ var App = module.exports = React.createClass({
     var status;
     var messages = image.messages.map(function (msg) { return <li>{msg}</li> });
     if (image.status === 'finished') {
+
+      var bb = image.metadata.bbox
+      var f = {
+        type: 'Feature',
+        geometry: {
+          type: "Polygon",
+          coordinates: [[
+            [bb[1], bb[0]],
+            [bb[3], bb[2]]
+          ]]
+        }
+      }
+      var coords = turfCentroid(f).geometry.coordinates;
+      var url = 'http://hotosm.github.io/oam-browser/#/' + coords[0] + ',' + coords[1] + ',12';
+
       status = 'status-success'
-      messages.unshift(<li><a href="#" title="View image on OpenAerialMap" className="bttn-view-image">View image</a></li>)
+      messages.unshift(<li><a href={url} title="View image on OpenAerialMap" className="bttn-view-image">View image</a></li>)
     } else if (image.status === 'processing') {
       status = 'status-processing'
       messages.unshift(<li>Upload in progress.</li>)
