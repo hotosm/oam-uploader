@@ -17,7 +17,7 @@ var Home = module.exports = React.createClass({
 
   validatorTypes:  {
     'uploader-name': Joi.string().allow('').label('Name'),
-    'uploader-token': Joi.string().required().hex().length(128).label('Token'),
+    'uploader-token': Joi.string().required().hex().length(64).label('Token'),
     'uploader-email': Joi.string().email().label('Email'),
 
     'scenes': Joi.array().items(
