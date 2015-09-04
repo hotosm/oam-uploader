@@ -137,47 +137,52 @@ h6, .hd-xxs {
   }
 
   @include media(medium-up) {
-    font-size: 1.25rem;
-    line-height: 1.6;
 
-    h1, h2, h3, h4, h5, h6 {
-      margin: 3.5rem 0 1.75rem 0;
-    }
+    &:not(.modal-prose) {
 
-    p, ul, ol, dl, blockquote, figure, pre, table, .table-responsive {
-      margin-bottom: 1.75rem;
-    }
+      font-size: 1.25rem;
+      line-height: 1.6;
 
-    ul, ol {
-      margin-left: 2rem; 
-    }
+      h1, h2, h3, h4, h5, h6 {
+        margin: 3.5rem 0 1.75rem 0;
+      }
 
-    dd {
-      margin-bottom: 0.75rem;
-    }
+      p, ul, ol, dl, blockquote, figure, pre, table, .table-responsive {
+        margin-bottom: 1.75rem;
+      }
 
-    figcaption {
-      font-size: 1rem;
-      line-height: 1.5rem;
-    }
+      ul, ol {
+        margin-left: 2rem; 
+      }
 
-    hr {
-      margin: 3.5rem auto;
-    }
+      dd {
+        margin-bottom: 0.75rem;
+      }
 
-    blockquote {
-      padding: 1rem 1.5rem;
-      footer {
+      figcaption {
         font-size: 1rem;
         line-height: 1.5rem;
-        margin-top: -1rem;
       }
-    }
 
-    pre {
-      padding: 2rem;
-      margin-left: -2rem;
-      margin-right: -2rem;
+      hr {
+        margin: 3.5rem auto;
+      }
+
+      blockquote {
+        padding: 1rem 1.5rem;
+        footer {
+          font-size: 1rem;
+          line-height: 1.5rem;
+          margin-top: -1rem;
+        }
+      }
+
+      pre {
+        padding: 2rem;
+        margin-left: -2rem;
+        margin-right: -2rem;
+      }
+
     }
   }
 }

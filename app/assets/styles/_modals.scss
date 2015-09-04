@@ -146,7 +146,7 @@ $modal-padding: 1rem;
       @extend .visually-hidden;
     }
     &:before {
-      @extend .icon-s-cancel;
+      @extend .collecticon-sm-xmark;
     }
   }
   h2 {

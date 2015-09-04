@@ -1,11 +1,14 @@
-'use strict';
+  'use strict';
 var url = require('url');
 var React = require('react/addons');
 var ValidationMixin = require('react-validation-mixin');
 var Joi = require('joi');
 var nets = require('nets');
 var Scene = require('../components/scene');
+var Dropdown = require('../components/dropdown');
 var apiUrl = require('../config.js').OAMUploaderApi;
+var AppActions = require('../actions/app-actions');
+var $ = require('jquery');
 
 var Home = module.exports = React.createClass({
   displayName: 'Home',
@@ -14,7 +17,7 @@ var Home = module.exports = React.createClass({
 
   validatorTypes:  {
     'uploader-name': Joi.string().allow('').label('Name'),
-    'uploader-token': Joi.string().required().hex().length(128).label('Token'),
+    'uploader-token': Joi.string().required().hex().length(64).label('Token'),
     'uploader-email': Joi.string().email().label('Email'),
 
     'scenes': Joi.array().items(
@@ -38,10 +41,6 @@ var Home = module.exports = React.createClass({
     if (process.env.DS_DEBUG) {
       return {
         loading: false,
-        feedback: {
-          type: null,
-          message: null
-        },
 
         // Form properties.
         'uploader-token': '',
@@ -55,10 +54,6 @@ var Home = module.exports = React.createClass({
 
     return {
       loading: false,
-      feedback: {
-        type: null,
-        message: null
-      },
 
       // Form properties.
       'uploader-token': '',
@@ -149,6 +144,8 @@ var Home = module.exports = React.createClass({
     this.validate(function(error, validationErrors) {
       if (error) {
         console.log(validationErrors);
+        AppActions.showNotification('alert', 'Form contains errors!');
+        this.scrollToError();
       } else {
 
         if (this.state.loading) {
@@ -156,6 +153,8 @@ var Home = module.exports = React.createClass({
           return;
         }
         this.setState({loading: true});
+
+        AppActions.clearNotification();
 
         // All is well.
         // SUBMIT DATA.
@@ -212,46 +211,41 @@ var Home = module.exports = React.createClass({
 
           if (resp.statusCode >= 200 && resp.statusCode < 400) {
             var id = JSON.parse(body.toString()).upload;
-            this.setFormFeedback('success', (
-              <p>Your upload request was successfully submitted and is being
-              processed. <a href={'#/status/' + id}>Check upload status.</a></p>
+
+            AppActions.showNotification('success', (
+              <span>
+                Your upload request was successfully submitted and is being processed. <a href={'#/status/' + id}>Check upload status.</a>
+              </span>
             ));
+
             this.resetForm();
           } else {
-            this.setFormFeedback('alert', (
-              <p>There was a problem with the request.<br/>
+
+            AppActions.showNotification('alert', (
+              <span>
+                There was a problem with the request.<br/>
                 The OAM Upload server responded with: {resp.statusCode}<br/>
                 {'' + body}
-              </p>
+              </span>
             ));
+
           }
         }.bind(this));
       }
     }.bind(this));
   },
 
-  setFormFeedback: function(type, message) {
-    this.setState({feedback: {
-      type: type,
-      message: message
-    }});
-  },
-
-  clearFormFeedback: function() {
-    this.setState({feedback: {
-      type: null,
-      message: null
-    }});
+  scrollToError: function() {
+    var topPos = $('.message-alert').first().offset().top;
+    $('html').animate({ scrollTop: topPos - 50 });
   },
 
   renderErrorMessage: function(message) {
     message = message || '';
-    if (message.trim().length === 0) { return '' }
+    if (message.trim().length === 0) { return null }
 
     return (
-      <div className='message-wrapper'>
-        <p className="message message-alert">{message}</p>
-      </div>
+      <p className="message message-alert">{message}</p>
     );
   },
 
@@ -270,25 +264,18 @@ var Home = module.exports = React.createClass({
     );
   },
 
-  renderFeedback: function() {
-    if (this.state.feedback.type === null) {
-      return null;
-    }
-    var classes = "notification notification-" + this.state.feedback.type;
-
-    return (
-      <div className={classes}>
-        {this.state.feedback.message}
-      </div>
-    );
-  },
-
   render: function() {
     return (
       <div>
 
         <div className="intro-block">
-          <p>Welcome to the <a href="http://openaerialmap.org/" title="Visit OpenAerialMap">OpenAerialMap</a> Imagery Uploader. Use the form below to submit your imagery, if you have a valid upload token. Learn how to contribute with imagery by <a href="https://github.com/hotosm/oam-uploader" title="Go to the GitHub repo">reading the documentation</a>.</p>
+          <p>Welcome to the <a href="http://openaerialmap.org/" title="Visit OpenAerialMap">OpenAerialMap</a> Imagery Uploader.<br /> Use the form below to submit your imagery - a valid upload token is needed. <a href="https://github.com/hotosm/oam-uploader" title="Go to the GitHub repo">Read the documentation</a> to learn how to contribute.</p>
+          <Dropdown element="div" className="drop dropdown center" triggerTitle="Request a token" triggerClassName="bttn-request-token" triggerText="Request a token">
+            <ul className="drop-menu request-token-menu" role="menu">
+              <li className="github has-icon-bef"><a href="https://github.com/hotosm/oam-uploader-admin/issues/new?title=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A" title="Open GitHub issue"><span>Open GitHub issue</span></a></li>
+              <li className="email has-icon-bef"><a href="mailto:email%40example.com?subject=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A" title="Send email"><span>Send email</span></a></li>
+            </ul>
+          </Dropdown>
         </div>
 
         <section className="panel upload-panel">
@@ -345,8 +332,6 @@ var Home = module.exports = React.createClass({
           </div>
           <footer className="panel-footer"></footer>
         </section>
-
-        {this.renderFeedback()}
 
         {this.state.loading ? <p className="loading revealed">Loading</p> : null}
       </div>
