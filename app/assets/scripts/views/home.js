@@ -24,7 +24,7 @@ var Home = module.exports = React.createClass({
       Joi.object().keys({
         'title': Joi.string().min(1).required(),
         'platform-type': Joi.string().required().valid('satellite', 'aircraft', 'uav', 'ballon', 'kite'),
-        'sensor': Joi.string().required().label('Sensor'),
+        'sensor': Joi.string().allow('').label('Sensor'),
         'date-start': Joi.date().required().label('Date start'),
         // 'date-end': non required,
         'urls': Joi.string().required().label('Imagery location'),
@@ -291,23 +291,23 @@ var Home = module.exports = React.createClass({
               <fieldset className="form-fieldset general">
                 <legend className="form-legend">General</legend>
                 <div className="form-group">
-                  <label className="form-label">Token</label>
+                  <label className="form-label" htmlFor="uploader-token">Token</label>
                   <div className="form-control-set">
-                    <input type="password" className="form-control" placeholder="Key" aria-describedby="help-1" name="uploader-token" onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} value={this.state['uploader-token']} />
+                    <input type="password" className="form-control" placeholder="Key" name="uploader-token" id="uploader-token" onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} value={this.state['uploader-token']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-token')[0])}
                   </div>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Uploader <span className="visually-hidden">name</span></label>
+                  <label className="form-label" htmlFor="uploader-name">Uploader <span className="visually-hidden">name</span></label>
                   <div className="form-control-set">
-                    <input type="text" className="form-control" placeholder="Name (optional)" name="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
+                    <input type="text" className="form-control" placeholder="Name (optional)" name="uploader-name" id="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-name')[0])}
                   </div>
                 </div>
                 <div className="form-group">
-                <label className="form-label none"><span className="visually-hidden">Uploader email</span></label>
+                <label className="form-label none" htmlFor="uploader-email"><span className="visually-hidden">Uploader email</span></label>
                   <div className="form-control-set">
-                    <input type="email" className="form-control" placeholder="Email" name="uploader-email" onBlur={this.handleValidation('uploader-email')} onChange={this.onValueChange} value={this.state['uploader-email']} />
+                    <input type="email" className="form-control" placeholder="Email" name="uploader-email" id="uploader-email" onBlur={this.handleValidation('uploader-email')} onChange={this.onValueChange} value={this.state['uploader-email']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-email')[0])}
                   </div>
                 </div>

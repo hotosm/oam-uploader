@@ -9,6 +9,10 @@ var Scene = module.exports = React.createClass({
     return 'scene[' + this.props.index + '][' + fieldName + ']';
   },
 
+  getId: function(fieldName) {
+    return 'scene-' + this.props.index + '-' + fieldName;
+  },
+
   getRadioName: function(fieldName) {
     return this.getName(fieldName) + '[]';
   },
@@ -17,6 +21,23 @@ var Scene = module.exports = React.createClass({
     var pieces = e.target.name.match(/scene\[([0-9]+)\]\[([a-z0-9-]+)\]/);
     // sceneIndex, fieldName, fieldValue
     this.props.onValueChange(pieces[1], pieces[2], e.target.value);
+  },
+
+  onDateChange: function(field, date, dateString) {
+    var val = date === null ? null : date.toISOString();
+    this.props.onValueChange(this.props.index, field, val);
+  },
+
+  getValueForDate: function(field) {
+    return this.props.data[field] === null ? null : new Date(this.props.data[field]);
+  },
+
+  dateOrUndefined: function(field) {
+    // When getting the value for min/max, if we don't want to set one
+    // we need to use undefined.
+    // Using null results in the date being the epoch time.
+    var val = this.getValueForDate(field);
+    return val === null ? undefined : val;
   },
 
   renderRemoveBtn: function() {
@@ -38,38 +59,21 @@ var Scene = module.exports = React.createClass({
     return (
       <div>
         <div className="form-group">
-          <label className="form-label none"><span className="visually-hidden">Contact name</span></label>
+          <label className="form-label none" htmlFor={this.getId('contact-name')}><span className="visually-hidden">Contact name</span></label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Name (optional)" name={this.getName('contact-name')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-name')} />
+            <input type="text" className="form-control" placeholder="Name (optional)" name={this.getName('contact-name')} id={this.getId('contact-name')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-name')} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.contact-name')[0])}
           </div>
         </div>
         <div className="form-group">
-          <label className="form-label none"><span className="visually-hidden">Contact email</span></label>
+          <label className="form-label none" htmlFor={this.getId('contact-email')}><span className="visually-hidden">Contact email</span></label>
           <div className="form-control-set">
-            <input type="email" className="form-control" placeholder="Email" name={this.getName('contact-email')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-email')} />
+            <input type="email" className="form-control" placeholder="Email" name={this.getName('contact-email')} id={this.getId('contact-email')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-email')} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.contact-email')[0])}
           </div>
         </div>
       </div>
     );
-  },
-
-  onDateChange: function(field, date, dateString) {
-    var val = date === null ? null : date.toISOString();
-    this.props.onValueChange(this.props.index, field, val);
-  },
-
-  getValueForDate: function(field) {
-    return this.props.data[field] === null ? null : new Date(this.props.data[field]);
-  },
-
-  dateOrUndefined: function(field) {
-    // When getting the value for min/max, if we don't want to set one
-    // we need to use undefined.
-    // Using null results in the date being the epoch time.
-    var val = this.getValueForDate(field);
-    return val === null ? undefined : val;
   },
 
   render: function() {
@@ -81,9 +85,9 @@ var Scene = module.exports = React.createClass({
         <legend className="form-legend">Scene {i > 0 ? i + 1 : ''}</legend>
         {this.renderRemoveBtn()}
         <div className="form-group">
-          <label className="form-label">Title</label>
+          <label className="form-label" htmlFor={this.getId('title')}>Title</label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Scene title" name={this.getName('title')} onBlur={this.props.handleValidation('scenes.' + i + '.title')} onChange={this.onChange} value={this.props.data.title} />
+            <input type="text" className="form-control" placeholder="Scene title" name={this.getName('title')} id={this.getId('title')} onBlur={this.props.handleValidation('scenes.' + i + '.title')} onChange={this.onChange} value={this.props.data.title} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.title')[0])}
           </div>
         </div>
@@ -108,11 +112,11 @@ var Scene = module.exports = React.createClass({
           </div>
         </div>
         <div className="form-group">
-          <label className="form-label">Sensor</label>
+          <label className="form-label" htmlFor={this.getId('sensor')}>Sensor</label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Type/model" name={this.getName('sensor')} onBlur={this.props.handleValidation('scenes.' + i + '.sensor')} onChange={this.onChange} value={this.props.data.sensor} aria-describedby={'help-sensor-' + i} />
+            <input type="text" className="form-control" placeholder="Type/model (optional)" name={this.getName('sensor')} id={this.getId('sensor')} onBlur={this.props.handleValidation('scenes.' + i + '.sensor')} onChange={this.onChange} value={this.props.data.sensor} aria-describedby={'help-sensor-' + i} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.sensor')[0])}
-            <p id="{'help-sensor-' + i}" className="form-help">Type or model of image sensor or camera used (ex: Worldview-3).</p>
+            <p id={'help-sensor-' + i} className="form-help">Type or model of image sensor or camera used (ex: Worldview-3).</p>
           </div>
         </div>
         <div className="form-group">
@@ -148,27 +152,27 @@ var Scene = module.exports = React.createClass({
           </div>
         </div>
         <div className="form-group">
-          <label className="form-label">Imagery location</label>
+          <label className="form-label" htmlFor={this.getId('urls')}>Imagery location</label>
           <div className="form-control-set">
-            <textarea className="form-control" placeholder="One URL per line" aria-describedby={'help-img-location-' + i} rows="4" name={this.getName('urls')} onBlur={this.props.handleValidation('scenes.' + i + '.urls')} onChange={this.onChange} value={this.props.data.urls} />
+            <textarea className="form-control" placeholder="One URL per line" id={this.getId('urls')} aria-describedby={'help-img-location-' + i} rows="4" name={this.getName('urls')} onBlur={this.props.handleValidation('scenes.' + i + '.urls')} onChange={this.onChange} value={this.props.data.urls} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.urls')[0])}
-            <p id="{'help-img-location-' + i}" className="form-help">See URL requirements for more details.</p>
+            <p id={'help-img-location-' + i} className="form-help">See URL requirements for more details.</p>
           </div>
         </div>
         <div className="form-group">
-          <label className="form-label">Tile service</label>
+          <label className="form-label" htmlFor={this.getId('tile-url')}>Tile service</label>
           <div className="form-control-set">
-            <input type="url" className="form-control" placeholder="URL (optional)" name={this.getName('tile-url')} onBlur={this.props.handleValidation('scenes.' + i + '.tile-url')} onChange={this.onChange} value={this.props.data['tile-url']} aria-describedby={'help-tile-' + i} />
+            <input type="url" className="form-control" placeholder="URL (optional)" name={this.getName('tile-url')} id={this.getId('tile-url')} onBlur={this.props.handleValidation('scenes.' + i + '.tile-url')} onChange={this.onChange} value={this.props.data['tile-url']} aria-describedby={'help-tile-' + i} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.tile-url')[0])}
-            <p id="{'help-tile-' + i}" className="form-help">Enter a tile URL template. Valid tokens are {'{z}, {x}, {y} for Z/X/Y, and {u}'} for quadtile scheme.</p>
+            <p id={'help-tile-' + i} className="form-help">Enter a tile URL template. Valid tokens are {'{z}, {x}, {y} for Z/X/Y, and {u}'} for quadtile scheme.</p>
           </div>
         </div>
         <div className="form-group">
-          <label className="form-label">Provider</label>
+          <label className="form-label" htmlFor={this.getId('provider')}>Provider</label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Entity name" name={this.getName('provider')} onBlur={this.props.handleValidation('scenes.' + i + '.provider')} onChange={this.onChange} value={this.props.data['provider']} aria-describedby={'help-provider-' + i}  />
+            <input type="text" className="form-control" placeholder="Entity name" name={this.getName('provider')} id={this.getId('provider')} onBlur={this.props.handleValidation('scenes.' + i + '.provider')} onChange={this.onChange} value={this.props.data['provider']} aria-describedby={'help-provider-' + i}  />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.provider')[0])}
-            <p id="{'help-provider-' + i}" className="form-help">Name of company or individual that collected or provided the imagery.</p>
+            <p id={'help-provider-' + i} className="form-help">Name of company or individual that collected or provided the imagery.</p>
           </div>
         </div>
         <div className="form-group">
