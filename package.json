@@ -74,6 +74,7 @@
     "react-validation-mixin": "^4.2.0",
     "react-widgets": "^2.8.0",
     "reflux": "^0.2.12",
-    "titlecase": "^1.0.2"
+    "titlecase": "^1.0.2",
+    "turf-centroid": "^1.1.2"
   }
 }
