@@ -221,13 +221,22 @@ var Home = module.exports = React.createClass({
             this.resetForm();
           } else {
 
-            AppActions.showNotification('alert', (
-              <span>
-                There was a problem with the request.<br/>
-                The OAM Upload server responded with: {resp.statusCode}<br/>
-                {'' + body}
-              </span>
-            ));
+            var message = null;
+            if (resp.statusCode == 401) {
+              message = (
+                <span>The provided token is not valid.</span>
+              );
+            }
+            else {
+              message = (
+                <span>
+                  There was a problem with the request.
+                </span>
+              );
+              console.log(body);
+            }
+
+            AppActions.showNotification('alert', message);
 
           }
         }.bind(this));
