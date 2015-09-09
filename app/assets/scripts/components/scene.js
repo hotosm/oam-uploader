@@ -1,3 +1,7 @@
+// Named scene.js based on original way of referring to how image files are grouped together
+// To avoid confusion on frontend, labels have been renamed to datasets
+// Continuing to use the term scene for variables and functions
+
 'use strict';
 var React = require('react/addons');
 var DateTimePicker = require('react-widgets').DateTimePicker;
