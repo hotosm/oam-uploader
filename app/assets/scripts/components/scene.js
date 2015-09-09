@@ -1,3 +1,7 @@
+// Named scene.js based on original way of referring to how image files are grouped together
+// To avoid confusion on frontend, labels have been renamed to datasets
+// Continuing to use the term scene for variables and functions
+
 'use strict';
 var React = require('react/addons');
 var DateTimePicker = require('react-widgets').DateTimePicker;
@@ -44,7 +48,7 @@ var Scene = module.exports = React.createClass({
     var classes = 'bttn-remove-scene' + (this.props.total <= 1 ? ' disabled' : '');
     return (
       <div className="form-fieldset-actions">
-        <button type="button" className={classes} onClick={this.props.removeScene.bind(null, this.props.index)} title="Remove scene"><span>Remove scene</span></button>
+        <button type="button" className={classes} onClick={this.props.removeScene.bind(null, this.props.index)} title="Remove dataset"><span>Remove dataset</span></button>
       </div>
     );
   },
@@ -82,12 +86,12 @@ var Scene = module.exports = React.createClass({
 
     return (
       <fieldset className="form-fieldset scene">
-        <legend className="form-legend">Scene {i > 0 ? i + 1 : ''}</legend>
+        <legend className="form-legend">Dataset {i > 0 ? i + 1 : ''}</legend>
         {this.renderRemoveBtn()}
         <div className="form-group">
           <label className="form-label" htmlFor={this.getId('title')}>Title</label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Scene title" name={this.getName('title')} id={this.getId('title')} onBlur={this.props.handleValidation('scenes.' + i + '.title')} onChange={this.onChange} value={this.props.data.title} />
+            <input type="text" className="form-control" placeholder="Dataset title" name={this.getName('title')} id={this.getId('title')} onBlur={this.props.handleValidation('scenes.' + i + '.title')} onChange={this.onChange} value={this.props.data.title} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.title')[0])}
           </div>
         </div>

@@ -64,7 +64,7 @@ var App = module.exports = React.createClass({
       <section className="panel status-panel">
         <header className="panel-header">
           <div className="panel-headline">
-            <h1 className="panel-title">Scene: <span className="given-title">{scene.title}</span></h1>
+            <h1 className="panel-title">Dataset: <span className="given-title">{scene.title}</span></h1>
           </div>
         </header>
         <div className="panel-body">
