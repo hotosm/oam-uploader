@@ -329,7 +329,7 @@ var Home = module.exports = React.createClass({
               </div>
 
               <div className="form-note">
-                <p>By uploading you agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque facilisis consequat felis, eget blandit augue ullamcorper sit amet.</p>
+                <p>By submitting imagery to OpenAerialMap, you agree to place your imagery into the <a href="https://github.com/openimagerynetwork/oin-register#open-imagery-network">Open Imagery Network (OIN)</a>. All imagery contained in OIN is licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>, with attribution as contributors of Open Imagery Network. All imagery is available to be traced in OpenStreetMap.</p>
               </div>
 
               <div className="form-actions">
