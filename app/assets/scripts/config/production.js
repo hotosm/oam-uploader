@@ -5,6 +5,6 @@ var logo = require('./logo');
 module.exports = {
   environment: 'production',
   consoleMessage: logo,
-  OAMUploaderApi: 'http://52.22.141.10/'
+  OAMUploaderApi: 'https://upload-api.openaerialmap.org/'
 };
 
