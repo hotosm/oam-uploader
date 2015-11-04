@@ -136,7 +136,7 @@ var Scene = module.exports = React.createClass({
               onChange={this.onDateChange.bind(null, 'date-start')} />
 
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.date-start')[0])}
-
+            <p id={'help-date-start-' + i} className="form-help">If the exact start time is unknown using 00:00:00 sill suffice.</p>
           </div>
         </div>
         <div className="form-group">
@@ -152,7 +152,7 @@ var Scene = module.exports = React.createClass({
               onChange={this.onDateChange.bind(null, 'date-end')} />
 
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.date-end')[0])}
-
+            <p id={'help-date-end-' + i} className="form-help">If the exact end time is unknown using 23:59:59 sill suffice.</p>
           </div>
         </div>
         <div className="form-group">
