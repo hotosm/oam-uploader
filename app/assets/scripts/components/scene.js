@@ -145,6 +145,7 @@ var Scene = module.exports = React.createClass({
 
             <DateTimePicker ref="dateEnd"
               min={this.dateOrUndefined('date-start')}
+              max={new Date()}
               finalView="decade"
               format={"yyyy-MM-dd HH:mm:ss"}
               timeFormat={"HH:mm"}
