@@ -65,7 +65,7 @@ var Scene = module.exports = React.createClass({
         <div className="form-group">
           <label className="form-label none" htmlFor={this.getId('contact-name')}><span className="visually-hidden">Contact name</span></label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Name (optional)" name={this.getName('contact-name')} id={this.getId('contact-name')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-name')} />
+            <input type="text" className="form-control" placeholder="Name" name={this.getName('contact-name')} id={this.getId('contact-name')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-name')} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.contact-name')[0])}
           </div>
         </div>
@@ -136,7 +136,7 @@ var Scene = module.exports = React.createClass({
               onChange={this.onDateChange.bind(null, 'date-start')} />
 
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.date-start')[0])}
-            <p id={'help-date-start-' + i} className="form-help">If the exact start time is unknown using 00:00:00 sill suffice.</p>
+            <p id={'help-date-start-' + i} className="form-help">If the exact start time is unknown using 00:00:00 will suffice.</p>
           </div>
         </div>
         <div className="form-group">
@@ -152,7 +152,7 @@ var Scene = module.exports = React.createClass({
               onChange={this.onDateChange.bind(null, 'date-end')} />
 
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.date-end')[0])}
-            <p id={'help-date-end-' + i} className="form-help">If the exact end time is unknown using 23:59:59 sill suffice.</p>
+            <p id={'help-date-end-' + i} className="form-help">If the exact end time is unknown using 23:59:59 will suffice.</p>
           </div>
         </div>
         <div className="form-group">

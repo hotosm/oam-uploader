@@ -16,22 +16,22 @@ var Home = module.exports = React.createClass({
   mixins: [ValidationMixin],
 
   validatorTypes:  {
-    'uploader-name': Joi.string().allow('').label('Name'),
+    'uploader-name': Joi.string().label('Name').required(),
     'uploader-token': Joi.string().required().hex().length(64).label('Token'),
     'uploader-email': Joi.string().email().label('Email'),
 
     'scenes': Joi.array().items(
       Joi.object().keys({
-        'title': Joi.string().min(1).required(),
+        'title': Joi.string().min(1).required().label('Title'),
         'platform-type': Joi.string().required().valid('satellite', 'aircraft', 'uav', 'ballon', 'kite'),
         'sensor': Joi.string().allow('').label('Sensor'),
         'date-start': Joi.date().required().label('Date start'),
-        // 'date-end': non required,
+        'date-end': Joi.date().min(Joi.ref('date-start')).max('now').required().label('Date End'),
         'urls': Joi.string().required().label('Imagery location'),
         'tile-url': Joi.string().allow('').label('Tile service'),
         'provider': Joi.string().required().label('Provider'),
         'contact-type': Joi.string().required().valid('uploader', 'other'),
-        'contact-name': Joi.string().allow('').label('Name'),
+        'contact-name': Joi.string().label('Name').required(),
         'contact-email': Joi.label('Email').when('contact-type', { is: 'other', then: Joi.string().email().required() })
       })
     )
@@ -66,13 +66,20 @@ var Home = module.exports = React.createClass({
   },
 
   getSceneDataTemplate: function() {
+    var midnight = new Date();
+    midnight.setMilliseconds(0);
+    midnight.setSeconds(0);
+    midnight.setMinutes(0);
+    midnight.setHours(0);
+    var now = new Date();
+
     if (process.env.DS_DEBUG) {
       return {
         'title': 'An imaginary scene',
         'platform-type': 'satellite',
         'sensor': 'x',
-        'date-start': new Date().toISOString(),
-        'date-end': new Date().toISOString(),
+        'date-start': midnight.toISOString(),
+        'date-end': now.toISOString(),
         'urls': 'http://fake-imagery.net/fake.tif',
         'tile-url': '',
         'provider': 'Mocks R Us',
@@ -85,8 +92,8 @@ var Home = module.exports = React.createClass({
     return {
       'platform-type': 'satellite',
       'sensor': '',
-      'date-start': new Date().toISOString(),
-      'date-end': null,
+      'date-start': midnight.toISOString(),
+      'date-end': now.toISOString(),
       'urls': '',
       'tile-url': '',
       'provider': '',
@@ -309,7 +316,7 @@ var Home = module.exports = React.createClass({
                 <div className="form-group">
                   <label className="form-label" htmlFor="uploader-name">Uploader <span className="visually-hidden">name</span></label>
                   <div className="form-control-set">
-                    <input type="text" className="form-control" placeholder="Name (optional)" name="uploader-name" id="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
+                    <input type="text" className="form-control" placeholder="Name" name="uploader-name" id="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-name')[0])}
                   </div>
                 </div>
