@@ -124,10 +124,17 @@ var App = module.exports = React.createClass({
 
     status = ' ' + status + ' ';
 
+    var imgStatusMatrix = {
+      'initial': 'Pending',
+      'processing': 'Processing',
+      'finished': 'Finished',
+      'errored': 'Errored'
+    };
+
     return (
       <div className={"image-block" + status}>
         <h2 className="image-block-title">Image {i}</h2>
-        <p className={"status" + status}>{titlecase(image.status)}</p>
+        <p className={"status" + status}>{imgStatusMatrix[image.status]}</p>
         <dl className="status-details">
           <dt>Started</dt>
           <dd>{dateFormat(image.startedAt)}</dd>
