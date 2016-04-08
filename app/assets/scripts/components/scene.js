@@ -65,14 +65,14 @@ var Scene = module.exports = React.createClass({
         <div className="form-group">
           <label className="form-label none" htmlFor={this.getId('contact-name')}><span className="visually-hidden">Contact name</span></label>
           <div className="form-control-set">
-            <input type="text" className="form-control" placeholder="Name" name={this.getName('contact-name')} id={this.getId('contact-name')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-name')} />
+            <input type="text" className="form-control" placeholder="Name" name={this.getName('contact-name')} id={this.getId('contact-name')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-name')} onChange={this.onChange} value={this.props.data['contact-name']} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.contact-name')[0])}
           </div>
         </div>
         <div className="form-group">
           <label className="form-label none" htmlFor={this.getId('contact-email')}><span className="visually-hidden">Contact email</span></label>
           <div className="form-control-set">
-            <input type="email" className="form-control" placeholder="Email" name={this.getName('contact-email')} id={this.getId('contact-email')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-email')} />
+            <input type="email" className="form-control" placeholder="Email" name={this.getName('contact-email')} id={this.getId('contact-email')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-email')} onChange={this.onChange} value={this.props.data['contact-email']} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.contact-email')[0])}
           </div>
         </div>
