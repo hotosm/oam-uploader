@@ -31,7 +31,7 @@ var Home = module.exports = React.createClass({
         'tile-url': Joi.string().allow('').label('Tile service'),
         'provider': Joi.string().required().label('Provider'),
         'contact-type': Joi.string().required().valid('uploader', 'other'),
-        'contact-name': Joi.string().label('Name').required(),
+        'contact-name': Joi.label('Name').when('contact-type', { is: 'other', then: Joi.string().required() }),
         'contact-email': Joi.label('Email').when('contact-type', { is: 'other', then: Joi.string().email().required() })
       })
     )
