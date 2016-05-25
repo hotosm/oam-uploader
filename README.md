@@ -29,3 +29,6 @@ Compile the sass files, javascript, collecticons... Use this instead of ```gulp 
 ```
 $ gulp
 ```
+
+## License
+Oam Uploader is licensed under **BSD 3-Clause License**, see the [LICENSE](LICENSE) file for more details.

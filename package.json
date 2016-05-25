@@ -1,6 +1,6 @@
 {
   "name": "oam-uploader",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Open aerial map uploader",
   "repository": {
     "type": "git",
@@ -10,14 +10,14 @@
     "name": "Development Seed",
     "url": "https://developmentseed.org"
   },
-  "license": "MIT",
+  "license": "BSD 3-Clause",
   "homepage": "https://github.com/hotosm/oam-uploader",
   "scripts": {
     "postinstall": "[ -f app/assets/scripts/config/local.js ] || echo 'module.exports = {};' > app/assets/scripts/config/local.js",
     "serve": "gulp serve",
     "build": "gulp",
     "lint": "semistandard app/assets/scripts/**/*.js",
-    "test": "echo NO TESTS YET"
+    "test": "echo NO TESTS YET && exit 0"
   },
   "browserify": {
     "transform": [
