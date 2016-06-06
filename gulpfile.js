@@ -1,5 +1,4 @@
 'use strict';
-
 var fs = require('fs');
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
@@ -7,7 +6,6 @@ var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 var watchify = require('watchify');
 var browserify = require('browserify');
-var reactify = require('reactify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var sourcemaps = require('gulp-sourcemaps');
@@ -16,7 +14,6 @@ var exit = require('gulp-exit');
 var rev = require('gulp-rev');
 var revReplace = require('gulp-rev-replace');
 var notifier = require('node-notifier');
-var rename = require('gulp-rename');
 var cp = require('child_process');
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,6 +22,22 @@ var cp = require('child_process');
 
 // The package.json
 var pkg;
+
+// Environment
+// Set the correct environment, which controls what happens in config.js
+if (!process.env.DS_ENV) {
+  if (process.env.TRAVIS_BRANCH && process.env.TRAVIS_BRANCH !== process.env.DEPLOY_BRANCH) {
+    process.env.DS_ENV = 'staging';
+  } else if (process.env.TRAVIS_BRANCH && process.env.TRAVIS_BRANCH === process.env.DEPLOY_BRANCH) {
+    process.env.DS_ENV = 'production';
+  } else {
+    process.env.DS_ENV = 'development';
+  }
+}
+
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
+var prodBuild = false;
 
 // /////////////////////////////////////////////////////////////////////////////
 // ------------------------ Collecticon tasks --------------------------------//
@@ -76,6 +89,7 @@ readPackage();
 //----------------------------------------------------------------------------//
 
 gulp.task('default', ['clean'], function () {
+  prodBuild = true;
   gulp.start('build');
 });
 
@@ -119,20 +133,9 @@ gulp.task('build', ['vendorScripts', 'javascript', 'collecticons'], function () 
 // When including the file in the index.html we need to refer to bundle.js not
 // main.js
 gulp.task('javascript', function () {
-  // set the correct environment, which controls what happens in config.js
-  if (!process.env.DS_ENV) {
-    if (!process.env.TRAVIS_BRANCH
-    || process.env.TRAVIS_BRANCH !== process.env.DEPLOY_BRANCH) {
-      process.env.DS_ENV = 'production';
-    } else {
-      process.env.DS_ENV = 'staging';
-    }
-  }
-
   var watcher = watchify(browserify({
     entries: ['./app/assets/scripts/main.js'],
     debug: true,
-    transform: [reactify],
     cache: {},
     packageCache: {},
     fullPaths: true
@@ -148,7 +151,10 @@ gulp.task('javascript', function () {
           title: 'Oops! Browserify errored:',
           message: e.message
         });
-        console.log('Sass error:', e);
+        console.log('Javascript error:', e);
+        if (prodBuild) {
+          process.exit(1);
+        }
         // Allows the watch to continue.
         this.emit('end');
       })
@@ -170,12 +176,11 @@ gulp.task('javascript', function () {
 
 // Vendor scripts. Basically all the dependencies in the package.js.
 // Therefore be careful and keep the dependencies clean.
-gulp.task('vendorScripts', function() {
+gulp.task('vendorScripts', function () {
   // Ensure package is updated.
   readPackage();
   var vb = browserify({
     debug: true,
-    transform: [reactify],
     require: pkg.dependencies ? Object.keys(pkg.dependencies) : []
   });
   return vb.bundle()
@@ -187,7 +192,6 @@ gulp.task('vendorScripts', function() {
     .pipe(gulp.dest('.tmp/assets/scripts/'))
     .pipe(reload({stream: true}));
 });
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //--------------------------- Helper tasks -----------------------------------//
@@ -201,6 +205,9 @@ gulp.task('styles', function () {
         message: e.message
       });
       console.log('Sass error:', e.toString());
+      if (prodBuild) {
+        process.exit(1);
+      }
       // Allows the watch to continue.
       this.emit('end');
     }))
@@ -208,7 +215,7 @@ gulp.task('styles', function () {
     .pipe($.sass({
       outputStyle: 'nested', // libsass doesn't support expanded yet
       precision: 10,
-      includePaths: ['.'].concat(require('node-neat').includePaths)
+      includePaths: require('node-neat').includePaths
     }))
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest('.tmp/assets/styles'))
@@ -216,29 +223,25 @@ gulp.task('styles', function () {
 });
 
 gulp.task('html', ['styles'], function () {
-  var assets = $.useref.assets({searchPath: ['.tmp', 'app', '.']});
-
   return gulp.src('app/*.html')
-    .pipe(assets)
+    .pipe($.useref({searchPath: ['.tmp', 'app', '.']}))
     .pipe($.if('*.js', $.uglify()))
     .pipe($.if('*.css', $.csso()))
-    .pipe(rev())
-    .pipe(assets.restore())
-    .pipe($.useref())
+    .pipe($.if(/\.(css|js)$/, rev()))
     .pipe(revReplace())
-    //.pipe($.if('*.html', $.minifyHtml({conditionals: true, loose: true})))
     .pipe(gulp.dest('dist'));
 });
 
 gulp.task('images', function () {
   return gulp.src('app/assets/graphics/**/*')
-    .pipe($.cache($.imagemin({
-      progressive: true,
-      interlaced: true,
+    .pipe($.cache($.imagemin([
+      $.imagemin.gifsicle({interlaced: true}),
+      $.imagemin.jpegtran({progressive: true}),
+      $.imagemin.optipng({optimizationLevel: 5}),
       // don't remove IDs from SVGs, they are often used
       // as hooks for embedding and styling
-      svgoPlugins: [{cleanupIDs: false}]
-    })))
+      $.imagemin.svgo({plugins: [{cleanupIDs: false}]})
+    ])))
     .pipe(gulp.dest('dist/assets/graphics'));
 });
 
