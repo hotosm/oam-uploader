@@ -144,19 +144,22 @@
     &:after {
       position: absolute;
       z-index: 1;
-      top: 0.35rem;
-      font-size: 1rem;
       opacity: 0.48;
+      top: 0.5rem;
+      font-size: 1rem;
+      line-height: 1.5rem;
+      width: 1.5rem;
+      text-align: center;
     }
   }
   &.has-icon-bef a {
-    padding-left: 2.5rem;
+    padding-left: 2.75rem;
     &:before {
       left: 1rem;
     }
   }
   &.has-icon-aft a {
-    padding-right: 2.5rem;
+    padding-right: 2.75rem;
     &:after {
       right: 1rem;
     }

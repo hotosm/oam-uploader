@@ -54,6 +54,22 @@ input[type=submit] {
     }
   }
   @include transition(background-color 0.24s ease 0s, opacity 0s linear 0s);
+
+ /* Icon handling */
+  &::before, &::after,
+  [class^="collecticon-"], [class*=" collecticon-"] {
+    font-size: 1rem;
+  }
+  &::before { margin-right: 0.375rem; }
+  &::after { margin-left: 0.375rem; }
+ 
+  &::before,
+  &::after,
+  > * {
+    vertical-align: top;
+    display: inline-block;
+    line-height: inherit !important;
+  }
 }
 
 
