@@ -26,10 +26,10 @@ var cp = require('child_process');
 // The package.json
 var pkg;
 
-////////////////////////////////////////////////////////////////////////////////
-//------------------------- Collecticon tasks --------------------------------//
-//--------------------- (Font generation related) ----------------------------//
-//----------------------------------------------------------------------------//
+// /////////////////////////////////////////////////////////////////////////////
+// ------------------------ Collecticon tasks --------------------------------//
+// -------------------- (Font generation related) ----------------------------//
+// ---------------------------------------------------------------------------//
 gulp.task('collecticons', function (done) {
   var args = [
     'node_modules/collecticons-processor/bin/collecticons.js',
@@ -37,9 +37,15 @@ gulp.task('collecticons', function (done) {
     'app/assets/graphics/collecticons/',
     '--font-embed',
     '--font-dest', 'app/assets/fonts',
+    '--font-name', 'Collecticons',
     '--font-types', 'woff',
     '--style-format', 'sass',
     '--style-dest', 'app/assets/styles/',
+    '--style-name', 'icons',
+    '--class-name', 'collecticon',
+    '--author-name', 'Development Seed',
+    '--author-url', 'https://developmentseed.org/',
+    '--no-standalone',
     '--no-preview'
   ];
 

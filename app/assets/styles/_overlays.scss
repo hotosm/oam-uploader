@@ -8,7 +8,7 @@
 .drop-toggle {
   &.caret {
     &:after {
-      @extend .collecticon-sm-chevron-down;
+      @extend %collecticon-sm-chevron-down;
       opacity: 0.32;
       font-size: 1rem;
       margin-left: 0.25rem;
@@ -34,7 +34,7 @@
   @include transform(translate3d(0, 0, 0));
   @include transition(opacity 0.16s ease 0s, margin 0.16s ease 0s, visibility 0.16s linear 0s);
   &:before {
-    @extend .collecticon-triangle-up;
+    @extend %collecticon-triangle-up;
     position: absolute;
     z-index: 15;
     left: 1rem;
@@ -44,12 +44,12 @@
     height: 1rem;
     width: 1rem;
     .dropdown > & {
-      @extend .collecticon-triangle-up;
+      @extend %collecticon-triangle-up;
       top: -0.675rem;
       text-shadow: 0 -1px $brdr-rgba;
     }
     .dropup > & {
-      @extend .collecticon-triangle-down;
+      @extend %collecticon-triangle-down;
       bottom: -0.675rem;
       text-shadow: 0 1px $brdr-rgba;
     }
@@ -161,8 +161,8 @@
       right: 1rem;
     }
   }
-  &.email a:before { @extend .collecticon-envelope; }
-  &.github a:before { @extend .collecticon-github; }
+  &.email a:before { @extend %collecticon-envelope; }
+  &.github a:before { @extend %collecticon-github; }
 }
 
 .drop-menu > .active > a,
@@ -172,7 +172,7 @@
   outline: 0;
   font-weight: $base-font-bold;
   &:after {
-    @extend .collecticon-sm-tick;
+    @extend %collecticon-sm-tick;
     position: absolute;
     z-index: 1;
     right: 1rem;

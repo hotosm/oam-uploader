@@ -186,19 +186,19 @@ a:active{
   }
   &.notification-success:before {
     background: rgba($success-color, 0.92);
-    @extend .collecticon-circle-tick;
+    @extend %collecticon-circle-tick;
   }
   &.notification-info:before {
     background: rgba($info-color, 0.92);
-    @extend .collecticon-circle-information;
+    @extend %collecticon-circle-information;
   }
   &.notification-warning:before {
     background: rgba($warning-color, 0.92);
-    @extend .collecticon-circle-exclamation;
+    @extend %collecticon-circle-exclamation;
   }
   &.notification-alert:before {
     background: rgba($alert-color, 0.92);
-    @extend .collecticon-circle-xmark;
+    @extend %collecticon-circle-xmark;
   }
 }
 
@@ -219,7 +219,7 @@ a:active{
     @extend .visually-hidden;
   }
   &:before {
-    @extend .collecticon-sm-xmark;
+    @extend %collecticon-sm-xmark;
   }
 }
 
@@ -250,19 +250,19 @@ a:active{
   &.status-processing {
     background: $info-color;
     &:before {
-      @extend .collecticon-circle-information;
+      @extend %collecticon-circle-information;
     }
   }
   &.status-error {
     background: $alert-color;
     &:before {
-      @extend .collecticon-circle-xmark;
+      @extend %collecticon-circle-xmark;
     }
   }
   &.status-success {
     background: $secondary-color;
     &:before {
-      @extend .collecticon-circle-tick;
+      @extend %collecticon-circle-tick;
     }
   }
 }
@@ -311,7 +311,7 @@ a:active{
 
   &:before {
     display: block;
-    @extend .icon-spinner;
+    // @extend .icon-spinner;
     font-size: 2rem;
     width: 2rem;
     height: 2rem;
