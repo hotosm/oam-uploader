@@ -54,6 +54,22 @@ input[type=submit] {
     }
   }
   @include transition(background-color 0.24s ease 0s, opacity 0s linear 0s);
+
+ /* Icon handling */
+  &::before, &::after,
+  [class^="collecticon-"], [class*=" collecticon-"] {
+    font-size: 1rem;
+  }
+  &::before { margin-right: 0.375rem; }
+  &::after { margin-left: 0.375rem; }
+ 
+  &::before,
+  &::after,
+  > * {
+    vertical-align: top;
+    display: inline-block;
+    line-height: inherit !important;
+  }
 }
 
 
@@ -130,18 +146,18 @@ input[type=submit] {
   &:after { margin-left: 0.375rem; }
   &.next:after {
     margin-left: 0.25rem;
-    @extend .collecticon-sm-chevron-right;
+    @extend %collecticon-sm-chevron-right;
   }
   &.prev:before {
     margin-right: 0.25rem;
-    @extend .collecticon-sm-chevron-left;
+    @extend %collecticon-sm-chevron-left;
   }
-  &.plus:before { @extend .collecticon-sm-plus; }
-  &.minus:before { @extend .collecticon-sm-minus; }
-  &.clipboard:before { @extend .collecticon-clipboard-list; }
+  &.plus:before { @extend %collecticon-sm-plus; }
+  &.minus:before { @extend %collecticon-sm-minus; }
+  &.clipboard:before { @extend %collecticon-clipboard-list; }
 
-  &.delete:before { @extend .collecticon-trash-bin; }
-  &.edit:before { @extend .collecticon-pencil; }
+  &.delete:before { @extend %collecticon-trash-bin; }
+  &.edit:before { @extend %collecticon-pencil; }
 }
 
 .bttn-notxt {

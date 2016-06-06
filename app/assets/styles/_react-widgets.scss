@@ -7,25 +7,25 @@
   font-variant: normal;
 }
 .rw-i-caret-down:before {
-  @extend .collecticon-sm-chevron-down;
+  @extend %collecticon-sm-chevron-down;
 }
 .rw-i-caret-up:before {
-  @extend .collecticon-sm-chevron-up;
+  @extend %collecticon-sm-chevron-up;
 }
 .rw-i-caret-left:before {
-  @extend .collecticon-sm-chevron-left;
+  @extend %collecticon-sm-chevron-left;
 }
 .rw-i-caret-right:before {
-  @extend .collecticon-sm-chevron-right;
+  @extend %collecticon-sm-chevron-right;
 }
 .rw-i-clock-o:before {
-  @extend .collecticon-clock;
+  @extend %collecticon-clock;
 }
 .rw-i-calendar:before {
-  @extend .collecticon-calendar;
+  @extend %collecticon-calendar;
 }
 .rw-i-search:before {
-  @extend .collecticon-magnifier-right;
+  @extend %collecticon-magnifier-right;
 }
 /* for debugging */
 .rw-sr {
