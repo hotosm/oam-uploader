@@ -7,4 +7,3 @@ module.exports = {
   consoleMessage: logo,
   OAMUploaderApi: 'https://upload-api.openaerialmap.org/'
 };
-

@@ -1,9 +1,7 @@
 'use strict';
 var React = require('react/addons');
 var Router = require('react-router');
-var RouteHandler = Router.RouteHandler;
 var moment = require('moment');
-var titlecase = require('titlecase');
 var turfCentroid = require('turf-centroid');
 
 var util = require('util');
@@ -13,10 +11,10 @@ var apiUrl = require('../config.js').OAMUploaderApi;
 
 function dateFormat (date) {
   // http://momentjs.com/docs/#/displaying/
-  return moment(date).format('YYYY-M-D [at] H:mm')
+  return moment(date).format('YYYY-M-D [at] H:mm');
 }
 
-var App = module.exports = React.createClass({
+module.exports = React.createClass({
   displayName: 'Status',
 
   mixins: [Router.State],
@@ -54,21 +52,21 @@ var App = module.exports = React.createClass({
           errored: true,
           message: 'Error parsing API response; statusCode: ' + resp.statusCode,
           data: '' + body
-        })
+        });
       }
     }.bind(this));
   },
 
   renderScene: function (scene) {
     return (
-      <section className="panel status-panel">
-        <header className="panel-header">
-          <div className="panel-headline">
-            <h1 className="panel-title">Dataset: <span className="given-title">{scene.title}</span></h1>
+      <section className='panel status-panel'>
+        <header className='panel-header'>
+          <div className='panel-headline'>
+            <h1 className='panel-title'>Dataset: <span className='given-title'>{scene.title}</span></h1>
           </div>
         </header>
-        <div className="panel-body">
-          <dl className="status-details">
+        <div className='panel-body'>
+          <dl className='status-details'>
             <dt>Platform</dt>
             <dd>{scene.platform}</dd>
             <dt>Sensor</dt>
@@ -80,46 +78,45 @@ var App = module.exports = React.createClass({
             { scene.tms ? [
               <dt>Tile service</dt>,
               <dd>{scene.tms}</dd>
-              ] : '' }
+            ] : '' }
             <dt>Contact</dt>
-            <dd><span className="name">{scene.contact.name}</span> <span className="email">{scene.contact.email}</span></dd>
+            <dd><span className='name'>{scene.contact.name}</span> <span className='email'>{scene.contact.email}</span></dd>
           </dl>
 
           {scene.images.map(this.renderImage.bind(this))}
 
         </div>
-        <footer className="panel-footer"></footer>
+        <footer className='panel-footer'></footer>
       </section>
-      )
+    );
   },
 
   renderImage: function (image, i) {
     var status;
-    var messages = image.messages.map(function (msg) { return <li>{msg}</li> });
+    var messages = image.messages.map(function (msg) { return <li>{msg}</li>; });
     if (image.status === 'finished') {
-
-      var bb = image.metadata.bbox
+      var bb = image.metadata.bbox;
       var f = {
         type: 'Feature',
         geometry: {
-          type: "Polygon",
+          type: 'Polygon',
           coordinates: [[
             [bb[1], bb[0]],
             [bb[3], bb[2]]
           ]]
         }
-      }
+      };
       var coords = turfCentroid(f).geometry.coordinates;
       var url = 'http://hotosm.github.io/oam-browser/#/' + coords[0] + ',' + coords[1] + ',12';
 
-      status = 'status-success'
-      messages.unshift(<li><a href={url} title="View image on OpenAerialMap" className="bttn-view-image">View image</a></li>)
+      status = 'status-success';
+      messages.unshift(<li><a href={url} title='View image on OpenAerialMap' className='bttn-view-image'>View image</a></li>);
     } else if (image.status === 'processing') {
-      status = 'status-processing'
-      messages.unshift(<li>Upload in progress.</li>)
+      status = 'status-processing';
+      messages.unshift(<li>Upload in progress.</li>);
     } else if (image.status === 'errored') {
-      status = 'status-error'
-      messages.unshift(<li><strong>Upload failed: </strong> {image.error.message}</li>)
+      status = 'status-error';
+      messages.unshift(<li><strong>Upload failed: </strong> {image.error.message}</li>);
     }
 
     status = ' ' + status + ' ';
@@ -132,10 +129,10 @@ var App = module.exports = React.createClass({
     };
 
     return (
-      <div className={"image-block" + status}>
-        <h2 className="image-block-title">Image {i}</h2>
-        <p className={"status" + status}>{imgStatusMatrix[image.status]}</p>
-        <dl className="status-details">
+      <div className={'image-block' + status}>
+        <h2 className='image-block-title'>Image {i}</h2>
+        <p className={'status' + status}>{imgStatusMatrix[image.status]}</p>
+        <dl className='status-details'>
           <dt>Started</dt>
           <dd>{dateFormat(image.startedAt)}</dd>
           { image.stoppedAt ? [
@@ -143,22 +140,22 @@ var App = module.exports = React.createClass({
             <dd>{dateFormat(image.stoppedAt)}</dd>
           ] : '' }
           <dt>Info</dt>
-          <dd className="info-detail">
+          <dd className='info-detail'>
             <ul>{messages}</ul>
           </dd>
         </dl>
       </div>
-    )
+    );
   },
 
-  render: function() {
+  render: function () {
     if (this.state.loading) {
       return (<div><h1>Loading...</h1></div>);
     }
 
     if (this.state.errored) {
       return (
-        <div className="intro-block">
+        <div className='intro-block'>
           <h2>Status upload</h2>
           <p>There was an error: {this.state.message}.</p>
           <pre>{util.inspect(this.state.data)}</pre>
@@ -171,28 +168,28 @@ var App = module.exports = React.createClass({
     return (
       <div>
 
-        <div className="intro-block">
+        <div className='intro-block'>
           <h2>Status upload</h2>
         </div>
 
-        <section className="panel status-panel">
-          <header className="panel-header">
-            <div className="panel-headline">
-              <h1 className="panel-title">General</h1>
+        <section className='panel status-panel'>
+          <header className='panel-header'>
+            <div className='panel-headline'>
+              <h1 className='panel-title'>General</h1>
             </div>
           </header>
-          <div className="panel-body">
-            <dl className="status-details">
+          <div className='panel-body'>
+            <dl className='status-details'>
               <dt>Uploader</dt>
-              <dd><span className="name">{data.uploader.name}</span> <span className="email">{data.uploader.email}</span></dd>
+              <dd><span className='name'>{data.uploader.name}</span> <span className='email'>{data.uploader.email}</span></dd>
               <dt>Date</dt>
               <dd>{dateFormat(data.createdAt)}</dd>
             </dl>
           </div>
-          <footer className="panel-footer"></footer>
+          <footer className='panel-footer'></footer>
         </section>
 
-        {data.scenes.map(function (scene) { return this.renderScene(scene) }.bind(this))}
+        {data.scenes.map(function (scene) { return this.renderScene(scene); }.bind(this))}
 
       </div>
     );
