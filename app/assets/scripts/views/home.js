@@ -1,4 +1,4 @@
-  'use strict';
+'use strict';
 var url = require('url');
 var React = require('react/addons');
 var ValidationMixin = require('react-validation-mixin');
@@ -10,12 +10,12 @@ var apiUrl = require('../config.js').OAMUploaderApi;
 var AppActions = require('../actions/app-actions');
 var $ = require('jquery');
 
-var Home = module.exports = React.createClass({
+module.exports = React.createClass({
   displayName: 'Home',
 
   mixins: [ValidationMixin],
 
-  validatorTypes:  {
+  validatorTypes: {
     'uploader-name': Joi.string().label('Name').required(),
     'uploader-token': Joi.string().required().hex().length(64).label('Token'),
     'uploader-email': Joi.string().email().label('Email'),
@@ -37,7 +37,7 @@ var Home = module.exports = React.createClass({
     )
   },
 
-  getInitialState: function() {
+  getInitialState: function () {
     if (process.env.DS_DEBUG) {
       return {
         loading: false,
@@ -65,7 +65,7 @@ var Home = module.exports = React.createClass({
     };
   },
 
-  getSceneDataTemplate: function() {
+  getSceneDataTemplate: function () {
     var midnight = new Date();
     midnight.setMilliseconds(0);
     midnight.setSeconds(0);
@@ -103,31 +103,31 @@ var Home = module.exports = React.createClass({
     };
   },
 
-  addScene: function() {
+  addScene: function () {
     var scenes = this.state.scenes;
     scenes.push(this.getSceneDataTemplate());
     this.setState({scenes: scenes});
   },
 
-  removeScene: function(sceneIndex) {
+  removeScene: function (sceneIndex) {
     var scenes = this.state.scenes;
     scenes.splice(sceneIndex, 1);
     this.setState({scenes: scenes});
   },
 
-  onSceneValueChange: function(sceneIndex, fieldName, fieldValue) {
+  onSceneValueChange: function (sceneIndex, fieldName, fieldValue) {
     var scenes = this.state.scenes;
     scenes[sceneIndex][fieldName] = fieldValue;
     this.setState({scenes: scenes});
   },
 
-  onValueChange: function(event) {
+  onValueChange: function (event) {
     var data = {};
     data[event.target.name] = event.target.value;
     this.setState(data);
   },
 
-  resetForm: function() {
+  resetForm: function () {
     this.setState({
       'uploader-token': null,
       'uploader-name': null,
@@ -138,7 +138,7 @@ var Home = module.exports = React.createClass({
     });
   },
 
-  onSubmit: function(event) {
+  onSubmit: function (event) {
     event.preventDefault();
 
     // Warning... Controlled HACK.
@@ -146,15 +146,14 @@ var Home = module.exports = React.createClass({
     // a render, however it will be updated by the validate function later on.
     // This is needed to clear previous errors as the plugin doesn't handle
     // arrays of objects specially well.
-    this.state.errors = {};
+    this.state.errors = {}; // eslint-disable-line
 
-    this.validate(function(error, validationErrors) {
+    this.validate(function (error, validationErrors) {
       if (error) {
         console.log(validationErrors);
         AppActions.showNotification('alert', 'Form contains errors!');
         this.scrollToError();
       } else {
-
         if (this.state.loading) {
           // Submit already in process.
           return;
@@ -186,7 +185,7 @@ var Home = module.exports = React.createClass({
             var contact = {
               name: other ? scene['contact-name'] : uploader.name,
               email: other ? scene['contact-email'] : uploader.email
-            }
+            };
 
             var tms = scene['tile-url'].trim();
             tms = tms.length === 0 ? undefined : tms;
@@ -214,6 +213,9 @@ var Home = module.exports = React.createClass({
             'Content-Type': 'application/json'
           }
         }, function (err, resp, body) {
+          if (err) {
+            console.error('error', err);
+          }
           this.setState({loading: false});
 
           if (resp.statusCode >= 200 && resp.statusCode < 400) {
@@ -227,14 +229,12 @@ var Home = module.exports = React.createClass({
 
             this.resetForm();
           } else {
-
             var message = null;
-            if (resp.statusCode == 401) {
+            if (resp.statusCode === 401) {
               message = (
                 <span>The provided token is not valid.</span>
               );
-            }
-            else {
+            } else {
               message = (
                 <span>
                   There was a problem with the request.
@@ -244,28 +244,27 @@ var Home = module.exports = React.createClass({
             }
 
             AppActions.showNotification('alert', message);
-
           }
         }.bind(this));
       }
     }.bind(this));
   },
 
-  scrollToError: function() {
+  scrollToError: function () {
     var topPos = $('.message-alert').first().offset().top;
     $('html').animate({ scrollTop: topPos - 50 });
   },
 
-  renderErrorMessage: function(message) {
+  renderErrorMessage: function (message) {
     message = message || '';
-    if (message.trim().length === 0) { return null }
+    if (message.trim().length === 0) { return null; }
 
     return (
-      <p className="message message-alert">{message}</p>
+      <p className='message message-alert'>{message}</p>
     );
   },
 
-  renderScene: function(data, index) {
+  renderScene: function (data, index) {
     return (
       <Scene
         key={index}
@@ -280,50 +279,50 @@ var Home = module.exports = React.createClass({
     );
   },
 
-  render: function() {
+  render: function () {
     return (
       <div>
 
-        <div className="intro-block">
-          <p>Welcome to the <a href="http://openaerialmap.org/" title="Visit OpenAerialMap">OpenAerialMap</a> Imagery Uploader.<br /> Use the form below to submit your imagery - a valid upload token is needed. <a href="https://github.com/hotosm/oam-uploader" title="Go to the GitHub repo">Read the documentation</a> to learn how to contribute.</p>
-          <Dropdown element="div" className="drop dropdown center" triggerTitle="Request a token" triggerClassName="bttn-request-token" triggerText="Request a token">
-            <ul className="drop-menu request-token-menu" role="menu">
-              <li className="github has-icon-bef"><a href="https://github.com/hotosm/oam-uploader-admin/issues/new?title=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A" title="Open GitHub issue"><span>Open GitHub issue</span></a></li>
-              <li className="email has-icon-bef"><a href="mailto:sysadmin%40hotosm.org?subject=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A" title="Send email"><span>Send email</span></a></li>
+        <div className='intro-block'>
+          <p>Welcome to the <a href='http://openaerialmap.org/' title='Visit OpenAerialMap'>OpenAerialMap</a> Imagery Uploader.<br /> Use the form below to submit your imagery - a valid upload token is needed. <a href='https://github.com/hotosm/oam-uploader' title='Go to the GitHub repo'>Read the documentation</a> to learn how to contribute.</p>
+          <Dropdown element='div' className='drop dropdown center' triggerTitle='Request a token' triggerClassName='bttn-request-token' triggerText='Request a token'>
+            <ul className='drop-menu request-token-menu' role='menu'>
+              <li className='github has-icon-bef'><a href='https://github.com/hotosm/oam-uploader-admin/issues/new?title=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A' title='Open GitHub issue'><span>Open GitHub issue</span></a></li>
+              <li className='email has-icon-bef'><a href='mailto:sysadmin%40hotosm.org?subject=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A' title='Send email'><span>Send email</span></a></li>
             </ul>
           </Dropdown>
         </div>
 
-        <section className="panel upload-panel">
-          <header className="panel-header">
-            <div className="panel-headline">
-              <h1 className="panel-title">Upload</h1>
+        <section className='panel upload-panel'>
+          <header className='panel-header'>
+            <div className='panel-headline'>
+              <h1 className='panel-title'>Upload</h1>
             </div>
           </header>
-          <div className="panel-body">
+          <div className='panel-body'>
 
-            <form id="upload-form" className="form-horizontal">
+            <form id='upload-form' className='form-horizontal'>
 
-              <fieldset className="form-fieldset general">
-                <legend className="form-legend">General</legend>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="uploader-token">Token</label>
-                  <div className="form-control-set">
-                    <input type="password" className="form-control" placeholder="Key" name="uploader-token" id="uploader-token" onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} value={this.state['uploader-token']} />
+              <fieldset className='form-fieldset general'>
+                <legend className='form-legend'>General</legend>
+                <div className='form-group'>
+                  <label className='form-label' htmlFor='uploader-token'>Token</label>
+                  <div className='form-control-set'>
+                    <input type='password' className='form-control' placeholder='Key' name='uploader-token' id='uploader-token' onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} value={this.state['uploader-token']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-token')[0])}
                   </div>
                 </div>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="uploader-name">Uploader <span className="visually-hidden">name</span></label>
-                  <div className="form-control-set">
-                    <input type="text" className="form-control" placeholder="Name" name="uploader-name" id="uploader-name" onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
+                <div className='form-group'>
+                  <label className='form-label' htmlFor='uploader-name'>Uploader <span className='visually-hidden'>name</span></label>
+                  <div className='form-control-set'>
+                    <input type='text' className='form-control' placeholder='Name' name='uploader-name' id='uploader-name' onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-name')[0])}
                   </div>
                 </div>
-                <div className="form-group">
-                <label className="form-label none" htmlFor="uploader-email"><span className="visually-hidden">Uploader email</span></label>
-                  <div className="form-control-set">
-                    <input type="email" className="form-control" placeholder="Email" name="uploader-email" id="uploader-email" onBlur={this.handleValidation('uploader-email')} onChange={this.onValueChange} value={this.state['uploader-email']} />
+                <div className='form-group'>
+                <label className='form-label none' htmlFor='uploader-email'><span className='visually-hidden'>Uploader email</span></label>
+                  <div className='form-control-set'>
+                    <input type='email' className='form-control' placeholder='Email' name='uploader-email' id='uploader-email' onBlur={this.handleValidation('uploader-email')} onChange={this.onValueChange} value={this.state['uploader-email']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-email')[0])}
                   </div>
                 </div>
@@ -331,25 +330,25 @@ var Home = module.exports = React.createClass({
 
               {this.state.scenes.map(this.renderScene)}
 
-              <div className="form-extra-actions">
-                <button type="button" className="bttn-add-scene" onClick={this.addScene} title="Add new dataset"><span>New dataset</span></button>
+              <div className='form-extra-actions'>
+                <button type='button' className='bttn-add-scene' onClick={this.addScene} title='Add new dataset'><span>New dataset</span></button>
               </div>
 
-              <div className="form-note">
-                <p>By submitting imagery to OpenAerialMap, you agree to place your imagery into the <a href="https://github.com/openimagerynetwork/oin-register#open-imagery-network">Open Imagery Network (OIN)</a>. All imagery contained in OIN is licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>, with attribution as contributors of Open Imagery Network. All imagery is available to be traced in OpenStreetMap.</p>
+              <div className='form-note'>
+                <p>By submitting imagery to OpenAerialMap, you agree to place your imagery into the <a href='https://github.com/openimagerynetwork/oin-register#open-imagery-network'>Open Imagery Network (OIN)</a>. All imagery contained in OIN is licensed <a href='https://creativecommons.org/licenses/by/4.0/'>CC-BY 4.0</a>, with attribution as contributors of Open Imagery Network. All imagery is available to be traced in OpenStreetMap.</p>
               </div>
 
-              <div className="form-actions">
-                <button type="submit" className="bttn-submit" onClick={this.onSubmit}><span>Submit</span></button>
+              <div className='form-actions'>
+                <button type='submit' className='bttn-submit' onClick={this.onSubmit}><span>Submit</span></button>
               </div>
 
             </form>
 
           </div>
-          <footer className="panel-footer"></footer>
+          <footer className='panel-footer'></footer>
         </section>
 
-        {this.state.loading ? <p className="loading revealed">Loading</p> : null}
+        {this.state.loading ? <p className='loading revealed'>Loading</p> : null}
       </div>
     );
   }
