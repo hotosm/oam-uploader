@@ -239,7 +239,7 @@ module.exports = React.createClass({
               />
             ))}
             <div className='imagery-location-import'>
-              <button type='button' className='bttn-imagery-manual' onClick={() => this.addImageryLocation('manual')} title='Input url manually'><span>Manual</span></button>
+              <button type='button' className='bttn-imagery-manual' onClick={() => this.addImageryLocation('manual')} title='Write url'><span>Url</span></button>
               <button type='button' className='bttn-imagery-dropbox' onClick={this.importDropboxClick} title='Import file from dropbox'><span>Dropbox</span></button>
               {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.img-loc')[0])}
               <p className='form-help'>Select file source location.</p>

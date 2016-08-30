@@ -276,6 +276,9 @@ input[type=submit] {
 
 .bttn-imagery-dropbox {
   @extend .bttn, .bttn-base-light, .bttn-s;
+  &::before {
+    @extend %collecticon-dropbox;
+  }
 }
 
 .bttn-remove-imagery {
