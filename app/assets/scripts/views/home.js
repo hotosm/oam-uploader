@@ -40,12 +40,12 @@ module.exports = React.createClass({
         'date-start': Joi.date().required().label('Date start'),
         'date-end': Joi.date().min(Joi.ref('date-start')).max('now').required().label('Date End'),
 
-        'img-loc': Joi.array().items(
+        'img-loc': Joi.array().min(1).items(
           Joi.object().keys({
             url: Joi.string().required().label('Imagery url'),
-            origin: Joi.string().required().label('Imagery location')
+            origin: Joi.string().required().label('Imagery file origin')
           })
-        ),
+        ).label('Imagery location'),
 
         'tile-url': Joi.string().allow('').label('Tile service'),
         'provider': Joi.string().required().label('Provider'),
@@ -113,7 +113,7 @@ module.exports = React.createClass({
       'sensor': '',
       'date-start': midnight.toISOString(),
       'date-end': now.toISOString(),
-      'img-loc': [this.getSceneImgLocTemplate()],
+      'img-loc': [],
       'tile-url': '',
       'provider': '',
       'contact-type': 'uploader',
@@ -148,9 +148,11 @@ module.exports = React.createClass({
     this.setState({scenes: scenes});
   },
 
-  addImageryLocationToScene: function (sceneIndex) {
+  addImageryLocationToScene: function (sceneIndex, origin) {
     let scenes = this.state.scenes;
-    scenes[sceneIndex]['img-loc'].push(this.getSceneImgLocTemplate());
+    let tmp = this.getSceneImgLocTemplate();
+    tmp.origin = origin;
+    scenes[sceneIndex]['img-loc'].push(tmp);
     this.setState({scenes: scenes});
   },
 

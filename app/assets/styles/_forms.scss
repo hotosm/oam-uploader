@@ -344,13 +344,13 @@ input[type=radio] {
     top: 0;
   }
 
-  .imagery-location-import {
-    button {
-      margin-right: 1rem;
-    }
-  }
-
   .imagery-location {
     width: calc(100% - 3rem);
+  }
+}
+
+.imagery-location-import {
+  button {
+    margin-right: 1rem;
   }
 }

@@ -1,4 +1,3 @@
-/* global Dropbox */
 var React = require('react/addons');
 
 module.exports = React.createClass({
@@ -31,50 +30,13 @@ module.exports = React.createClass({
     this.props.onValueChange(this.props.index, fieldName, e.target.value);
   },
 
-  importDropboxClick: function () {
-    this.props.onValueChange(this.props.index, 'origin', 'dropbox');
-    // Next tick.
-    setTimeout(() => {
-      Dropbox.choose({
-        success: (files) => {
-          this.props.onValueChange(this.props.index, 'url', files[0].link);
-        },
-
-        cancel: () => {
-          this.props.onValueChange(this.props.index, 'origin', '');
-        },
-
-        // Optional. "preview" (default) is a preview link to the document for sharing,
-        // "direct" is an expiring link to download the contents of the file. For more
-        // information about link types, see Link types below.
-        linkType: 'direct',
-
-        // Optional. A value of false (default) limits selection to a single file, while
-        // true enables multiple file selection.
-        multiselect: false
-      });
-    }, 1);
-  },
-
   renderRemoveBtn: function () {
-    var classes = 'bttn-remove-imagery' + (this.props.total <= 1 ? ' disabled' : '');
+    // var classes = 'bttn-remove-imagery' + (this.props.total <= 1 ? ' disabled' : '');
     return (
       <div className='form-img-actions'>
-        <button type='button' className={classes} onClick={this.props.removeImageryLocation.bind(null, this.props.index)} title='Remove dataset'><span>Remove dataset</span></button>
+        <button type='button' className='bttn-remove-imagery' onClick={this.props.removeImageryLocation.bind(null, this.props.index)} title='Remove dataset'><span>Remove dataset</span></button>
       </div>
     );
-  },
-
-  renderInputOption: function () {
-    if (this.props.data.origin === '') {
-      return (
-        <div className='imagery-location-import'>
-          <button type='button' className='bttn-imagery-manual' onClick={() => this.props.onValueChange(this.props.index, 'origin', 'manual')} title='Input url manually'><span>Manual</span></button>
-          <button type='button' className='bttn-imagery-dropbox' onClick={this.importDropboxClick} title='Import file from dropbox'><span>Dropbox</span></button>
-          <p className='form-help'>Select file source location.</p>
-        </div>
-      );
-    }
   },
 
   renderInput: function () {
@@ -112,11 +74,7 @@ module.exports = React.createClass({
           <input type='url' className='form-control' {...opts} />
         );
       default:
-        // More generic error.
-        let err = this.props.getValidationMessages(validationName)[0] && this.props.index === 0
-          ? 'At least one image is needed'
-          : null;
-        return this.props.renderErrorMessage(err);
+        return null;
     }
   },
 
@@ -126,7 +84,6 @@ module.exports = React.createClass({
       <div className='imagery-location-fieldset'>
         {this.renderRemoveBtn()}
         <div className='imagery-location'>
-          {this.renderInputOption()}
           {this.renderInput()}
         </div>
       </div>
