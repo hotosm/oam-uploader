@@ -201,8 +201,6 @@ module.exports = React.createClass({
         AppActions.showNotification('alert', 'Form contains errors!');
         this.scrollToError();
       } else {
-        console.log('this.state.scenes', this.state.scenes);
-        return;
         if (this.state.loading) {
           // Submit already in process.
           return;
@@ -248,7 +246,7 @@ module.exports = React.createClass({
               acquisition_start: scene['date-start'],
               acquisition_end: scene['date-end'],
               tms: tms,
-              urls: scene.urls.split('\n')
+              urls: scene['img-loc'].map(o => o.url)
             };
           })
         };
