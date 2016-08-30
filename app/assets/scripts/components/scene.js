@@ -6,6 +6,8 @@
 var React = require('react/addons');
 var DateTimePicker = require('react-widgets').DateTimePicker;
 
+var ImageryLocation = require('./imagery-location');
+
 module.exports = React.createClass({
   displayName: 'Scene',
 
@@ -15,6 +17,10 @@ module.exports = React.createClass({
     renderErrorMessage: React.PropTypes.func,
     getValidationMessages: React.PropTypes.func,
     handleValidation: React.PropTypes.func,
+
+    addImageryLocationToScene: React.PropTypes.func,
+    removeImageryLocatioFromScene: React.PropTypes.func,
+
     index: React.PropTypes.number,
     total: React.PropTypes.number,
     data: React.PropTypes.object
@@ -41,6 +47,23 @@ module.exports = React.createClass({
   onDateChange: function (field, date, dateString) {
     var val = date === null ? null : date.toISOString();
     this.props.onValueChange(this.props.index, field, val);
+  },
+
+  onImgLocValueChange: function (fieldIndex, fieldName, fieldValue) {
+    // Update the imagery location array and then use onValueChange
+    // function to send the new values to parent.
+    let vals = this.props.data['img-loc'];
+    vals[fieldIndex][fieldName] = fieldValue;
+    // sceneIndex, fieldName, fieldValue
+    this.props.onValueChange(this.props.index, 'img-loc', vals);
+  },
+
+  addImageryLocation: function () {
+    this.props.addImageryLocationToScene(this.props.index);
+  },
+
+  removeImageryLocation: function (locIndex) {
+    this.props.removeImageryLocatioFromScene(this.props.index, locIndex);
   },
 
   getValueForDate: function (field) {
@@ -94,6 +117,7 @@ module.exports = React.createClass({
   render: function () {
     // Just to shorten.
     var i = this.props.index;
+    console.log('data', this.props.data);
 
     return (
       <fieldset className='form-fieldset scene'>
@@ -167,14 +191,31 @@ module.exports = React.createClass({
             <p id={'help-date-end-' + i} className='form-help'>If the exact end time is unknown using 23:59:59 will suffice.</p>
           </div>
         </div>
+
         <div className='form-group'>
-          <label className='form-label' htmlFor={this.getId('urls')}>Imagery location</label>
+          <label className='form-label'>Imagery location</label>
           <div className='form-control-set'>
-            <textarea className='form-control' placeholder='One URL per line' id={this.getId('urls')} aria-describedby={'help-img-location-' + i} rows='4' name={this.getName('urls')} onBlur={this.props.handleValidation('scenes.' + i + '.urls')} onChange={this.onChange} value={this.props.data.urls} />
-            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.urls')[0])}
-            <p id={'help-img-location-' + i} className='form-help'>See URL requirements for more details.</p>
+            {this.props.data['img-loc'].map((o, imgI) => (
+              <ImageryLocation
+                key={imgI}
+                onValueChange={this.onImgLocValueChange}
+                renderErrorMessage={this.props.renderErrorMessage}
+                getValidationMessages={this.props.getValidationMessages}
+                handleValidation={this.props.handleValidation}
+                removeImageryLocation={this.removeImageryLocation}
+                sceneName={this.getName('img-loc')}
+                sceneId={this.getId('img-loc')}
+                index={imgI}
+                validationName={'scenes.' + i + '.img-loc'}
+                total={this.props.data['img-loc'].length}
+                data={o}
+              />
+            ))}
+
+            <button type='button' className='bttn-add-scene' onClick={this.addImageryLocation} title='Add new imagery'><span>Add new Imagery</span></button>
           </div>
         </div>
+
         <div className='form-group'>
           <label className='form-label' htmlFor={this.getId('tile-url')}>Tile service</label>
           <div className='form-control-set'>

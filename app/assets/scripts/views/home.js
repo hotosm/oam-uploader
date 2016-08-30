@@ -10,6 +10,18 @@ var apiUrl = require('../config.js').OAMUploaderApi;
 var AppActions = require('../actions/app-actions');
 var $ = require('jquery');
 
+// Sanity note:
+// There are some places where the component state is being altered directly.
+// This happens because of javascript objects work. Ex:
+//   onSceneValueChange: function (sceneIndex, fieldName, fieldValue) {
+//     var scenes = this.state.scenes;
+//     scenes[sceneIndex][fieldName] = fieldValue;
+//     this.setState({scenes: scenes});
+//   },
+// The solution would be to clone the state every time, but since we're
+// ALWAYS calling setState after one of these changes, it's not a problem.
+// It's still an antipattern, but I know what I'm doing! :)
+
 module.exports = React.createClass({
   displayName: 'Home',
 
@@ -27,7 +39,14 @@ module.exports = React.createClass({
         'sensor': Joi.string().allow('').label('Sensor'),
         'date-start': Joi.date().required().label('Date start'),
         'date-end': Joi.date().min(Joi.ref('date-start')).max('now').required().label('Date End'),
-        'urls': Joi.string().required().label('Imagery location'),
+
+        'img-loc': Joi.array().items(
+          Joi.object().keys({
+            url: Joi.string().required().label('Imagery url'),
+            origin: Joi.string().required().label('Imagery location')
+          })
+        ),
+
         'tile-url': Joi.string().allow('').label('Tile service'),
         'provider': Joi.string().required().label('Provider'),
         'contact-type': Joi.string().required().valid('uploader', 'other'),
@@ -80,7 +99,7 @@ module.exports = React.createClass({
         'sensor': 'x',
         'date-start': midnight.toISOString(),
         'date-end': now.toISOString(),
-        'urls': 'http://fake-imagery.net/fake.tif',
+        'img-loc': [this.getSceneImgLocTemplate()],
         'tile-url': '',
         'provider': 'Mocks R Us',
         'contact-type': 'uploader',
@@ -94,12 +113,26 @@ module.exports = React.createClass({
       'sensor': '',
       'date-start': midnight.toISOString(),
       'date-end': now.toISOString(),
-      'urls': '',
+      'img-loc': [this.getSceneImgLocTemplate()],
       'tile-url': '',
       'provider': '',
       'contact-type': 'uploader',
       'contact-name': '',
       'contact-email': ''
+    };
+  },
+
+  getSceneImgLocTemplate: function () {
+    if (process.env.DS_DEBUG) {
+      return {
+        url: 'http://fake-imagery.net/fake.tif',
+        origin: 'manual'
+      };
+    }
+
+    return {
+      url: '',
+      origin: ''
     };
   },
 
@@ -112,6 +145,18 @@ module.exports = React.createClass({
   removeScene: function (sceneIndex) {
     var scenes = this.state.scenes;
     scenes.splice(sceneIndex, 1);
+    this.setState({scenes: scenes});
+  },
+
+  addImageryLocationToScene: function (sceneIndex) {
+    let scenes = this.state.scenes;
+    scenes[sceneIndex]['img-loc'].push(this.getSceneImgLocTemplate());
+    this.setState({scenes: scenes});
+  },
+
+  removeImageryLocatioFromScene: function (sceneIndex, imgLocIndex) {
+    var scenes = this.state.scenes;
+    scenes[sceneIndex]['img-loc'].splice(imgLocIndex, 1);
     this.setState({scenes: scenes});
   },
 
@@ -154,6 +199,8 @@ module.exports = React.createClass({
         AppActions.showNotification('alert', 'Form contains errors!');
         this.scrollToError();
       } else {
+        console.log('this.state.scenes', this.state.scenes);
+        return;
         if (this.state.loading) {
           // Submit already in process.
           return;
@@ -272,6 +319,9 @@ module.exports = React.createClass({
         index={index} data={data}
         onValueChange={this.onSceneValueChange}
         removeScene={this.removeScene}
+
+        addImageryLocationToScene={this.addImageryLocationToScene}
+        removeImageryLocatioFromScene={this.removeImageryLocatioFromScene}
 
         handleValidation={this.handleValidation}
         getValidationMessages={this.getValidationMessages}
