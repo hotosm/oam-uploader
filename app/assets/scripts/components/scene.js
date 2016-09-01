@@ -75,7 +75,14 @@ module.exports = React.createClass({
     setTimeout(() => {
       Dropbox.choose({
         success: (files) => {
-          this.onImgLocValueChange(imgLocIndex, 'url', files[0].link);
+          files.forEach((o, i) => {
+            if (i === 0) {
+              this.onImgLocValueChange(imgLocIndex, 'url', files[0].link);
+            } else {
+              this.props.addImageryLocationToScene(this.props.index, 'dropbox');
+              this.onImgLocValueChange(imgLocIndex + i, 'url', files[i].link);
+            }
+          });
         },
 
         cancel: () => {
@@ -89,7 +96,7 @@ module.exports = React.createClass({
 
         // Optional. A value of false (default) limits selection to a single file, while
         // true enables multiple file selection.
-        multiselect: false
+        multiselect: true
       });
     }, 1);
   },
