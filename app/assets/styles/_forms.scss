@@ -334,3 +334,23 @@ input[type=radio] {
     font-weight: $base-font-weight;
   }
 }
+
+.imagery-location-fieldset {
+  position: relative;
+  margin-bottom: 1rem;
+  .form-img-actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .imagery-location {
+    width: calc(100% - 3rem);
+  }
+}
+
+.imagery-location-import {
+  button {
+    margin-right: 1rem;
+  }
+}

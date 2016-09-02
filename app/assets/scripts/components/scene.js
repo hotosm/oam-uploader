@@ -1,3 +1,5 @@
+/* global Dropbox */
+
 // Named scene.js based on original way of referring to how image files are grouped together
 // To avoid confusion on frontend, labels have been renamed to datasets
 // Continuing to use the term scene for variables and functions
@@ -5,6 +7,8 @@
 'use strict';
 var React = require('react/addons');
 var DateTimePicker = require('react-widgets').DateTimePicker;
+
+var ImageryLocation = require('./imagery-location');
 
 module.exports = React.createClass({
   displayName: 'Scene',
@@ -15,6 +19,10 @@ module.exports = React.createClass({
     renderErrorMessage: React.PropTypes.func,
     getValidationMessages: React.PropTypes.func,
     handleValidation: React.PropTypes.func,
+
+    addImageryLocationToScene: React.PropTypes.func,
+    removeImageryLocatioFromScene: React.PropTypes.func,
+
     index: React.PropTypes.number,
     total: React.PropTypes.number,
     data: React.PropTypes.object
@@ -41,6 +49,56 @@ module.exports = React.createClass({
   onDateChange: function (field, date, dateString) {
     var val = date === null ? null : date.toISOString();
     this.props.onValueChange(this.props.index, field, val);
+  },
+
+  onImgLocValueChange: function (fieldIndex, fieldName, fieldValue) {
+    // Update the imagery location array and then use onValueChange
+    // function to send the new values to parent.
+    let vals = this.props.data['img-loc'];
+    vals[fieldIndex][fieldName] = fieldValue;
+    // sceneIndex, fieldName, fieldValue
+    this.props.onValueChange(this.props.index, 'img-loc', vals);
+  },
+
+  addImageryLocation: function (origin) {
+    this.props.addImageryLocationToScene(this.props.index, origin);
+  },
+
+  removeImageryLocation: function (locIndex) {
+    this.props.removeImageryLocatioFromScene(this.props.index, locIndex);
+  },
+
+  importDropboxClick: function () {
+    this.addImageryLocation('dropbox');
+    let imgLocIndex = this.props.data['img-loc'].length - 1;
+    // Next tick.
+    setTimeout(() => {
+      Dropbox.choose({
+        success: (files) => {
+          files.forEach((o, i) => {
+            if (i === 0) {
+              this.onImgLocValueChange(imgLocIndex, 'url', files[0].link);
+            } else {
+              this.props.addImageryLocationToScene(this.props.index, 'dropbox');
+              this.onImgLocValueChange(imgLocIndex + i, 'url', files[i].link);
+            }
+          });
+        },
+
+        cancel: () => {
+          this.removeImageryLocation(imgLocIndex);
+        },
+
+        // Optional. "preview" (default) is a preview link to the document for sharing,
+        // "direct" is an expiring link to download the contents of the file. For more
+        // information about link types, see Link types below.
+        linkType: 'direct',
+
+        // Optional. A value of false (default) limits selection to a single file, while
+        // true enables multiple file selection.
+        multiselect: true
+      });
+    }, 1);
   },
 
   getValueForDate: function (field) {
@@ -167,14 +225,35 @@ module.exports = React.createClass({
             <p id={'help-date-end-' + i} className='form-help'>If the exact end time is unknown using 23:59:59 will suffice.</p>
           </div>
         </div>
+
         <div className='form-group'>
-          <label className='form-label' htmlFor={this.getId('urls')}>Imagery location</label>
+          <label className='form-label'>Imagery location</label>
           <div className='form-control-set'>
-            <textarea className='form-control' placeholder='One URL per line' id={this.getId('urls')} aria-describedby={'help-img-location-' + i} rows='4' name={this.getName('urls')} onBlur={this.props.handleValidation('scenes.' + i + '.urls')} onChange={this.onChange} value={this.props.data.urls} />
-            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.urls')[0])}
-            <p id={'help-img-location-' + i} className='form-help'>See URL requirements for more details.</p>
+            {this.props.data['img-loc'].map((o, imgI) => (
+              <ImageryLocation
+                key={imgI}
+                onValueChange={this.onImgLocValueChange}
+                renderErrorMessage={this.props.renderErrorMessage}
+                getValidationMessages={this.props.getValidationMessages}
+                handleValidation={this.props.handleValidation}
+                removeImageryLocation={this.removeImageryLocation}
+                sceneName={this.getName('img-loc')}
+                sceneId={this.getId('img-loc')}
+                index={imgI}
+                validationName={'scenes.' + i + '.img-loc'}
+                total={this.props.data['img-loc'].length}
+                data={o}
+              />
+            ))}
+            <div className='imagery-location-import'>
+              <button type='button' className='bttn-imagery-manual' onClick={() => this.addImageryLocation('manual')} title='Write url'><span>Url</span></button>
+              <button type='button' className='bttn-imagery-dropbox' onClick={this.importDropboxClick} title='Import file from dropbox'><span>Dropbox</span></button>
+              {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.img-loc')[0])}
+              <p className='form-help'>Select file source location.</p>
+            </div>
           </div>
         </div>
+
         <div className='form-group'>
           <label className='form-label' htmlFor={this.getId('tile-url')}>Tile service</label>
           <div className='form-control-set'>

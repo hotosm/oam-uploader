@@ -266,3 +266,21 @@ input[type=submit] {
 .bttn-request-token {
   @extend .bttn, .bttn-base-light, .bttn-l;
 }
+
+.bttn-imagery-manual {
+  @extend .bttn, .bttn-base-light, .bttn-s;
+  &::before {
+    @extend %collecticon-link;
+  }
+}
+
+.bttn-imagery-dropbox {
+  @extend .bttn, .bttn-base-light, .bttn-s;
+  &::before {
+    @extend %collecticon-dropbox;
+  }
+}
+
+.bttn-remove-imagery {
+  @extend .bttn, .bttn-base-light, .bttn-s, .delete, .bttn-notxt;
+}
