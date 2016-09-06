@@ -36,7 +36,7 @@ module.exports = React.createClass({
       Joi.object().keys({
         'title': Joi.string().min(1).required().label('Title'),
         'platform-type': Joi.string().required().valid('satellite', 'aircraft', 'uav', 'ballon', 'kite'),
-        'sensor': Joi.string().allow('').label('Sensor'),
+        'sensor': Joi.string().required().label('Sensor'),
         'date-start': Joi.date().required().label('Date start'),
         'date-end': Joi.date().min(Joi.ref('date-start')).max('now').required().label('Date End'),
 
