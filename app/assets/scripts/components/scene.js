@@ -187,7 +187,7 @@ module.exports = React.createClass({
         <div className='form-group'>
           <label className='form-label' htmlFor={this.getId('sensor')}>Sensor</label>
           <div className='form-control-set'>
-            <input type='text' className='form-control' placeholder='Type/model (optional)' name={this.getName('sensor')} id={this.getId('sensor')} onBlur={this.props.handleValidation('scenes.' + i + '.sensor')} onChange={this.onChange} value={this.props.data.sensor} aria-describedby={'help-sensor-' + i} />
+            <input type='text' className='form-control' placeholder='Type/model' name={this.getName('sensor')} id={this.getId('sensor')} onBlur={this.props.handleValidation('scenes.' + i + '.sensor')} onChange={this.onChange} value={this.props.data.sensor} aria-describedby={'help-sensor-' + i} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.sensor')[0])}
             <p id={'help-sensor-' + i} className='form-help'>Type or model of image sensor or camera used (ex: Worldview-3).</p>
           </div>
