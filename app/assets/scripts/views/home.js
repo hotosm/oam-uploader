@@ -338,7 +338,7 @@ module.exports = React.createClass({
           <Dropdown element='div' className='drop dropdown center' triggerTitle='Request a token' triggerClassName='bttn-request-token' triggerText='Request a token'>
             <ul className='drop-menu request-token-menu' role='menu'>
               <li className='github has-icon-bef'><a href='https://github.com/hotosm/oam-uploader-admin/issues/new?title=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A' title='Open GitHub issue'><span>Open GitHub issue</span></a></li>
-              <li className='email has-icon-bef'><a href='mailto:sysadmin%40hotosm.org?subject=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A' title='Send email'><span>Send email</span></a></li>
+              <li className='email has-icon-bef'><a href='mailto:info%40openaerialmap.org?subject=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A' title='Send email'><span>Send email</span></a></li>
             </ul>
           </Dropdown>
         </div>
