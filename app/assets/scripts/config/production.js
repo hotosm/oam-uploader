@@ -5,5 +5,7 @@ var logo = require('./logo');
 module.exports = {
   environment: 'production',
   consoleMessage: logo,
-  OAMUploaderApi: 'https://upload-api.openaerialmap.org/'
+  OAMUploaderApi: 'https://upload-api.openaerialmap.org/',
+  googleClient: '',
+  googleDeveloperKey: ''
 };

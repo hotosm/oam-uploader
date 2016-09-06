@@ -9,6 +9,7 @@ var React = require('react/addons');
 var DateTimePicker = require('react-widgets').DateTimePicker;
 
 var ImageryLocation = require('./imagery-location');
+var gDrive = require('../utils/google');
 
 module.exports = React.createClass({
   displayName: 'Scene',
@@ -77,10 +78,10 @@ module.exports = React.createClass({
         success: (files) => {
           files.forEach((o, i) => {
             if (i === 0) {
-              this.onImgLocValueChange(imgLocIndex, 'url', files[0].link);
+              this.onImgLocValueChange(imgLocIndex, 'url', o.link);
             } else {
               this.props.addImageryLocationToScene(this.props.index, 'dropbox');
-              this.onImgLocValueChange(imgLocIndex + i, 'url', files[i].link);
+              this.onImgLocValueChange(imgLocIndex + i, 'url', o.link);
             }
           });
         },
@@ -98,6 +99,30 @@ module.exports = React.createClass({
         // true enables multiple file selection.
         multiselect: true
       });
+    }, 1);
+  },
+
+  importGDriveClick: function () {
+    this.addImageryLocation('gdrive');
+    let imgLocIndex = this.props.data['img-loc'].length - 1;
+    // Next tick.
+    setTimeout(() => {
+      gDrive.picker()
+        .then(files => {
+          if (files.picked !== files.shared) {
+            console.log('Some of the files you picked are not shared therefore will not be used');
+          }
+          files.urls.forEach((o, i) => {
+            if (i === 0) {
+              this.onImgLocValueChange(imgLocIndex, 'url', o);
+            } else {
+              this.props.addImageryLocationToScene(this.props.index, 'gdrive');
+              this.onImgLocValueChange(imgLocIndex + i, 'url', o);
+            }
+          });
+        }, e => {
+          this.removeImageryLocation(imgLocIndex);
+        });
     }, 1);
   },
 
@@ -248,6 +273,7 @@ module.exports = React.createClass({
             <div className='imagery-location-import'>
               <button type='button' className='bttn-imagery-manual' onClick={() => this.addImageryLocation('manual')} title='Write url'><span>Url</span></button>
               <button type='button' className='bttn-imagery-dropbox' onClick={this.importDropboxClick} title='Import file from dropbox'><span>Dropbox</span></button>
+              <button type='button' className='bttn-imagery-dropbox' onClick={this.importGDriveClick} title='Import file from Google Drive'><span>G Drive</span></button>
               {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.img-loc')[0])}
               <p className='form-help'>Select file source location.</p>
             </div>
