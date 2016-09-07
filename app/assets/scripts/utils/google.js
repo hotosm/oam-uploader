@@ -24,6 +24,9 @@ const onGApiLoad = function () {
 
 const getAuthToken = function () {
   let p = new Promise((resolve, reject) => {
+    if (OAM_UP.gAuthToken) {
+      return resolve();
+    }
     if (OAM_UP.gAuthApiLoaded) {
       gapi.auth.authorize({
         'client_id': config.googleClient,
@@ -50,7 +53,6 @@ const pickFiles = function () {
     if (!OAM_UP.gPickerApiLoaded) {
       return reject('gpicker api not loaded');
     }
-    console.log('OAM_UP.gAuthToken', OAM_UP.gAuthToken);
     if (!OAM_UP.gAuthToken) {
       return reject('auth token not available');
     }
@@ -62,18 +64,16 @@ const pickFiles = function () {
       .setCallback((data) => {
         console.log('data', data);
         if (data[google.picker.Response.ACTION] === google.picker.Action.PICKED) {
-          let res = {
-            picked: data[google.picker.Response.DOCUMENTS].length,
-            shared: 0,
-            urls: []
-          };
-          data[google.picker.Response.DOCUMENTS].forEach(o => {
-            if (o.isShared) {
-              res.shared++;
-              res.urls.push(`https://drive.google.com/uc?export=download&id=${o.id}`);
-            }
+          let res = data[google.picker.Response.DOCUMENTS].map(o => {
+            return {
+              name: o.name,
+              shared: o.isShared,
+              dlUrl: o.isShared ? `https://drive.google.com/uc?export=download&id=${o.id}` : null
+            };
           });
           return resolve(res);
+        } else if (data[google.picker.Response.ACTION] === google.picker.Action.CANCEL) {
+          return reject('google picker canceled');
         }
       })
       .build()

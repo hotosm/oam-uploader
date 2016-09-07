@@ -109,17 +109,34 @@ module.exports = React.createClass({
     setTimeout(() => {
       gDrive.picker()
         .then(files => {
-          if (files.picked !== files.shared) {
-            console.log('Some of the files you picked are not shared therefore will not be used');
-          }
-          files.urls.forEach((o, i) => {
-            if (i === 0) {
-              this.onImgLocValueChange(imgLocIndex, 'url', o);
+          // let picked = files.length;
+          // let shared = _.sum(files, o => o.shared ? 1 : 0);
+          // if (picked !== shared) {
+          //   console.log('Some of the files you picked are not shared therefore will not be used');
+          // }
+          let gDriveErrFiles = [];
+          let validIndex = 0;
+          files.forEach(o => {
+            if (!o.shared) {
+              gDriveErrFiles.push(o.name);
+              return;
+            }
+            if (validIndex === 0) {
+              this.onImgLocValueChange(imgLocIndex, 'url', o.dlUrl);
             } else {
               this.props.addImageryLocationToScene(this.props.index, 'gdrive');
-              this.onImgLocValueChange(imgLocIndex + i, 'url', o);
+              this.onImgLocValueChange(imgLocIndex + validIndex, 'url', o.dlUrl);
             }
+            validIndex++;
           });
+          if (gDriveErrFiles.length) {
+            alert(`
+The following files are not publicly available and can't be used:
+- ${gDriveErrFiles.join('\n- ')}
+
+Please check the instructions on how to use files from Google Drive.
+            `);
+          }
         }, e => {
           this.removeImageryLocation(imgLocIndex);
         });
@@ -273,9 +290,9 @@ module.exports = React.createClass({
             <div className='imagery-location-import'>
               <button type='button' className='bttn-imagery-manual' onClick={() => this.addImageryLocation('manual')} title='Write url'><span>Url</span></button>
               <button type='button' className='bttn-imagery-dropbox' onClick={this.importDropboxClick} title='Import file from dropbox'><span>Dropbox</span></button>
-              <button type='button' className='bttn-imagery-dropbox' onClick={this.importGDriveClick} title='Import file from Google Drive'><span>G Drive</span></button>
+              <button type='button' className='bttn-imagery-gdrive' onClick={this.importGDriveClick} title='Import file from Google Drive'><span>Drive</span></button>
               {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.img-loc')[0])}
-              <p className='form-help'>Select file source location.</p>
+              <p className='form-help'>Select file source location.<br />Click <a href='' title='How to select files from google drive'>here</a> for instructions on how to use Google Drive.</p>
             </div>
           </div>
         </div>
