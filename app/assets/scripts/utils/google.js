@@ -68,7 +68,8 @@ const pickFiles = function () {
             return {
               name: o.name,
               shared: o.isShared,
-              dlUrl: o.isShared ? `https://drive.google.com/uc?export=download&id=${o.id}` : null
+              // dlUrl: o.isShared ? `https://drive.google.com/uc?export=download&id=${o.id}` : null
+              dlUrl: o.isShared ? `gdrive://${o.id}` : null
             };
           });
           return resolve(res);
