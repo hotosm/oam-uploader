@@ -292,7 +292,7 @@ Please check the instructions on how to use files from Google Drive.
               <button type='button' className='bttn-imagery-dropbox' onClick={this.importDropboxClick} title='Import file from dropbox'><span>Dropbox</span></button>
               <button type='button' className='bttn-imagery-gdrive' onClick={this.importGDriveClick} title='Import file from Google Drive'><span>Drive</span></button>
               {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.img-loc')[0])}
-              <p className='form-help'>Select file source location.<br />Click <a href='' title='How to select files from google drive'>here</a> for instructions on how to use Google Drive.</p>
+              <p className='form-help'>Select file source location.<br />Click <a href='https://docs.openaerialmap.org/uploader/uploader-form/#via-google-drive' title='How to select files from google drive'>here</a> for instructions on how to use Google Drive.</p>
             </div>
           </div>
         </div>
