@@ -42,6 +42,12 @@
     <link rel="stylesheet" href="assets/styles/main.css">
     <!-- endbuild -->
     <link rel="author" type="text/plain" href="humans.txt" />
+
+<script>
+  // OAM_UP will contain some core variables to control the state of things.
+  // Mostly for google's shenanigans.
+  window.OAM_UP = {};
+</script>
   </head>
   <body>
 
@@ -56,5 +62,7 @@
     <!-- build:js assets/scripts/bundle.js -->
     <script src="assets/scripts/bundle.js"></script>
     <!-- endbuild -->
+
+    <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=onGApiLoad"></script>
   </body>
 </html>

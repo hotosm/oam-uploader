@@ -281,6 +281,13 @@ input[type=submit] {
   }
 }
 
+.bttn-imagery-gdrive {
+  @extend .bttn, .bttn-base-light, .bttn-s;
+  &::before {
+    @extend %collecticon-google-drive;
+  }
+}
+
 .bttn-remove-imagery {
   @extend .bttn, .bttn-base-light, .bttn-s, .delete, .bttn-notxt;
 }

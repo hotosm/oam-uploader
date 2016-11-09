@@ -60,6 +60,7 @@ module.exports = React.createClass({
           </div>
         );
       case 'dropbox':
+      case 'gdrive':
         if (this.props.data.url === '') {
           return <p>Loading file selector. Please wait...</p>;
         }
