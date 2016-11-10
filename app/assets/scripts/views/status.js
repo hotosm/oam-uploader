@@ -3,6 +3,7 @@ var React = require('react/addons');
 var Router = require('react-router');
 var moment = require('moment');
 var turfCentroid = require('turf-centroid');
+var parse = require('wellknown');
 
 var util = require('util');
 var url = require('url');
@@ -95,19 +96,11 @@ module.exports = React.createClass({
     var status;
     var messages = image.messages.map(function (msg) { return <li>{msg}</li>; });
     if (image.status === 'finished') {
-      var bb = image.metadata.bbox;
-      var f = {
-        type: 'Feature',
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[
-            [bb[1], bb[0]],
-            [bb[3], bb[2]]
-          ]]
-        }
-      };
+      var footprint = image.metadata.footprint;
+      var f = parse(footprint);
+
       var coords = turfCentroid(f).geometry.coordinates;
-      var url = 'http://hotosm.github.io/oam-browser/#/' + coords[0] + ',' + coords[1] + ',12';
+      var url = 'https://beta.openaerialmap.org/#/' + coords +',12';
 
       status = 'status-success';
       messages.unshift(<li><a href={url} title='View image on OpenAerialMap' className='bttn-view-image'>View image</a></li>);
