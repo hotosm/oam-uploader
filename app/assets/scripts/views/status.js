@@ -100,7 +100,7 @@ module.exports = React.createClass({
       var f = parse(footprint);
 
       var coords = turfCentroid(f).geometry.coordinates;
-      var url = 'https://beta.openaerialmap.org/#/' + coords +',12';
+      var url = 'https://beta.openaerialmap.org/#/' + coords[0] + ',' + coords[1] + ',12';
 
       status = 'status-success';
       messages.unshift(<li><a href={url} title='View image on OpenAerialMap' className='bttn-view-image'>View image</a></li>);
