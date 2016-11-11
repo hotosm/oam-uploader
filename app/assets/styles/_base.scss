@@ -240,7 +240,7 @@ a:active{
   &:before {
     font-size: 1rem;
     margin-right: 0.25rem;
-    line-height: 1.5rem;
+    line-height: 1.5rem!important;
     vertical-align: top;
   }
   &.status-active {
