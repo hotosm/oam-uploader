@@ -240,8 +240,8 @@ a:active{
   &:before {
     font-size: 1rem;
     margin-right: 0.25rem;
-    float: left;
-    padding-top: 0.2rem;
+    line-height: 1.5rem;
+    vertical-align: top;
   }
   &.status-active {
     background: $secondary-color;
