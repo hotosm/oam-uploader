@@ -5,7 +5,7 @@ module.exports = React.createClass({
 
   propTypes: {
     onValueChange: React.PropTypes.func,
-    onFileChange: React.PropTypes.func,
+    onFileRefChange: React.PropTypes.func,
     removeImageryLocation: React.PropTypes.func,
     renderErrorMessage: React.PropTypes.func,
     getValidationMessages: React.PropTypes.func,
@@ -32,9 +32,8 @@ module.exports = React.createClass({
   },
 
   onFileChange: function (fieldName, e) {
-    // console.log(this.props.index, fieldName, e.target.files[0]);
     // !!! Send the index, input type, and reference to the onFileChange action
-    this.props.onFileChange(this.props.index, fieldName, e.target.files[0]);
+    this.props.onFileRefChange(this.props.index, fieldName, e.target.files[0]);
   },
 
   renderRemoveBtn: function () {

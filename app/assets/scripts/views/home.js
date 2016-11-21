@@ -156,6 +156,10 @@ module.exports = React.createClass({
     this.setState({scenes: scenes});
   },
 
+  onFileRefChange: function (sceneIndex, origin) {
+    console.log('ref', sceneIndex, origin);
+  },
+
   removeImageryLocatioFromScene: function (sceneIndex, imgLocIndex) {
     var scenes = this.state.scenes;
     scenes[sceneIndex]['img-loc'].splice(imgLocIndex, 1);
@@ -322,6 +326,10 @@ module.exports = React.createClass({
 
         addImageryLocationToScene={this.addImageryLocationToScene}
         removeImageryLocatioFromScene={this.removeImageryLocatioFromScene}
+
+        onFileRefChange={this.onFileRefChange}
+
+        addFileReferenceToScene={this.addFileReferenceToScene}
 
         handleValidation={this.handleValidation}
         getValidationMessages={this.getValidationMessages}

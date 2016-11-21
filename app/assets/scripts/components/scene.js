@@ -16,6 +16,7 @@ module.exports = React.createClass({
 
   propTypes: {
     onValueChange: React.PropTypes.func,
+    onFileRefChange: React.PropTypes.func,
     removeScene: React.PropTypes.func,
     renderErrorMessage: React.PropTypes.func,
     getValidationMessages: React.PropTypes.func,
@@ -61,8 +62,8 @@ module.exports = React.createClass({
     this.props.onValueChange(this.props.index, 'img-loc', vals);
   },
 
-  onImgFileRefChange: function (fieldIndex, fieldName, fieldValue) {
-    console.log(fieldValue);
+  onFileRefChange: function (fieldIndex, fieldName, fieldValue) {
+    this.props.onFileRefChange(fieldIndex, fieldValue);
   },
 
   addImageryLocation: function (origin) {
@@ -283,8 +284,7 @@ Please check the instructions on how to use files from Google Drive.
               <ImageryLocation
                 key={imgI}
                 onValueChange={this.onImgLocValueChange}
-                onFileChange={this.onImgFileRefChange}
-                onImgFileRefChange={this.onImgFileRefChange}
+                onFileRefChange={this.onFileRefChange}
                 renderErrorMessage={this.props.renderErrorMessage}
                 getValidationMessages={this.props.getValidationMessages}
                 handleValidation={this.props.handleValidation}
