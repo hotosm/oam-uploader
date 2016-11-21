@@ -5,6 +5,7 @@ module.exports = React.createClass({
 
   propTypes: {
     onValueChange: React.PropTypes.func,
+    onFileChange: React.PropTypes.func,
     removeImageryLocation: React.PropTypes.func,
     renderErrorMessage: React.PropTypes.func,
     getValidationMessages: React.PropTypes.func,
@@ -28,6 +29,12 @@ module.exports = React.createClass({
   onChange: function (fieldName, e) {
     // fieldIndex, fieldName, fieldValue
     this.props.onValueChange(this.props.index, fieldName, e.target.value);
+  },
+
+  onFileChange: function (fieldName, e) {
+    // console.log(this.props.index, fieldName, e.target.files[0]);
+    // !!! Send the index, input type, and reference to the onFileChange action
+    this.props.onFileChange(this.props.index, fieldName, e.target.files[0]);
   },
 
   renderRemoveBtn: function () {
@@ -61,11 +68,10 @@ module.exports = React.createClass({
         );
       case 'upload':
         opts = {
-          name: this.getName('url'),
-          id: this.getId('url'),
+          name: this.getName('upload'),
+          id: this.getId('upload'),
           onBlur: this.props.handleValidation(validationName),
-          onChange: this.onChange.bind(null, 'url'),
-          value: this.props.data.url
+          onChange: this.onFileChange.bind(null, 'upload')
         };
         return (
           <div>

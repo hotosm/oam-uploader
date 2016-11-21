@@ -61,6 +61,10 @@ module.exports = React.createClass({
     this.props.onValueChange(this.props.index, 'img-loc', vals);
   },
 
+  onImgFileRefChange: function (fieldIndex, fieldName, fieldValue) {
+    console.log(fieldValue);
+  },
+
   addImageryLocation: function (origin) {
     this.props.addImageryLocationToScene(this.props.index, origin);
   },
@@ -279,6 +283,8 @@ Please check the instructions on how to use files from Google Drive.
               <ImageryLocation
                 key={imgI}
                 onValueChange={this.onImgLocValueChange}
+                onFileChange={this.onImgFileRefChange}
+                onImgFileRefChange={this.onImgFileRefChange}
                 renderErrorMessage={this.props.renderErrorMessage}
                 getValidationMessages={this.props.getValidationMessages}
                 handleValidation={this.props.handleValidation}
