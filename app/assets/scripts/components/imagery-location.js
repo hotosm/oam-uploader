@@ -59,6 +59,20 @@ module.exports = React.createClass({
             {this.props.renderErrorMessage(this.props.getValidationMessages(validationName)[0])}
           </div>
         );
+      case 'upload':
+        opts = {
+          name: this.getName('url'),
+          id: this.getId('url'),
+          onBlur: this.props.handleValidation(validationName),
+          onChange: this.onChange.bind(null, 'url'),
+          value: this.props.data.url
+        };
+        return (
+          <div>
+            <input type='file' className='form-control' placeholder='Local file' {...opts} />
+            {this.props.renderErrorMessage(this.props.getValidationMessages(validationName)[0])}
+          </div>
+        );
       case 'dropbox':
       case 'gdrive':
         if (this.props.data.url === '') {

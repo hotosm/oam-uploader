@@ -69,6 +69,10 @@ module.exports = React.createClass({
     this.props.removeImageryLocatioFromScene(this.props.index, locIndex);
   },
 
+  uploadDirectClick: function (origin) {
+    this.props.addImageryLocationToScene(this.props.index, origin);
+  },
+
   importDropboxClick: function () {
     this.addImageryLocation('dropbox');
     let imgLocIndex = this.props.data['img-loc'].length - 1;
@@ -288,6 +292,7 @@ Please check the instructions on how to use files from Google Drive.
               />
             ))}
             <div className='imagery-location-import'>
+              <button type='button' className='bttn-imagery-upload' onClick={() => this.uploadDirectClick('upload')} title='Upload file directly'><span>Upload</span></button>
               <button type='button' className='bttn-imagery-manual' onClick={() => this.addImageryLocation('manual')} title='Write url'><span>Url</span></button>
               <button type='button' className='bttn-imagery-dropbox' onClick={this.importDropboxClick} title='Import file from dropbox'><span>Dropbox</span></button>
               <button type='button' className='bttn-imagery-gdrive' onClick={this.importGDriveClick} title='Import file from Google Drive'><span>Drive</span></button>
