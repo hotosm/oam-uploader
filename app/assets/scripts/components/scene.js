@@ -62,7 +62,6 @@ module.exports = React.createClass({
   },
 
   addImageryLocation: function (origin) {
-    console.log(origin);
     this.props.addImageryLocationToScene(this.props.index, origin);
   },
 

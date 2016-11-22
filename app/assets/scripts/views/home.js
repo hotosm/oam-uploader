@@ -171,6 +171,7 @@ module.exports = React.createClass({
   onValueChange: function (event) {
     var data = {};
     data[event.target.name] = event.target.value;
+    console.log('data');
     this.setState(data);
   },
 

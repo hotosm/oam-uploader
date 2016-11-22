@@ -27,7 +27,8 @@ module.exports = React.createClass({
 
   onChange: function (fieldName, e) {
     // fieldIndex, fieldName, fieldValue
-    this.props.onValueChange(this.props.index, fieldName, e.target.value);
+    const payload = fieldName === 'upload' ? e.target.files[0] : e.target.value;
+    this.props.onValueChange(this.props.index, fieldName, payload);
   },
 
   renderRemoveBtn: function () {
