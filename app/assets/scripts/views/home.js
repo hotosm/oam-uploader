@@ -43,7 +43,8 @@ module.exports = React.createClass({
         'img-loc': Joi.array().min(1).items(
           Joi.object().keys({
             url: Joi.string().required().label('Imagery url'),
-            origin: Joi.string().required().label('Imagery file origin')
+            origin: Joi.string().required().label('Imagery file origin'),
+            upload: Joi.object().when('url', {is: 'is a file', then: Joi.object().required()})
           })
         ).label('Imagery location'),
 
@@ -55,7 +56,6 @@ module.exports = React.createClass({
       })
     )
   },
-
   getInitialState: function () {
     if (process.env.DS_DEBUG) {
       return {
@@ -331,7 +331,6 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    console.log(this.state);
     return (
       <div>
 
