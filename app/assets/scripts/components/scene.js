@@ -16,7 +16,6 @@ module.exports = React.createClass({
 
   propTypes: {
     onValueChange: React.PropTypes.func,
-    onFileRefChange: React.PropTypes.func,
     removeScene: React.PropTypes.func,
     renderErrorMessage: React.PropTypes.func,
     getValidationMessages: React.PropTypes.func,
@@ -24,6 +23,8 @@ module.exports = React.createClass({
 
     addImageryLocationToScene: React.PropTypes.func,
     removeImageryLocatioFromScene: React.PropTypes.func,
+
+    addFileRef: React.PropTypes.func,
 
     index: React.PropTypes.number,
     total: React.PropTypes.number,
@@ -63,7 +64,7 @@ module.exports = React.createClass({
   },
 
   onFileRefChange: function (fieldIndex, fieldName, fieldValue) {
-    this.props.onFileRefChange(fieldIndex, fieldValue);
+    this.props.addFileRef(fieldIndex, fieldName, fieldValue);
   },
 
   addImageryLocation: function (origin) {
