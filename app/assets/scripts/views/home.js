@@ -166,6 +166,7 @@ module.exports = React.createClass({
     var scenes = this.state.scenes;
     scenes[sceneIndex][fieldName] = fieldValue;
     this.setState({scenes: scenes});
+    console.log('this.state', this.state);
   },
 
   onValueChange: function (event) {

@@ -56,7 +56,10 @@ module.exports = React.createClass({
     // Update the imagery location array and then use onValueChange
     // function to send the new values to parent.
     let vals = this.props.data['img-loc'];
-    vals[fieldIndex][fieldName] = fieldValue;
+    if (fieldName === 'upload') {
+      vals[fieldIndex].file = fieldValue;
+      vals[fieldIndex].url = 'is a file';
+    }
     // sceneIndex, fieldName, fieldValue
     this.props.onValueChange(this.props.index, 'img-loc', vals);
   },
