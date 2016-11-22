@@ -45,6 +45,19 @@ module.exports = React.createClass({
     let opts = {};
     let validationName = this.props.validationName + '.' + i + '.url';
     switch (this.props.data.origin) {
+      case 'upload':
+        opts = {
+          name: this.getName('upload'),
+          id: this.getId('upload'),
+          onBlur: this.props.handleValidation(validationName),
+          onChange: this.onChange.bind(null, 'upload')
+        };
+        return (
+          <div>
+            <input type='file' className='form-control' placeholder='Local file' {...opts} />
+            {this.props.renderErrorMessage(this.props.getValidationMessages(validationName)[0])}
+          </div>
+        );
       case 'manual':
         opts = {
           name: this.getName('url'),
