@@ -44,7 +44,7 @@ module.exports = React.createClass({
           Joi.object().keys({
             url: Joi.string().required().label('Imagery url'),
             origin: Joi.string().required().label('Imagery file origin'),
-            upload: Joi.object().when('url', {is: 'is a file', then: Joi.object().required()})
+            file: Joi.label('File').when('origin', { is: 'upload', then: Joi.object().required() })
           })
         ).label('Imagery location'),
 

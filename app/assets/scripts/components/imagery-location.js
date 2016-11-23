@@ -27,8 +27,12 @@ module.exports = React.createClass({
 
   onChange: function (fieldName, e) {
     // fieldIndex, fieldName, fieldValue
-    const payload = fieldName === 'upload' ? e.target.files[0] : e.target.value;
-    this.props.onValueChange(this.props.index, fieldName, payload);
+    this.props.onValueChange(this.props.index, fieldName, e.target.value);
+  },
+
+  onChangeFile: function (fieldName, e) {
+    // fieldIndex, fieldName, fieldValue
+    this.props.onValueChange(this.props.index, fieldName, e.target.files[0]);
   },
 
   renderRemoveBtn: function () {
@@ -47,15 +51,15 @@ module.exports = React.createClass({
     let validationName = this.props.validationName + '.' + i + '.url';
     switch (this.props.data.origin) {
       case 'upload':
+        validationName = this.props.validationName + '.' + i + '.file';
         opts = {
-          name: this.getName('upload'),
-          id: this.getId('upload'),
-          onBlur: this.props.handleValidation(validationName),
-          onChange: this.onChange.bind(null, 'upload')
+          name: this.getName('url'),
+          id: this.getId('url'),
+          onChange: (e) => { this.onChangeFile('upload', e); this.props.handleValidation(validationName)(e); }
         };
         return (
           <div>
-            <input type='file' className='form-control' placeholder='Local file' {...opts} />
+            <input type='file' className='' placeholder='Local file' {...opts} />
             {this.props.renderErrorMessage(this.props.getValidationMessages(validationName)[0])}
           </div>
         );
