@@ -43,7 +43,8 @@ module.exports = React.createClass({
         'img-loc': Joi.array().min(1).items(
           Joi.object().keys({
             url: Joi.string().required().label('Imagery url'),
-            origin: Joi.string().required().label('Imagery file origin')
+            origin: Joi.string().required().label('Imagery file origin'),
+            file: Joi.label('File').when('origin', { is: 'upload', then: Joi.object().required() })
           })
         ).label('Imagery location'),
 

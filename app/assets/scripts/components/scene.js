@@ -56,9 +56,13 @@ module.exports = React.createClass({
     // Update the imagery location array and then use onValueChange
     // function to send the new values to parent.
     let vals = this.props.data['img-loc'];
+    // When dealing with a direct upload, we need to store the file info not
+    // the url. The url here is just to avoid errors.
     if (fieldName === 'upload') {
       vals[fieldIndex].file = fieldValue;
-      vals[fieldIndex].url = 'is a file';
+      vals[fieldIndex].url = `file://${fieldValue.name}`;
+    } else {
+      vals[fieldIndex][fieldName] = fieldValue;
     }
     // sceneIndex, fieldName, fieldValue
     this.props.onValueChange(this.props.index, 'img-loc', vals);
