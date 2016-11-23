@@ -269,30 +269,30 @@ input[type=submit] {
 
 .bttn-imagery-manual {
   @extend .bttn, .bttn-base-light, .bttn-s;
-  // &::before {
-  //   @extend %collecticon-link;
-  // }
+  &::before {
+    @extend %collecticon-link;
+  }
 }
 
 .bttn-imagery-dropbox {
   @extend .bttn, .bttn-base-light, .bttn-s;
-  // &::before {
-  //   @extend %collecticon-dropbox;
-  // }
+  &::before {
+    @extend %collecticon-dropbox;
+  }
 }
 
 .bttn-imagery-gdrive {
   @extend .bttn, .bttn-base-light, .bttn-s;
-  // &::before {
-  //   @extend %collecticon-google-drive;
-  // }
+  &::before {
+    @extend %collecticon-google-drive;
+  }
 }
 
 .bttn-imagery-upload {
   @extend .bttn, .bttn-base-light, .bttn-s;
-  // &::before {
-  //   @extend %collecticon-arrow-up;
-  // }
+  &::before {
+    @extend %collecticon-arrow-up;
+  }
  }
 
 .bttn-remove-imagery {
