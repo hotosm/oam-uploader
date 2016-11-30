@@ -9,3 +9,4 @@ app/assets/scripts/config/local.js
 .resources
 app/assets/styles/_icons.scss
 app/assets/scripts/config/local.js
+.DS_Store
