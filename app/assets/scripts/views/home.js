@@ -43,7 +43,8 @@ module.exports = React.createClass({
         'img-loc': Joi.array().min(1).items(
           Joi.object().keys({
             url: Joi.string().required().label('Imagery url'),
-            origin: Joi.string().required().label('Imagery file origin')
+            origin: Joi.string().required().label('Imagery file origin'),
+            file: Joi.label('File').when('origin', { is: 'upload', then: Joi.object().required() })
           })
         ).label('Imagery location'),
 
@@ -55,7 +56,6 @@ module.exports = React.createClass({
       })
     )
   },
-
   getInitialState: function () {
     if (process.env.DS_DEBUG) {
       return {
@@ -166,6 +166,7 @@ module.exports = React.createClass({
     var scenes = this.state.scenes;
     scenes[sceneIndex][fieldName] = fieldValue;
     this.setState({scenes: scenes});
+    console.log('this.state', this.state);
   },
 
   onValueChange: function (event) {
@@ -228,6 +229,10 @@ module.exports = React.createClass({
         var data = {
           uploader: uploader,
           scenes: this.state.scenes.map(function (scene) {
+            console.log(scene);
+            delete scene['img-loc'][0]['file'];
+            scene['img-loc'][0]['origin'] = 'manual';
+            scene['img-loc'][0]['url'] = "http://fake-imagery.net/fake.tif";
             var other = scene['contact-type'] === 'other';
             var contact = {
               name: other ? scene['contact-name'] : uploader.name,
