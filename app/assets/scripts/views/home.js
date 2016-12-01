@@ -192,6 +192,16 @@ module.exports = React.createClass({
     fd.append('file', file);
 
     $.ajax({
+      xhr: function () {
+        let xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener('progress', function (evt) {
+          if (evt.lengthComputable) {
+            const percentComplete = evt.loaded / evt.total;
+            return callback(percentComplete);
+          }
+        }, false);
+        return xhr;
+      },
       url: 'http://localhost:4000/direct-upload',
       data: fd,
       processData: false,
