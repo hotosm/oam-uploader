@@ -68,7 +68,7 @@ module.exports = React.createClass({
         scenes: [
           this.getSceneDataTemplate()
         ],
-        uploadProgress: ''
+        uploadProgress: 0
       };
     }
 
@@ -81,7 +81,8 @@ module.exports = React.createClass({
       'uploader-email': '',
       scenes: [
         this.getSceneDataTemplate()
-      ]
+      ],
+      uploadProgress: 0
     };
   },
 
@@ -187,7 +188,7 @@ module.exports = React.createClass({
     });
   },
 
-  uploadScene: function (file, callback) {
+  uploadFile: function (file, callback) {
     const fd = new FormData();
     fd.append('file', file);
 
@@ -284,13 +285,21 @@ module.exports = React.createClass({
         };
         console.log('valid', data);
 
+        // Gather list of files to upload
+        let uploads = [];
         data.scenes.forEach((scene) => {
           scene.files.forEach((file) => {
-            if (file) {
-              this.uploadScene(file, (progress) => {
-                console.log(progress);
-              });
-            }
+            if (file) uploads.push(file);
+          });
+          // Remove file references from JSON data
+          delete scene.files;
+        });
+
+        // Upload list of files
+        uploads.forEach((file, i) => {
+          this.uploadFile(file, (progress) => {
+            console.log(progress);
+            this.setState({uploadProgress: progress});
           });
         });
 
