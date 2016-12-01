@@ -67,7 +67,8 @@ module.exports = React.createClass({
         'uploader-email': 'zimmy@fake.com',
         scenes: [
           this.getSceneDataTemplate()
-        ]
+        ],
+        uploadProgress: ''
       };
     }
 
@@ -186,6 +187,25 @@ module.exports = React.createClass({
     });
   },
 
+  uploadScene: function (file, callback) {
+    const fd = new FormData();
+    fd.append('file', file);
+
+    $.ajax({
+      url: 'http://localhost:4000/direct-upload',
+      data: fd,
+      processData: false,
+      contentType: false,
+      type: 'POST',
+      error: function (err) {
+        console.log(err);
+      },
+      success: function (data) {
+        return callback(1);
+      }
+    });
+  },
+
   onSubmit: function (event) {
     event.preventDefault();
 
@@ -229,10 +249,6 @@ module.exports = React.createClass({
         var data = {
           uploader: uploader,
           scenes: this.state.scenes.map(function (scene) {
-            console.log(scene);
-            delete scene['img-loc'][0]['file'];
-            scene['img-loc'][0]['origin'] = 'manual';
-            scene['img-loc'][0]['url'] = "http://fake-imagery.net/fake.tif";
             var other = scene['contact-type'] === 'other';
             var contact = {
               name: other ? scene['contact-name'] : uploader.name,
@@ -251,11 +267,22 @@ module.exports = React.createClass({
               acquisition_start: scene['date-start'],
               acquisition_end: scene['date-end'],
               tms: tms,
-              urls: scene['img-loc'].map(o => o.url)
+              urls: scene['img-loc'].map(o => o.url),
+              files: scene['img-loc'].map(o => o.file)
             };
           })
         };
         console.log('valid', data);
+
+        data.scenes.forEach((scene) => {
+          scene.files.forEach((file) => {
+            if (file) {
+              this.uploadScene(file, (progress) => {
+                console.log(progress);
+              });
+            }
+          });
+        });
 
         nets({
           url: url.resolve(apiUrl, '/uploads?access_token=' + token),
@@ -292,7 +319,6 @@ module.exports = React.createClass({
                   There was a problem with the request.
                 </span>
               );
-              console.log(body);
             }
 
             AppActions.showNotification('alert', message);
@@ -404,6 +430,7 @@ module.exports = React.createClass({
         </section>
 
         {this.state.loading ? <p className='loading revealed'>Loading</p> : null}
+
       </div>
     );
   }
