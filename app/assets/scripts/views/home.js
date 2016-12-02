@@ -203,7 +203,7 @@ module.exports = React.createClass({
         let xhr = new window.XMLHttpRequest();
         xhr.upload.addEventListener('progress', function (evt) {
           if (evt.lengthComputable) {
-            const percentComplete = Math.round(evt.loaded / evt.total) * 100;
+            const percentComplete = Math.round(evt.loaded / evt.total * 100);
             return callback(percentComplete);
           }
         }, false);
@@ -222,6 +222,7 @@ module.exports = React.createClass({
       },
       complete: function () {
         component.setState({uploadActive: false});
+        console.log(component.state.uploadActive);
       },
       success: function (data) {
         return callback(100);
@@ -459,15 +460,15 @@ module.exports = React.createClass({
 
               <div className='form-actions'>
                 <button type='submit' className='bttn-submit' onClick={this.onSubmit}><span>Submit</span></button>
+                <div className='upload-progress-spacer'></div>
+                <div id='upload-progress' className={this.state.uploadActive ? '' : 'upload-inactive'}>
+                  <div className='meter'>
+                    <span style={{width: this.state.uploadProgress + '%'}}></span>
+                  </div>
+                </div>
               </div>
 
             </form>
-
-            <div id='upload-progress' className={this.state.uploadActive ? '' : 'upload-hidden'}>
-              <div className='meter'>
-                <span style={{width: this.state.uploadProgress + '%'}}></span>
-              </div>
-            </div>
 
           </div>
           <footer className='panel-footer'></footer>
