@@ -188,7 +188,7 @@ module.exports = React.createClass({
     });
   },
 
-  uploadFile: function (file, callback) {
+  uploadFile: function (file, token, callback) {
     const fd = new FormData();
     fd.append('file', file);
 
@@ -203,7 +203,7 @@ module.exports = React.createClass({
         }, false);
         return xhr;
       },
-      url: 'http://localhost:4000/direct-upload',
+      url: url.resolve('http://localhost:4000', '/direct-upload?access_token=' + token),
       data: fd,
       processData: false,
       contentType: false,
@@ -297,7 +297,7 @@ module.exports = React.createClass({
 
         // Upload list of files
         uploads.forEach((file, i) => {
-          this.uploadFile(file, (progress) => {
+          this.uploadFile(file, token, (progress) => {
             console.log(progress);
             this.setState({uploadProgress: progress});
           });
