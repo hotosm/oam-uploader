@@ -68,7 +68,10 @@ module.exports = React.createClass({
         scenes: [
           this.getSceneDataTemplate()
         ],
-        uploadProgress: 75
+        uploadActive: false,
+        uploadProgress: 0,
+        uploadFileIndex: 0,
+        uploadTotalFiles: 0
       };
     }
 
@@ -82,7 +85,10 @@ module.exports = React.createClass({
       scenes: [
         this.getSceneDataTemplate()
       ],
-      uploadProgress: 75
+      uploadActive: false,
+      uploadProgress: 0,
+      uploadFileIndex: 0,
+      uploadTotalFiles: 0
     };
   },
 
@@ -188,7 +194,7 @@ module.exports = React.createClass({
     });
   },
 
-  uploadFile: function (file, totalFiles, currentIndex, token, callback) {
+  uploadFile: function (file, component, totalFiles, currentIndex, token, callback) {
     const fd = new FormData();
     fd.append('file', file);
 
@@ -197,7 +203,7 @@ module.exports = React.createClass({
         let xhr = new window.XMLHttpRequest();
         xhr.upload.addEventListener('progress', function (evt) {
           if (evt.lengthComputable) {
-            const percentComplete = evt.loaded / evt.total;
+            const percentComplete = Math.round(evt.loaded / evt.total) * 100;
             return callback(percentComplete);
           }
         }, false);
@@ -211,8 +217,14 @@ module.exports = React.createClass({
       error: function (err) {
         console.log(err);
       },
+      beforeSend: function () {
+        component.setState({uploadActive: true});
+      },
+      complete: function () {
+        component.setState({uploadActive: false});
+      },
       success: function (data) {
-        return callback(1);
+        return callback(100);
       }
     });
   },
@@ -298,7 +310,7 @@ module.exports = React.createClass({
         // Upload list of files
         const totalFiles = uploads.length;
         uploads.forEach((file, currentIndex) => {
-          this.uploadFile(file, totalFiles, currentIndex, token, (progress) => {
+          this.uploadFile(file, this, totalFiles, currentIndex, token, (progress) => {
             console.log(progress);
             this.setState({uploadProgress: progress});
           });
@@ -451,7 +463,7 @@ module.exports = React.createClass({
 
             </form>
 
-            <div id='upload-progress'>
+            <div id='upload-progress' className={this.state.uploadActive ? '' : 'upload-hidden'}>
               <div className='meter'>
                 <span style={{width: this.state.uploadProgress + '%'}}></span>
               </div>

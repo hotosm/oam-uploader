@@ -1,4 +1,7 @@
 #upload-progress {
+  &.upload-hidden {
+    opacity: 0;
+  }
   .meter {
     box-sizing: content-box;
     height: 20px;  /* Can be anything */
