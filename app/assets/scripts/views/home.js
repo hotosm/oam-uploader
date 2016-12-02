@@ -68,7 +68,7 @@ module.exports = React.createClass({
         scenes: [
           this.getSceneDataTemplate()
         ],
-        uploadProgress: 0
+        uploadProgress: 75
       };
     }
 
@@ -82,7 +82,7 @@ module.exports = React.createClass({
       scenes: [
         this.getSceneDataTemplate()
       ],
-      uploadProgress: 0
+      uploadProgress: 75
     };
   },
 
@@ -188,7 +188,7 @@ module.exports = React.createClass({
     });
   },
 
-  uploadFile: function (file, token, callback) {
+  uploadFile: function (file, totalFiles, currentIndex, token, callback) {
     const fd = new FormData();
     fd.append('file', file);
 
@@ -291,13 +291,14 @@ module.exports = React.createClass({
           scene.files.forEach((file) => {
             if (file) uploads.push(file);
           });
-          // Remove file references from JSON data
+          // Remove file references from JSON data (not saved in database)
           delete scene.files;
         });
 
         // Upload list of files
-        uploads.forEach((file, i) => {
-          this.uploadFile(file, token, (progress) => {
+        const totalFiles = uploads.length;
+        uploads.forEach((file, currentIndex) => {
+          this.uploadFile(file, totalFiles, currentIndex, token, (progress) => {
             console.log(progress);
             this.setState({uploadProgress: progress});
           });
@@ -400,8 +401,14 @@ module.exports = React.createClass({
             </div>
           </header>
           <div className='panel-body'>
+          <div className='meter'>
+            <span></span>
+          </div>
 
             <form id='upload-form' className='form-horizontal'>
+            <div className='meter'>
+              <span></span>
+            </div>
 
               <fieldset className='form-fieldset general'>
                 <legend className='form-legend'>General</legend>
@@ -443,6 +450,12 @@ module.exports = React.createClass({
               </div>
 
             </form>
+
+            <div id='upload-progress'>
+              <div className='meter'>
+                <span style={{width: this.state.uploadProgress + '%'}}></span>
+              </div>
+            </div>
 
           </div>
           <footer className='panel-footer'></footer>
