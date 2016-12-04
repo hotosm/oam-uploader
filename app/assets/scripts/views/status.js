@@ -25,7 +25,6 @@ const constructUrl = (imgData) => {
   // Use turf to calculate the center of the image
   const footprint = parse(imgData.metadata.footprint);
   const center = turfCentroid(footprint).geometry.coordinates;
-  console.log(imgData);
 
   // Calculate the tile quadkey for the image using Mapbox tilebelt
   // * a square at zoom Z is the same as a map tile at zoom Z+3 (previewZoom)
