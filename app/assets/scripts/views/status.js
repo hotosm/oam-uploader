@@ -10,6 +10,7 @@ var util = require('util');
 var url = require('url');
 var nets = require('nets');
 var apiUrl = require('../config.js').OAMUploaderApi;
+var browserUrl = require('../config.js').OAMBrowserUrl;
 
 function dateFormat (date) {
   // http://momentjs.com/docs/#/displaying/
@@ -23,7 +24,7 @@ function dateFormat (date) {
 const constructUrl = (imgData) => {
   const previewZoom = 10;
   // Use turf to calculate the center of the image
-  const footprint = parse(imgData.metadata.footprint);
+  const footprint = parse(imgData.footprint);
   const center = turfCentroid(footprint).geometry.coordinates;
 
   // Calculate the tile quadkey for the image using Mapbox tilebelt
@@ -32,7 +33,7 @@ const constructUrl = (imgData) => {
   const quadKey = tilebelt.tileToQuadkey(tile);
   const mapView = center[0] + ',' + center[1] + ',' + previewZoom;
   // Return OAM Browser URL including map view, tile, and image id
-  return `https://beta.openaerialmap.org/#/${mapView}/${quadKey}/`;
+  return `${browserUrl}/#/${mapView}/${quadKey}/`;
 };
 
 module.exports = React.createClass({
