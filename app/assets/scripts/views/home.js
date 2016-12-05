@@ -318,50 +318,52 @@ module.exports = React.createClass({
                   `Uploading file ${currentIndex + 1} of ${totalFiles} (${progress}%)`}
               );
             }
-            if (progress === 100) this.setState({uploadStatus: 'Upload complete!'});
+            if (progress === 100) {
+              this.setState({uploadStatus: 'Upload complete!'});
+
+              nets({
+                url: url.resolve(apiUrl, '/uploads?access_token=' + token),
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              }, function (err, resp, body) {
+                if (err) {
+                  console.error('error', err);
+                }
+                this.setState({loading: false});
+
+                if (resp.statusCode >= 200 && resp.statusCode < 400) {
+                  var id = JSON.parse(body.toString()).upload;
+
+                  AppActions.showNotification('success', (
+                    <span>
+                      Your upload request was successfully submitted and is being processed. <a href={'#/status/' + id}>Check upload status.</a>
+                    </span>
+                  ));
+
+                  this.resetForm();
+                } else {
+                  var message = null;
+                  if (resp.statusCode === 401) {
+                    message = (
+                      <span>The provided token is not valid.</span>
+                    );
+                  } else {
+                    message = (
+                      <span>
+                        There was a problem with the request.
+                      </span>
+                    );
+                  }
+
+                  AppActions.showNotification('alert', message);
+                }
+              }.bind(this));
+            }
           });
         });
-
-        nets({
-          url: url.resolve(apiUrl, '/uploads?access_token=' + token),
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }, function (err, resp, body) {
-          if (err) {
-            console.error('error', err);
-          }
-          this.setState({loading: false});
-
-          if (resp.statusCode >= 200 && resp.statusCode < 400) {
-            var id = JSON.parse(body.toString()).upload;
-
-            AppActions.showNotification('success', (
-              <span>
-                Your upload request was successfully submitted and is being processed. <a href={'#/status/' + id}>Check upload status.</a>
-              </span>
-            ));
-
-            this.resetForm();
-          } else {
-            var message = null;
-            if (resp.statusCode === 401) {
-              message = (
-                <span>The provided token is not valid.</span>
-              );
-            } else {
-              message = (
-                <span>
-                  There was a problem with the request.
-                </span>
-              );
-            }
-
-            AppActions.showNotification('alert', message);
-          }
-        }.bind(this));
       }
     }.bind(this));
   },
