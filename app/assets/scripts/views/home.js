@@ -309,7 +309,7 @@ module.exports = React.createClass({
           this.uploadFile(file, this, token, (progress) => {
             this.setState({uploadProgress: progress});
             if (totalFiles === 1) {
-                this.setState({uploadStatus: `Uploading file (${progress}%)...`});
+              this.setState({uploadStatus: `Uploading file (${progress}%)...`});
             } else {
               this.setState(
                 {uploadStatus:
