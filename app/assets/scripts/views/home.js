@@ -465,7 +465,6 @@ module.exports = React.createClass({
 
               <div className='form-actions'>
                 <button type='submit' className='bttn-submit' onClick={this.onSubmit}><span>Submit</span></button>
-                <div className='upload-progress-spacer'></div>
                 <div id='upload-progress' className={this.state.uploadActive ? '' : 'upload-inactive'}>
                   <div className='meter'>
                     <span style={{width: this.state.uploadProgress + '%'}}></span>
