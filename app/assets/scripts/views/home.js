@@ -70,6 +70,7 @@ module.exports = React.createClass({
         ],
         uploadActive: false,
         uploadProgress: 0,
+        uploadStatus: '',
         uploadFileIndex: 0,
         uploadTotalFiles: 0
       };
@@ -221,11 +222,10 @@ module.exports = React.createClass({
         component.setState({uploadActive: true});
       },
       complete: function () {
-        component.setState({uploadActive: false});
-        console.log(component.state.uploadActive);
+        return callback(100);
       },
       success: function (data) {
-        return callback(100);
+        component.setState({uploadActive: false});
       }
     });
   },
@@ -312,8 +312,15 @@ module.exports = React.createClass({
         const totalFiles = uploads.length;
         uploads.forEach((file, currentIndex) => {
           this.uploadFile(file, this, totalFiles, currentIndex, token, (progress) => {
-            console.log(progress);
             this.setState({uploadProgress: progress});
+            if (totalFiles === 1) {
+              this.setState({uploadStatus: `Uploading ${file.name}`});
+            } else {
+              this.setState(
+                {uploadStatus:
+                  `Uploading ${file.name} (file ${currentIndex + 1} of ${totalFiles})`}
+              );
+            }
           });
         });
 
