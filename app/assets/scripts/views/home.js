@@ -172,7 +172,6 @@ module.exports = React.createClass({
     var scenes = this.state.scenes;
     scenes[sceneIndex][fieldName] = fieldValue;
     this.setState({scenes: scenes});
-    console.log('this.state', this.state);
   },
 
   onValueChange: function (event) {
@@ -207,7 +206,7 @@ module.exports = React.createClass({
         }, false);
         return xhr;
       },
-      url: url.resolve('http://localhost:4000', '/direct-upload?access_token=' + token),
+      url: url.resolve(apiUrl, '/direct-upload?access_token=' + token),
       data: fd,
       processData: false,
       contentType: false,
@@ -293,7 +292,6 @@ module.exports = React.createClass({
             };
           })
         };
-        console.log('valid', data);
 
         // Gather list of files to upload
         let uploads = [];
