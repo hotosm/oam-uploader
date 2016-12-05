@@ -8,10 +8,10 @@
     box-sizing: content-box;
     height: 20px;
     position: relative;
-    margin: 0 0 20px 0;
+    margin: 0;
     background: rgb(237, 239, 240);
     border-radius: 25px;
-    padding: 10px;
+    padding-left: 10px;
     box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
   }
   .meter > span {
@@ -60,6 +60,11 @@
   .bttn-submit {
     width: 10em;
     float: left;
+  }
+
+  .upload-status {
+    margin-left: 10px;
+    font-size: .8rem;
   }
 
   .upload-progress-spacer {

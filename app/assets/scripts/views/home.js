@@ -192,7 +192,7 @@ module.exports = React.createClass({
     });
   },
 
-  uploadFile: function (file, component, totalFiles, currentIndex, token, callback) {
+  uploadFile: function (file, component, token, callback) {
     const fd = new FormData();
     fd.append('file', file);
 
@@ -308,16 +308,17 @@ module.exports = React.createClass({
         // Upload list of files
         const totalFiles = uploads.length;
         uploads.forEach((file, currentIndex) => {
-          this.uploadFile(file, this, totalFiles, currentIndex, token, (progress) => {
+          this.uploadFile(file, this, token, (progress) => {
             this.setState({uploadProgress: progress});
             if (totalFiles === 1) {
-              this.setState({uploadStatus: `Uploading ${file.name}`});
+                this.setState({uploadStatus: `Uploading file (${progress}%)...`});
             } else {
               this.setState(
                 {uploadStatus:
-                  `Uploading ${file.name} (file ${currentIndex + 1} of ${totalFiles})`}
+                  `Uploading file ${currentIndex + 1} of ${totalFiles} (${progress}%)`}
               );
             }
+            if (progress === 100) this.setState({uploadStatus: 'Upload complete!'});
           });
         });
 
@@ -469,6 +470,9 @@ module.exports = React.createClass({
                   <div className='meter'>
                     <span style={{width: this.state.uploadProgress + '%'}}></span>
                   </div>
+                  <span className='upload-status'>
+                    {this.state.uploadStatus}
+                  </span>
                 </div>
               </div>
 
