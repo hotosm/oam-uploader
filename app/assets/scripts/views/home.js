@@ -70,6 +70,7 @@ module.exports = React.createClass({
         ],
         uploadActive: false,
         uploadProgress: 0,
+        uploadError: false,
         uploadStatus: ''
       };
     }
@@ -86,6 +87,7 @@ module.exports = React.createClass({
       ],
       uploadActive: false,
       uploadProgress: 0,
+      uploadError: false,
       uploadStatus: ''
     };
   },
@@ -213,14 +215,15 @@ module.exports = React.createClass({
       type: 'POST',
       error: function (err) {
         console.log(err);
+        component.setState({uploadError: true});
+        component.setState({uploadActive: false});
       },
       beforeSend: function () {
+        component.setState({uploadError: false});
         component.setState({uploadActive: true});
       },
-      complete: function () {
-        return callback(100);
-      },
       success: function (data) {
+        component.setState({uploadError: false});
         component.setState({uploadActive: false});
       }
     });
@@ -332,7 +335,7 @@ module.exports = React.createClass({
                 }
                 this.setState({loading: false});
 
-                if (resp.statusCode >= 200 && resp.statusCode < 400) {
+                if (resp.statusCode >= 200 && resp.statusCode < 400 && !this.state.uploadError) {
                   var id = JSON.parse(body.toString()).upload;
 
                   AppActions.showNotification('success', (
