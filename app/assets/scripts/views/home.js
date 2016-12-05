@@ -70,9 +70,7 @@ module.exports = React.createClass({
         ],
         uploadActive: false,
         uploadProgress: 0,
-        uploadStatus: '',
-        uploadFileIndex: 0,
-        uploadTotalFiles: 0
+        uploadStatus: ''
       };
     }
 
@@ -88,8 +86,7 @@ module.exports = React.createClass({
       ],
       uploadActive: false,
       uploadProgress: 0,
-      uploadFileIndex: 0,
-      uploadTotalFiles: 0
+      uploadStatus: ''
     };
   },
 
