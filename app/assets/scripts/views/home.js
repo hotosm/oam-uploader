@@ -197,7 +197,7 @@ module.exports = React.createClass({
   uploadFile: function (file, token, callback) {
     const fd = new FormData();
     fd.append('file', file.data);
-    fd.append('new-name', file.newName);
+    fd.append('newName', file.newName);
 
     $.ajax({
       xhr: function () {
