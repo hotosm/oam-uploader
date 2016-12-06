@@ -203,7 +203,6 @@ module.exports = React.createClass({
         let xhr = new window.XMLHttpRequest();
         xhr.upload.addEventListener('progress', function (evt) {
           if (evt.lengthComputable) {
-            console.log(evt);
             return callback(null, {
               type: 'progress',
               fileName: file.name,
@@ -319,12 +318,11 @@ module.exports = React.createClass({
         // Store the progress of multiple files to sum for the progress bar.
         let progressStats = {};
         uploads.forEach((file) => {
-          console.log(file);
           // Init progress status to 0
           progressStats[file.name] = 0;
           this.uploadFile(file, token, (err, result) => {
             if (err) {
-              console.log('error', error);
+              console.log('error', err);
               this.setState({uploadError: true, uploadActive: false, loading: false});
               AppActions.showNotification('alert', <span>There was a problem uploading the files.</span>);
               return;
