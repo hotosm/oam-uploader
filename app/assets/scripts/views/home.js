@@ -196,7 +196,8 @@ module.exports = React.createClass({
 
   uploadFile: function (file, token, callback) {
     const fd = new FormData();
-    fd.append('file', file);
+    fd.append('file', file.data);
+    fd.append('new-name', file.newName);
 
     $.ajax({
       xhr: function () {
@@ -205,7 +206,7 @@ module.exports = React.createClass({
           if (evt.lengthComputable) {
             return callback(null, {
               type: 'progress',
-              fileName: file.name,
+              fileName: file.data.name,
               val: evt.loaded
             });
           }
@@ -286,6 +287,23 @@ module.exports = React.createClass({
             var tms = scene['tile-url'].trim();
             tms = tms.length === 0 ? undefined : tms;
 
+            // Generate random filenames, to avoid collisions at the API
+            const randomizeName = (filename) => {
+              const ext = filename.substr(filename.lastIndexOf('.'));
+              const basename = filename.replace(ext, '');
+              const randStr = Math.random().toString(36).substring(5);
+              return `${basename}-${randStr}${ext}`;
+            };
+            let files = [];
+            let urls = [];
+            scene['img-loc'].forEach((o) => {
+              if (o.file) {
+                const name = randomizeName(o.file.name);
+                files.push({newName: name, data: o.file});
+                urls.push('file://' + name);
+              }
+            });
+
             return {
               contact: contact,
               title: scene.title,
@@ -295,8 +313,8 @@ module.exports = React.createClass({
               acquisition_start: scene['date-start'],
               acquisition_end: scene['date-end'],
               tms: tms,
-              urls: scene['img-loc'].map(o => o.url),
-              files: scene['img-loc'].map(o => o.file)
+              urls: urls,
+              files: files
             };
           })
         };
@@ -306,8 +324,8 @@ module.exports = React.createClass({
         let totalBytes = 0;
         data.scenes.forEach((scene) => {
           scene.files.forEach((file) => {
-            totalBytes += file.size;
-            if (file) uploads.push(file);
+            totalBytes += file.data.size;
+            if (file.data) uploads.push(file);
           });
           // Remove file references from JSON data (not saved in database)
           delete scene.files;
@@ -319,7 +337,7 @@ module.exports = React.createClass({
         let progressStats = {};
         uploads.forEach((file) => {
           // Init progress status to 0
-          progressStats[file.name] = 0;
+          progressStats[file.data.name] = 0;
           this.uploadFile(file, token, (err, result) => {
             if (err) {
               console.log('error', err);
