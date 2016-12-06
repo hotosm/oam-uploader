@@ -202,8 +202,8 @@ module.exports = React.createClass({
         let xhr = new window.XMLHttpRequest();
         xhr.upload.addEventListener('progress', function (evt) {
           if (evt.lengthComputable) {
-            const percentComplete = Math.round(evt.loaded / evt.total * 100);
-            return callback(percentComplete);
+            console.log(evt);
+            return callback(evt.loaded);
           }
         }, false);
         return xhr;
@@ -223,6 +223,7 @@ module.exports = React.createClass({
         component.setState({uploadActive: true});
       },
       success: function (data) {
+        console.log(data);
         component.setState({uploadError: false});
         component.setState({uploadActive: false});
       }
@@ -298,8 +299,10 @@ module.exports = React.createClass({
 
         // Gather list of files to upload
         let uploads = [];
+        let totalBytes = 0;
         data.scenes.forEach((scene) => {
           scene.files.forEach((file) => {
+            totalBytes += file.size;
             if (file) uploads.push(file);
           });
           // Remove file references from JSON data (not saved in database)
@@ -308,15 +311,17 @@ module.exports = React.createClass({
 
         // Upload list of files
         const totalFiles = uploads.length;
-        uploads.forEach((file, currentIndex) => {
+        uploads.forEach((file) => {
+          console.log(file);
           this.uploadFile(file, this, token, (progress) => {
-            this.setState({uploadProgress: progress});
+            const percentComplete = Math.round(progress / totalBytes * 100);
+            this.setState({uploadProgress: percentComplete});
             if (totalFiles === 1) {
-              this.setState({uploadStatus: `Uploading file (${progress}%)...`});
+              this.setState({uploadStatus: `Uploading image (${percentComplete}%)...`});
             } else {
               this.setState(
                 {uploadStatus:
-                  `Uploading file ${currentIndex + 1} of ${totalFiles} (${progress}%)`}
+                  `Uploading ${totalFiles} images (${percentComplete}%)...`}
               );
             }
             if (progress === 100) {
