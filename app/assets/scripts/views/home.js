@@ -9,6 +9,7 @@ var Dropdown = require('../components/dropdown');
 var apiUrl = require('../config.js').OAMUploaderApi;
 var AppActions = require('../actions/app-actions');
 var $ = require('jquery');
+var _ = require('lodash');
 
 // Sanity note:
 // There are some places where the component state is being altered directly.
@@ -193,7 +194,7 @@ module.exports = React.createClass({
     });
   },
 
-  uploadFile: function (file, component, token, callback) {
+  uploadFile: function (file, token, callback) {
     const fd = new FormData();
     fd.append('file', file);
 
@@ -203,7 +204,11 @@ module.exports = React.createClass({
         xhr.upload.addEventListener('progress', function (evt) {
           if (evt.lengthComputable) {
             console.log(evt);
-            return callback(evt.loaded);
+            return callback(null, {
+              type: 'progress',
+              fileName: file.name,
+              val: evt.loaded
+            });
           }
         }, false);
         return xhr;
@@ -213,19 +218,19 @@ module.exports = React.createClass({
       processData: false,
       contentType: false,
       type: 'POST',
-      error: function (err) {
-        console.log(err);
-        component.setState({uploadError: true});
-        component.setState({uploadActive: false});
+      error: (err) => {
+        return callback(err);
       },
-      beforeSend: function () {
-        component.setState({uploadError: false});
-        component.setState({uploadActive: true});
+      beforeSend: () => {
+        return callback(null, {
+          type: 'beforeSend'
+        });
       },
-      success: function (data) {
-        console.log(data);
-        component.setState({uploadError: false});
-        component.setState({uploadActive: false});
+      success: (data) => {
+        return callback(null, {
+          type: 'success',
+          val: data
+        });
       }
     });
   },
@@ -311,21 +316,40 @@ module.exports = React.createClass({
 
         // Upload list of files
         const totalFiles = uploads.length;
+        // Store the progress of multiple files to sum for the progress bar.
+        let progressStats = {};
         uploads.forEach((file) => {
           console.log(file);
-          this.uploadFile(file, this, token, (progress) => {
-            const percentComplete = Math.round(progress / totalBytes * 100);
-            this.setState({uploadProgress: percentComplete});
-            if (totalFiles === 1) {
-              this.setState({uploadStatus: `Uploading image (${percentComplete}%)...`});
-            } else {
-              this.setState(
-                {uploadStatus:
-                  `Uploading ${totalFiles} images (${percentComplete}%)...`}
-              );
+          // Init progress status to 0
+          progressStats[file.name] = 0;
+          this.uploadFile(file, token, (err, result) => {
+            if (err) {
+              console.log('error', error);
+              this.setState({uploadError: true, uploadActive: false, loading: false});
+              AppActions.showNotification('alert', <span>There was a problem uploading the files.</span>);
+              return;
             }
-            if (progress === 100) {
-              this.setState({uploadStatus: 'Upload complete!'});
+
+            if (result.type === 'progress') {
+              const {fileName, val} = result;
+              // Update progress stats.
+              progressStats[fileName] = val;
+              let totalBytesComplete = _.reduce(progressStats, (sum, n) => sum + n, 0);
+              let percentComplete = totalBytesComplete / totalBytes * 100;
+              let percentDisplay = Math.round(percentComplete);
+
+              let uploadStatus = '';
+              if (totalFiles === 1) {
+                uploadStatus = `Uploading image (${percentDisplay}%)...`;
+              } else {
+                uploadStatus = `Uploading ${totalFiles} images (${percentDisplay}%)...`;
+              }
+
+              this.setState({uploadProgress: percentComplete, uploadStatus: uploadStatus});
+            } else if (result.type === 'beforeSend') {
+              this.setState({uploadError: false, uploadActive: true});
+            } else if (result.type === 'success' && this.state.uploadProgress >= 100) {
+              this.setState({uploadError: false, uploadActive: false, uploadStatus: 'Upload complete!'});
 
               nets({
                 url: url.resolve(apiUrl, '/uploads?access_token=' + token),
@@ -340,7 +364,7 @@ module.exports = React.createClass({
                 }
                 this.setState({loading: false});
 
-                if (resp.statusCode >= 200 && resp.statusCode < 400 && !this.state.uploadError) {
+                if (resp.statusCode >= 200 && resp.statusCode < 400) {
                   var id = JSON.parse(body.toString()).upload;
 
                   AppActions.showNotification('success', (
