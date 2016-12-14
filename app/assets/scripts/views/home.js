@@ -134,7 +134,7 @@ module.exports = React.createClass({
   getSceneImgLocTemplate: function () {
     if (process.env.DS_DEBUG) {
       return {
-        url: 'http://fake-imagery.net/fake.tif',
+        url: '',
         origin: 'manual'
       };
     }
@@ -298,9 +298,13 @@ module.exports = React.createClass({
             let urls = [];
             scene['img-loc'].forEach((o) => {
               if (o.file) {
+                console.log('file');
                 const name = randomizeName(o.file.name);
                 files.push({newName: name, data: o.file});
-                urls.push('file://' + name);
+                urls.unshift('file://' + name);
+              } else {
+                console.log('url');
+                urls.push(o.url);
               }
             });
 
@@ -323,10 +327,12 @@ module.exports = React.createClass({
         let uploads = [];
         let totalBytes = 0;
         data.scenes.forEach((scene) => {
-          scene.files.forEach((file) => {
-            totalBytes += file.data.size;
-            if (file.data) uploads.push(file);
-          });
+          if (scene.files.length) {
+            scene.files.forEach((file) => {
+              totalBytes += file.data.size;
+              if (file.data) uploads.push(file);
+            });
+          }
           // Remove file references from JSON data (not saved in database)
           delete scene.files;
         });
@@ -366,50 +372,49 @@ module.exports = React.createClass({
               this.setState({uploadError: false, uploadActive: true});
             } else if (result.type === 'success' && this.state.uploadProgress >= 100) {
               this.setState({uploadError: false, uploadActive: false, uploadStatus: 'Upload complete!'});
-
-              nets({
-                url: url.resolve(apiUrl, '/uploads?access_token=' + token),
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                  'Content-Type': 'application/json'
-                }
-              }, function (err, resp, body) {
-                if (err) {
-                  console.error('error', err);
-                }
-                this.setState({loading: false});
-
-                if (resp.statusCode >= 200 && resp.statusCode < 400) {
-                  var id = JSON.parse(body.toString()).upload;
-
-                  AppActions.showNotification('success', (
-                    <span>
-                      Your upload request was successfully submitted and is being processed. <a href={'#/status/' + id}>Check upload status.</a>
-                    </span>
-                  ));
-
-                  this.resetForm();
-                } else {
-                  var message = null;
-                  if (resp.statusCode === 401) {
-                    message = (
-                      <span>The provided token is not valid.</span>
-                    );
-                  } else {
-                    message = (
-                      <span>
-                        There was a problem with the request.
-                      </span>
-                    );
-                  }
-
-                  AppActions.showNotification('alert', message);
-                }
-              }.bind(this));
             }
           });
         });
+        console.log(data);
+        nets({
+          url: url.resolve(apiUrl, '/uploads?access_token=' + token),
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }, function (err, resp, body) {
+          if (err) {
+            console.error('error', err);
+          }
+          this.setState({loading: false});
+
+          if (resp.statusCode >= 200 && resp.statusCode < 400) {
+            var id = JSON.parse(body.toString()).upload;
+
+            AppActions.showNotification('success', (
+              <span>
+                Your upload request was successfully submitted and is being processed. <a href={'#/status/' + id}>Check upload status.</a>
+              </span>
+            ));
+
+            this.resetForm();
+          } else {
+            var message = null;
+            if (resp.statusCode === 401) {
+              message = (
+                <span>The provided token is not valid.</span>
+              );
+            } else {
+              message = (
+                <span>
+                  There was a problem with the request.
+                </span>
+              );
+            }
+            AppActions.showNotification('alert', message);
+          }
+        }.bind(this));
       }
     }.bind(this));
   },
