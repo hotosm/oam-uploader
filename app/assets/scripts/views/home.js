@@ -375,7 +375,7 @@ module.exports = React.createClass({
             }
           });
         });
-        console.log(data);
+
         nets({
           url: url.resolve(apiUrl, '/uploads?access_token=' + token),
           method: 'POST',
