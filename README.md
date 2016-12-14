@@ -10,7 +10,7 @@
   </h3>
 </div>
 
-The Uploader Interface allows users to upload imagery to be processed and catalogged by the [OpenAerialMap Catalog](https://docs.openaerialmap.org/catalog/) through a form. This web application requires the [Uploader API](https://github.com/hotosm/oam-uploader-api) to be running, and requires a token issued by the [Token Manager](https://github.com/hotosm/oam-uploader-admin). Before proceeding, we suggest you read the ecosystem docs.
+The Uploader Interface allows users to upload imagery that will be processed and stored in an [OpenImageryNetwork](https://github.com/openimagerynetwork/oin-metadata-spec) compatible bucket through a form. This web application requires the [Uploader API](https://github.com/hotosm/oam-uploader-api) to be running, and requires a token issued by the [Token Manager](https://github.com/hotosm/oam-uploader-admin). Before proceeding, we suggest you read the ecosystem docs.
 
 ## Development environment
 To set up the development environment for this website, you'll need to install the following on your system:
