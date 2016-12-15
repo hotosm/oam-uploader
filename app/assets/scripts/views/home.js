@@ -134,7 +134,7 @@ module.exports = React.createClass({
   getSceneImgLocTemplate: function () {
     if (process.env.DS_DEBUG) {
       return {
-        url: '',
+        url: 'http://fake-imagery.net/fake.tif',
         origin: 'manual'
       };
     }
@@ -298,12 +298,10 @@ module.exports = React.createClass({
             let urls = [];
             scene['img-loc'].forEach((o) => {
               if (o.file) {
-                console.log('file');
                 const name = randomizeName(o.file.name);
                 files.push({newName: name, data: o.file});
                 urls.unshift('file://' + name);
               } else {
-                console.log('url');
                 urls.push(o.url);
               }
             });
@@ -336,85 +334,90 @@ module.exports = React.createClass({
           // Remove file references from JSON data (not saved in database)
           delete scene.files;
         });
-
-        // Upload list of files
         const totalFiles = uploads.length;
-        // Store the progress of multiple files to sum for the progress bar.
-        let progressStats = {};
-        uploads.forEach((file) => {
-          // Init progress status to 0
-          progressStats[file.data.name] = 0;
-          this.uploadFile(file, token, (err, result) => {
-            if (err) {
-              console.log('error', err);
-              this.setState({uploadError: true, uploadActive: false, loading: false});
-              AppActions.showNotification('alert', <span>There was a problem uploading the files.</span>);
-              return;
-            }
-
-            if (result.type === 'progress') {
-              const {fileName, val} = result;
-              // Update progress stats.
-              progressStats[fileName] = val;
-              let totalBytesComplete = _.reduce(progressStats, (sum, n) => sum + n, 0);
-              let percentComplete = totalBytesComplete / totalBytes * 100;
-              let percentDisplay = Math.round(percentComplete);
-
-              let uploadStatus = '';
-              if (totalFiles === 1) {
-                uploadStatus = `Uploading image (${percentDisplay}%)...`;
-              } else {
-                uploadStatus = `Uploading ${totalFiles} images (${percentDisplay}%)...`;
+        if (!totalFiles) {
+          // Submit the form now
+          this.submitData(data, token);
+        } else {
+          // Upload list of files before submitting the form
+          let progressStats = {};
+          uploads.forEach((file) => {
+            // Init progress status to 0
+            progressStats[file.data.name] = 0;
+            this.uploadFile(file, token, (err, result) => {
+              if (err) {
+                console.log('error', err);
+                this.setState({uploadError: true, uploadActive: false, loading: false});
+                AppActions.showNotification('alert', <span>There was a problem uploading the files.</span>);
+                return;
               }
+              if (result.type === 'progress') {
+                const {fileName, val} = result;
+                // Update progress stats.
+                progressStats[fileName] = val;
+                let totalBytesComplete = _.reduce(progressStats, (sum, n) => sum + n, 0);
+                let percentComplete = totalBytesComplete / totalBytes * 100;
+                let percentDisplay = Math.round(percentComplete);
 
-              this.setState({uploadProgress: percentComplete, uploadStatus: uploadStatus});
-            } else if (result.type === 'beforeSend') {
-              this.setState({uploadError: false, uploadActive: true});
-            } else if (result.type === 'success' && this.state.uploadProgress >= 100) {
-              this.setState({uploadError: false, uploadActive: false, uploadStatus: 'Upload complete!'});
-            }
+                let uploadStatus = '';
+                if (totalFiles === 1) {
+                  uploadStatus = `Uploading image (${percentDisplay}%)...`;
+                } else {
+                  uploadStatus = `Uploading ${totalFiles} images (${percentDisplay}%)...`;
+                }
+                this.setState({uploadProgress: percentComplete, uploadStatus: uploadStatus});
+              } else if (result.type === 'beforeSend') {
+                this.setState({uploadError: false, uploadActive: true});
+              } else if (result.type === 'success' && this.state.uploadProgress >= 100) {
+                this.setState({uploadError: false, uploadActive: false, uploadStatus: 'Upload complete!'});
+                this.submitData(data, token);
+              }
+            });
           });
-        });
+        }
+      }
+    }.bind(this));
+  },
 
-        nets({
-          url: url.resolve(apiUrl, '/uploads?access_token=' + token),
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }, function (err, resp, body) {
-          if (err) {
-            console.error('error', err);
-          }
-          this.setState({loading: false});
+  submitData: function (data, token) {
+    nets({
+      url: url.resolve(apiUrl, '/uploads?access_token=' + token),
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }, function (err, resp, body) {
+      if (err) {
+        console.error('error', err);
+      }
+      this.setState({loading: false});
 
-          if (resp.statusCode >= 200 && resp.statusCode < 400) {
-            var id = JSON.parse(body.toString()).upload;
+      if (resp.statusCode >= 200 && resp.statusCode < 400) {
+        var id = JSON.parse(body.toString()).upload;
 
-            AppActions.showNotification('success', (
-              <span>
-                Your upload request was successfully submitted and is being processed. <a href={'#/status/' + id}>Check upload status.</a>
-              </span>
-            ));
+        AppActions.showNotification('success', (
+          <span>
+            Your upload request was successfully submitted and is being processed. <a href={'#/status/' + id}>Check upload status.</a>
+          </span>
+        ));
 
-            this.resetForm();
-          } else {
-            var message = null;
-            if (resp.statusCode === 401) {
-              message = (
-                <span>The provided token is not valid.</span>
-              );
-            } else {
-              message = (
-                <span>
-                  There was a problem with the request.
-                </span>
-              );
-            }
-            AppActions.showNotification('alert', message);
-          }
-        }.bind(this));
+        this.resetForm();
+      } else {
+        var message = null;
+        if (resp.statusCode === 401) {
+          message = (
+            <span>The provided token is not valid.</span>
+          );
+        } else {
+          message = (
+            <span>
+              There was a problem with the request.
+            </span>
+          );
+        }
+
+        AppActions.showNotification('alert', message);
       }
     }.bind(this));
   },
