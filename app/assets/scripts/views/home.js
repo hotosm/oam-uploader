@@ -53,7 +53,9 @@ module.exports = React.createClass({
         'provider': Joi.string().required().label('Provider'),
         'contact-type': Joi.string().required().valid('uploader', 'other'),
         'contact-name': Joi.label('Name').when('contact-type', { is: 'other', then: Joi.string().required() }),
-        'contact-email': Joi.label('Email').when('contact-type', { is: 'other', then: Joi.string().email().required() })
+        'contact-email': Joi.label('Email').when('contact-type', { is: 'other', then: Joi.string().email().required() }),
+        'license': Joi.string().required().label('License'),
+        'tags': Joi.string().required().label('Tags')
       })
     )
   },
@@ -63,7 +65,7 @@ module.exports = React.createClass({
         loading: false,
 
         // Form properties.
-        'uploader-token': '',
+        'uploader-token': '1d659d334b92d84d560fd38aba08e64540ee846fb6a6125dbfff4698202df2a3',
         'uploader-name': 'Dummy Dum Dum',
         'uploader-email': 'zimmy@fake.com',
         scenes: [
@@ -113,7 +115,9 @@ module.exports = React.createClass({
         'provider': 'Mocks R Us',
         'contact-type': 'uploader',
         'contact-name': '',
-        'contact-email': ''
+        'contact-email': '',
+        'license': 'MIT',
+        'tags': 'tropical, paradise'
       };
     }
 
@@ -127,14 +131,16 @@ module.exports = React.createClass({
       'provider': '',
       'contact-type': 'uploader',
       'contact-name': '',
-      'contact-email': ''
+      'contact-email': '',
+      'license': '',
+      'tags': ''
     };
   },
 
   getSceneImgLocTemplate: function () {
     if (process.env.DS_DEBUG) {
       return {
-        url: 'http://fake-imagery.net/fake.tif',
+        url: 'https://dl.dropboxusercontent.com/u/7989543/test-small.tif',
         origin: 'manual'
       };
     }
@@ -315,6 +321,8 @@ module.exports = React.createClass({
               acquisition_start: scene['date-start'],
               acquisition_end: scene['date-end'],
               tms: tms,
+              license: scene.license,
+              tags: scene.tags,
               urls: urls,
               files: files
             };
