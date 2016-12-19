@@ -65,7 +65,7 @@ module.exports = React.createClass({
         loading: false,
 
         // Form properties.
-        'uploader-token': '1d659d334b92d84d560fd38aba08e64540ee846fb6a6125dbfff4698202df2a3',
+        'uploader-token': '',
         'uploader-name': 'Dummy Dum Dum',
         'uploader-email': 'zimmy@fake.com',
         scenes: [
@@ -140,7 +140,7 @@ module.exports = React.createClass({
   getSceneImgLocTemplate: function () {
     if (process.env.DS_DEBUG) {
       return {
-        url: 'https://dl.dropboxusercontent.com/u/7989543/test-small.tif',
+        url: 'http://fake-imagery.net/fake.tif',
         origin: 'manual'
       };
     }
