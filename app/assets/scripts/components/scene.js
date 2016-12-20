@@ -332,7 +332,7 @@ Please check the instructions on how to use files from Google Drive.
         <div className='form-group'>
           <label className='form-label' htmlFor={this.getId('tags')}>Tags</label>
           <div className='form-control-set'>
-            <input type='text' className='form-control' placeholder='Comma-separated tags, e.g. "Haiti, Mathew"' name={this.getName('tags')} id={this.getId('tags')} onBlur={this.props.handleValidation('scenes.' + i + '.tags')} onChange={this.onChange} value={this.props.data['tags']} aria-describedby={'help-tags-' + i} />
+            <input type='text' className='form-control' placeholder='Comma-separated tags, e.g. "Haiti, Mathew" (optional)' name={this.getName('tags')} id={this.getId('tags')} onBlur={this.props.handleValidation('scenes.' + i + '.tags')} onChange={this.onChange} value={this.props.data['tags']} aria-describedby={'help-tags-' + i} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.tags')[0])}
             <p id={'help-tags-' + i} className='form-help'>Any additional metadata tags applicable to the dataset.</p>
           </div>

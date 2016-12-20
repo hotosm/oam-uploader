@@ -55,7 +55,7 @@ module.exports = React.createClass({
         'contact-name': Joi.label('Name').when('contact-type', { is: 'other', then: Joi.string().required() }),
         'contact-email': Joi.label('Email').when('contact-type', { is: 'other', then: Joi.string().email().required() }),
         'license': Joi.string().required().label('License'),
-        'tags': Joi.string().required().label('Tags')
+        'tags': Joi.string().allow('').label('Tags')
       })
     )
   },
