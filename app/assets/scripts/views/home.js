@@ -53,7 +53,9 @@ module.exports = React.createClass({
         'provider': Joi.string().required().label('Provider'),
         'contact-type': Joi.string().required().valid('uploader', 'other'),
         'contact-name': Joi.label('Name').when('contact-type', { is: 'other', then: Joi.string().required() }),
-        'contact-email': Joi.label('Email').when('contact-type', { is: 'other', then: Joi.string().email().required() })
+        'contact-email': Joi.label('Email').when('contact-type', { is: 'other', then: Joi.string().email().required() }),
+        'license': Joi.string().required().label('License'),
+        'tags': Joi.string().allow('').label('Tags')
       })
     )
   },
@@ -113,7 +115,9 @@ module.exports = React.createClass({
         'provider': 'Mocks R Us',
         'contact-type': 'uploader',
         'contact-name': '',
-        'contact-email': ''
+        'contact-email': '',
+        'license': 'MIT',
+        'tags': 'tropical, paradise'
       };
     }
 
@@ -127,7 +131,9 @@ module.exports = React.createClass({
       'provider': '',
       'contact-type': 'uploader',
       'contact-name': '',
-      'contact-email': ''
+      'contact-email': '',
+      'license': '',
+      'tags': ''
     };
   },
 
@@ -315,6 +321,8 @@ module.exports = React.createClass({
               acquisition_start: scene['date-start'],
               acquisition_end: scene['date-end'],
               tms: tms,
+              license: scene.license,
+              tags: scene.tags,
               urls: urls,
               files: files
             };
