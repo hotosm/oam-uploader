@@ -19,11 +19,12 @@ cache:
   - node_modules
 before_install:
 - chmod +x ./.build_scripts/deploy.sh
+- chmod +x ./.build_scripts/build.sh
 before_script:
 - npm run lint
 - npm test
 script:
-- npm run build
+- ".build_scripts/build.sh"
 deploy:
   - provider: script
     skip_cleanup: true
