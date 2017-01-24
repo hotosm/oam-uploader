@@ -83,7 +83,7 @@ module.exports = React.createClass({
             <dd><span className='name'>{scene.contact.name}</span> <span className='email'>{scene.contact.email}</span></dd>
           </dl>
 
-          {scene.images.map(this.renderImage.bind(this))}
+          {scene.images.map(this.renderImage)}
 
         </div>
         <footer className='panel-footer'></footer>
