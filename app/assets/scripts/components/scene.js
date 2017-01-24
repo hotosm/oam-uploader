@@ -322,17 +322,9 @@ Please check the instructions on how to use files from Google Drive.
           </div>
         </div>
         <div className='form-group'>
-          <label className='form-label' htmlFor={this.getId('license')}>License</label>
-          <div className='form-control-set'>
-            <input type='text' className='form-control' placeholder='License' name={this.getName('license')} id={this.getId('license')} onBlur={this.props.handleValidation('scenes.' + i + '.license')} onChange={this.onChange} value={this.props.data['license']} aria-describedby={'help-license-' + i} />
-            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.license')[0])}
-            <p id={'help-license-' + i} className='form-help'>The name of the license under which the imagery is to be shared.</p>
-          </div>
-        </div>
-        <div className='form-group'>
           <label className='form-label' htmlFor={this.getId('tags')}>Tags</label>
           <div className='form-control-set'>
-            <input type='text' className='form-control' placeholder='Comma-separated tags, e.g. "Haiti, Mathew" (optional)' name={this.getName('tags')} id={this.getId('tags')} onBlur={this.props.handleValidation('scenes.' + i + '.tags')} onChange={this.onChange} value={this.props.data['tags']} aria-describedby={'help-tags-' + i} />
+            <input type='text' className='form-control' placeholder='Comma-separated tags' name={this.getName('tags')} id={this.getId('tags')} onBlur={this.props.handleValidation('scenes.' + i + '.tags')} onChange={this.onChange} value={this.props.data['tags']} aria-describedby={'help-tags-' + i} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.tags')[0])}
             <p id={'help-tags-' + i} className='form-help'>Any additional metadata tags applicable to the dataset.</p>
           </div>
@@ -348,8 +340,15 @@ Please check the instructions on how to use files from Google Drive.
             </div>
           </div>
         </div>
-
         {this.renderContact()}
+        <div className='form-group'>
+          <label className='form-label'>License</label>
+          <div className='form-options-set'>
+            <div className='radio'>
+              <label><input type='radio' name={this.getRadioName('license')} onChange={this.onChange} value='CC-BY 4.0' checked={this.props.data['license'] === 'CC-BY 4.0'} /><a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a></label>
+            </div>
+          </div>
+        </div>
 
       </fieldset>
     );

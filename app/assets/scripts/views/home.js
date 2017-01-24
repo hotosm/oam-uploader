@@ -116,7 +116,7 @@ module.exports = React.createClass({
         'contact-type': 'uploader',
         'contact-name': '',
         'contact-email': '',
-        'license': 'MIT',
+        'license': 'CC-BY 4.0',
         'tags': 'tropical, paradise'
       };
     }
@@ -132,7 +132,7 @@ module.exports = React.createClass({
       'contact-type': 'uploader',
       'contact-name': '',
       'contact-email': '',
-      'license': '',
+      'license': 'CC-BY 4.0',
       'tags': ''
     };
   },
