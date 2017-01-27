@@ -5,7 +5,8 @@ env:
   global:
   - CXX=g++-4.8
   - DEPLOY_BRANCH=master
-  - secure: "CbQMKPAQQSnEpq3zd9UkeBN/m7BPQZ9JjRL3kgrBg16cKERYUP68hHcQszd6ZprxSiGeXEwJG93yMKbhTXhPEwHGO5W5pHLKCRIJcjxNZgE9MndmMHphhk8cY8/O0U3pWQcDw0BT9S6OxAvGQpRhLST3rHGsybkKs/DMIQuA8QbyOTaxsnd+D5hvDV3nk2EUSmBnV0DdmY4NPVTPk0FiPm3Dbopxxf+PlbH45jawv7h0CGYOSvnCAGKao2Ttgqm2483KbmBpfmNv16MXQRUXoHdfJjTV7J1J3pBDrI+FhAYJ+cZL0Ci2r5Snv1qU8buVzuWSVF6R9We6OHbySfbM7IEn2Fw3PUKqKP/reh9Dul6be9bqnfwRXycET5+tzSKwLybhYHdOVzm8OpLBzDRXvKAU4qO6fkghqj/xt0h6x0GpWOTolRneUDRWrc87VBctyzhyzhi6dR49VaMpslefRGSM+UQb3a41nh4N1rZbk9QJbciWwYgyLBycj22KfJQ2Dz/EtRbGCHrAETj49VEWXeAepDDjBjHZG5C1pDkksZVd0x4G/mpYj1u/p9l9/qCWqfndtoCBnBmQ+TX03ODS6agOKvTfRBMlHp0+7PHNhvKsnVZcPEo3cwDzhl4BOxjWrv+1+y23km5OlZJMF56PRASxMRSPybZKJcSCB18i4IU="
+  - STAGING_BRANCH=develop
+  - secure: l3LbSdgrDzXabTFLsTBHRQmas+xLkGq1+K7AMJeuJJCGrxRVwg4roG09hGtjdJS9CBsV3oiPojMySmiZIsiBjzUxhWTuQYs1y12s1y5quxO/38vNwRgjRY2JvPVWG469YGvFnrdMS9ybj55iG7ABrQhUdBj2tn1YglBCTENJ9921FmeVo03dKqnAwTN0t1RYjruxGD6stCoyS0lqoFTBF9ZFHAxEpCIk0FFUqenvd7DCR7NtPnV5fovkGhW2tDY4M8gZ3ZpJNIq1vO1TMUHxYeR597pgCBZTQZXX2qM4DHxapnMlS9i5fBs5cyyamPKfZbg7o4BXiy6HZrn3Cn7I4RP4WhZy7ou0sX2g/Y1v0V+LcIf0P8uYRcMU9fLrWrMaXhk+kczXsZRBUAEmg6EG7Zv6+0WJft1d15XNA0U6VPvuFN532JS01JxbvSZKFf24cvFZZnQJw53mMQhIA5BizuRlG4J0gMv0Hn3oVH/X8y+xuFjWT7sUXqrsLHxGrAPQco8P6LOxnOwde0hs3v+wCVBDvvC2bJ8K9+WN5hAceOo4n9lNmC5vXRj+2egV4bkKqHCNVQhVdQlTSTRO5PTyk/hT5LQXPygJlxwcz0onsDrXTg8FQxLILeA4iBT9SF5VMVehfrAff11ZLMUnjSXisS2sSBl9lnIzQta3cmuGAdY=
 addons:
   apt:
     sources:
@@ -18,14 +19,27 @@ cache:
   - node_modules
 before_install:
 - chmod +x ./.build_scripts/deploy.sh
+- chmod +x ./.build_scripts/build.sh
 before_script:
 - npm run lint
 - npm test
 script:
-- npm run build
+- ".build_scripts/build.sh"
 deploy:
-  provider: script
-  skip_cleanup: true
-  script: ".build_scripts/deploy.sh"
-  on:
-    branch: "${DEPLOY_BRANCH}"
+  - provider: script
+    skip_cleanup: true
+    script: ".build_scripts/deploy.sh"
+    on:
+      branch: "${DEPLOY_BRANCH}"
+  - provider: s3
+    access_key_id: AKIAI64NYOAFFWZEKWEA
+    secret_access_key:
+      secure: "e8NqZ5lce/e8IJC2cE0Gk3XkI9vQJLcDuGo5KCRo4kUq/h2aJ7mUHIkxBuMB/vtgDNJ5zRKjjWpOGHseOwcpEKuYyIPnM+axlhQtaxKE5lzzu00Z4/flWJdwNTxoMX+DFfkSK1Yvul46557usDyWkILngz6DDF/YdsBJQIomFs4hOczZzDcLl74hUEa+DwCn6J6nkzcJwtlXKV5ry+5gs0Oa3/CjN2TE9I9uc7E9GTvVJMShbnqAvKX+L5WEbYdWLrQiWCyU1FDaqjRVbQ9SDj95JqTzQ51GuoKvZEDcXQljB9s/Sm10lHTFhB84x+HToOBq5baZ+affjcLBFp8YHBiZUHwoirnOSBK13uS78Dl5HwHu5YMw+WBAqJ8Svkokff4JiR6k3v0VihChoTV/89cRuAdlN1l74wu4LvoxrX6B+mipFPsbTM5vfF5Pxxa+gd5cJ8hGuHenQ3kN7zqQUYAeFLKJQsrI8Sj47RZUYW4DUBiFrYQn+9AmnoXVgc+/MEXQYFA8qXHBFu0XVrAqSTUtyC62YeNLB9x+dVKfGNsnb7cmac7cuOnWIuE7em3OAix7xV2b8r5QFG4sR3Mq2DavC7+zlIjuxWe9td+PdkFll3vwvtMMQNVdizN3PCqBNjMQMeYCTFZpNK13UiSRdPoOc+HFa4U9+nmIkEYwNUo="
+    bucket: hotosm-oam-uploader-staging
+    region: us-east-1
+    skip_cleanup: true
+    local_dir: dist
+    acl: public_read
+    on:
+      repo: hotosm/oam-uploader
+      branch: "${STAGING_BRANCH}"

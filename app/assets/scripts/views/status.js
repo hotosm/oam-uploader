@@ -115,7 +115,7 @@ module.exports = React.createClass({
 
   renderImage: function (image, i) {
     var status;
-    var messages = image.messages.map(function (msg) { return <li>{msg}</li>; });
+    var messages = (image.messages || []).map(function (msg) { return <li>{msg}</li>; });
     if (image.status === 'finished') {
       var imgData = image.metadata;
       var url = constructUrl(imgData);
