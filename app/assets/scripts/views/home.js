@@ -11,6 +11,9 @@ var AppActions = require('../actions/app-actions');
 var $ = require('jquery');
 var _ = require('lodash');
 
+var fs = require('fs');
+var request = require('request');
+
 // Sanity note:
 // There are some places where the component state is being altered directly.
 // This happens because of javascript objects work. Ex:
@@ -65,7 +68,7 @@ module.exports = React.createClass({
         loading: false,
 
         // Form properties.
-        'uploader-token': '',
+        'uploader-token': '6ad1371fb8c3250f9de93fe63b76339199b8be28a27bdf878a05f9a1bd0b1604',
         'uploader-name': 'Dummy Dum Dum',
         'uploader-email': 'zimmy@fake.com',
         scenes: [
@@ -140,7 +143,8 @@ module.exports = React.createClass({
   getSceneImgLocTemplate: function () {
     if (process.env.DS_DEBUG) {
       return {
-        url: 'http://fake-imagery.net/fake.tif',
+        // url: 'http://fake-imagery.net/fake.tif',
+        url: 'https://dl.dropboxusercontent.com/u/7989543/test-small.tif',
         origin: 'manual'
       };
     }
@@ -201,43 +205,61 @@ module.exports = React.createClass({
   },
 
   uploadFile: function (file, token, callback) {
-    const fd = new FormData();
-    fd.append('file', file.data);
-    fd.append('newName', file.newName);
-
-    $.ajax({
-      xhr: function () {
-        let xhr = new window.XMLHttpRequest();
-        xhr.upload.addEventListener('progress', function (evt) {
-          if (evt.lengthComputable) {
-            return callback(null, {
-              type: 'progress',
-              fileName: file.data.name,
-              val: evt.loaded
-            });
-          }
-        }, false);
-        return xhr;
-      },
-      url: url.resolve(apiUrl, '/direct-upload?access_token=' + token),
-      data: fd,
-      processData: false,
-      contentType: false,
-      type: 'POST',
-      error: (err) => {
-        return callback(err);
-      },
-      beforeSend: () => {
-        return callback(null, {
-          type: 'beforeSend'
-        });
-      },
-      success: (data) => {
-        return callback(null, {
-          type: 'success',
-          val: data
-        });
-      }
+    console.log(file);
+    fetch(url.resolve(apiUrl, '/uploads/url?access_token=' + token), {
+      method: 'POST',
+      body: JSON.stringify({
+        name: file.data.name,
+        type: file.data.type
+      })
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      const presignedUrl = data.url;
+      // $.ajax({
+      //   url: presignedUrl,
+      //   type: 'PUT',
+      //   data: file.data,
+      //   processData: false,
+      //   contentType: false,
+      //   success: function () {
+      //     console.log('Uploaded data successfully.');
+      //   }
+      // });
+      $.ajax({
+        xhr: function () {
+          let xhr = new window.XMLHttpRequest();
+          xhr.upload.addEventListener('progress', function (evt) {
+            if (evt.lengthComputable) {
+              return callback(null, {
+                type: 'progress',
+                fileName: file.data.name,
+                val: evt.loaded
+              });
+            }
+          }, false);
+          return xhr;
+        },
+        url: presignedUrl,
+        data: file.data,
+        processData: false,
+        contentType: false,
+        type: 'PUT',
+        error: (err) => {
+          return callback(err);
+        },
+        beforeSend: () => {
+          return callback(null, {
+            type: 'beforeSend'
+          });
+        },
+        success: (data) => {
+          return callback(null, {
+            type: 'success',
+            val: data
+          });
+        }
+      });
     });
   },
 
