@@ -16,6 +16,7 @@
     "postinstall": "[ -f app/assets/scripts/config/local.js ] || echo 'module.exports = {};' > app/assets/scripts/config/local.js",
     "serve": "gulp serve",
     "build": "DS_ENV=production NODE_ENV=production gulp",
+    "stage": "DS_ENV=staging NODE_ENV=staging gulp",
     "lint": "eslint app/assets/scripts/ --ext .js",
     "test": "echo NO TESTS YET && exit 0"
   },
@@ -85,7 +86,9 @@
     "react-validation-mixin": "^4.2.0",
     "react-widgets": "^2.8.0",
     "reflux": "^0.2.12",
+    "tilebelt": "^1.0.1",
     "titlecase": "^1.0.2",
-    "turf-centroid": "^1.1.2"
+    "turf-centroid": "^1.1.2",
+    "wellknown": "^0.5.0"
   }
 }
