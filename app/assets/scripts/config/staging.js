@@ -6,6 +6,7 @@
 module.exports = {
   environment: 'staging',
   OAMUploaderApi: 'http://52.91.218.109/',
+  oinBucket: 'oam-uploader-staging',
   googleClient: '36015894456-3d5ka80qtpaqcjhco3lsl38s1fj0dr71.apps.googleusercontent.com',
   googleDeveloperKey: ''
 };
