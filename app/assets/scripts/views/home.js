@@ -67,7 +67,7 @@ module.exports = React.createClass({
         loading: false,
 
         // Form properties.
-        'uploader-token': '6ad1371fb8c3250f9de93fe63b76339199b8be28a27bdf878a05f9a1bd0b1604',
+        'uploader-token': '',
         'uploader-name': 'Dummy Dum Dum',
         'uploader-email': 'zimmy@fake.com',
         scenes: [
@@ -142,8 +142,7 @@ module.exports = React.createClass({
   getSceneImgLocTemplate: function () {
     if (process.env.DS_DEBUG) {
       return {
-        // url: 'http://fake-imagery.net/fake.tif',
-        url: 'https://dl.dropboxusercontent.com/u/7989543/test-small.tif',
+        url: 'http://fake-imagery.net/fake.tif',
         origin: 'manual'
       };
     }
@@ -316,7 +315,7 @@ module.exports = React.createClass({
               if (o.file) {
                 const name = randomizeName(o.file.name);
                 files.push({newName: name, data: o.file});
-                urls.unshift(config.oinBucket + '/' + name);
+                urls.unshift('https://s3.amazonaws.com/config.oinBucket/' + name);
               } else {
                 urls.push(o.url);
               }
