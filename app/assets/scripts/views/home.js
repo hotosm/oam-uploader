@@ -315,7 +315,7 @@ module.exports = React.createClass({
               if (o.file) {
                 const name = randomizeName(o.file.name);
                 files.push({newName: name, data: o.file});
-                urls.unshift('https://s3.amazonaws.com/config.oinBucket/' + name);
+                urls.unshift('https://s3.amazonaws.com/' + config.oinBucket + '/' + name);
               } else {
                 urls.push(o.url);
               }
