@@ -11,8 +11,7 @@ var AppActions = require('../actions/app-actions');
 var $ = require('jquery');
 var _ = require('lodash');
 
-var fs = require('fs');
-var request = require('request');
+var config = require('../config');
 
 // Sanity note:
 // There are some places where the component state is being altered directly.
@@ -205,27 +204,16 @@ module.exports = React.createClass({
   },
 
   uploadFile: function (file, token, callback) {
-    console.log(file);
     fetch(url.resolve(apiUrl, '/uploads/url?access_token=' + token), {
       method: 'POST',
       body: JSON.stringify({
-        name: file.data.name,
+        name: file.newName,
         type: file.data.type
       })
     })
     .then((response) => response.json())
     .then((data) => {
-      const presignedUrl = data.url;
-      // $.ajax({
-      //   url: presignedUrl,
-      //   type: 'PUT',
-      //   data: file.data,
-      //   processData: false,
-      //   contentType: false,
-      //   success: function () {
-      //     console.log('Uploaded data successfully.');
-      //   }
-      // });
+      let presignedUrl = data.url;
       $.ajax({
         xhr: function () {
           let xhr = new window.XMLHttpRequest();
@@ -233,7 +221,7 @@ module.exports = React.createClass({
             if (evt.lengthComputable) {
               return callback(null, {
                 type: 'progress',
-                fileName: file.data.name,
+                fileName: file.newName,
                 val: evt.loaded
               });
             }
@@ -243,7 +231,7 @@ module.exports = React.createClass({
         url: presignedUrl,
         data: file.data,
         processData: false,
-        contentType: false,
+        contentType: file.data.type,
         type: 'PUT',
         error: (err) => {
           return callback(err);
@@ -328,7 +316,7 @@ module.exports = React.createClass({
               if (o.file) {
                 const name = randomizeName(o.file.name);
                 files.push({newName: name, data: o.file});
-                urls.unshift('file://' + name);
+                urls.unshift(config.oinBucket + '/' + name);
               } else {
                 urls.push(o.url);
               }
