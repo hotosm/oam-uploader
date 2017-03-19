@@ -8,5 +8,5 @@ module.exports = {
   OAMUploaderApi: 'https://upload-api.openaerialmap.org/',
   googleClient: '36015894456-p23fapcrlb8gu5jso00j69uv1c8861j1.apps.googleusercontent.com',
   googleDeveloperKey: '',
-  OAMBrowserUrl: 'https://beta.openaerialmap.org'
+  OAMBrowserUrl: 'https://map.openaerialmap.org'
 };
