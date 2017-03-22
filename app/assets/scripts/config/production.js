@@ -6,7 +6,7 @@ module.exports = {
   environment: 'production',
   consoleMessage: logo,
   OAMUploaderApi: 'https://upload-api.openaerialmap.org/',
-  oinBucket: 'oam-uploader',
+  uploadBucket: 'oam-uploader-temp',
   googleClient: '36015894456-p23fapcrlb8gu5jso00j69uv1c8861j1.apps.googleusercontent.com',
   googleDeveloperKey: '',
   OAMBrowserUrl: 'https://beta.openaerialmap.org'
