@@ -5,6 +5,7 @@ module.exports = React.createClass({
 
   propTypes: {
     onValueChange: React.PropTypes.func,
+    onFileRefChange: React.PropTypes.func,
     removeImageryLocation: React.PropTypes.func,
     renderErrorMessage: React.PropTypes.func,
     getValidationMessages: React.PropTypes.func,
@@ -28,6 +29,11 @@ module.exports = React.createClass({
   onChange: function (fieldName, e) {
     // fieldIndex, fieldName, fieldValue
     this.props.onValueChange(this.props.index, fieldName, e.target.value);
+  },
+
+  onFileChange: function (fieldName, e) {
+    // !!! Send the index, input type, and reference to the onFileChange action
+    this.props.onFileRefChange(this.props.index, fieldName, e.target.files[0]);
   },
 
   renderRemoveBtn: function () {
@@ -56,6 +62,19 @@ module.exports = React.createClass({
         return (
           <div>
             <input type='url' className='form-control' placeholder='Imagery url' {...opts} />
+            {this.props.renderErrorMessage(this.props.getValidationMessages(validationName)[0])}
+          </div>
+        );
+      case 'upload':
+        opts = {
+          name: this.getName('upload'),
+          id: this.getId('upload'),
+          onBlur: this.props.handleValidation(validationName),
+          onChange: this.onFileChange.bind(null, 'upload')
+        };
+        return (
+          <div>
+            <input type='file' className='form-control' placeholder='Local file' {...opts} />
             {this.props.renderErrorMessage(this.props.getValidationMessages(validationName)[0])}
           </div>
         );

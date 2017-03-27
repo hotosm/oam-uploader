@@ -24,6 +24,8 @@ module.exports = React.createClass({
     addImageryLocationToScene: React.PropTypes.func,
     removeImageryLocatioFromScene: React.PropTypes.func,
 
+    addFileRef: React.PropTypes.func,
+
     index: React.PropTypes.number,
     total: React.PropTypes.number,
     data: React.PropTypes.object
@@ -61,12 +63,20 @@ module.exports = React.createClass({
     this.props.onValueChange(this.props.index, 'img-loc', vals);
   },
 
+  onFileRefChange: function (fieldIndex, fieldName, fieldValue) {
+    this.props.addFileRef(fieldIndex, fieldName, fieldValue);
+  },
+
   addImageryLocation: function (origin) {
     this.props.addImageryLocationToScene(this.props.index, origin);
   },
 
   removeImageryLocation: function (locIndex) {
     this.props.removeImageryLocatioFromScene(this.props.index, locIndex);
+  },
+
+  uploadDirectClick: function (origin) {
+    this.props.addImageryLocationToScene(this.props.index, origin);
   },
 
   importDropboxClick: function () {
@@ -275,6 +285,7 @@ Please check the instructions on how to use files from Google Drive.
               <ImageryLocation
                 key={imgI}
                 onValueChange={this.onImgLocValueChange}
+                onFileRefChange={this.onFileRefChange}
                 renderErrorMessage={this.props.renderErrorMessage}
                 getValidationMessages={this.props.getValidationMessages}
                 handleValidation={this.props.handleValidation}
@@ -288,6 +299,7 @@ Please check the instructions on how to use files from Google Drive.
               />
             ))}
             <div className='imagery-location-import'>
+              <button type='button' className='bttn-imagery-upload' onClick={() => this.uploadDirectClick('upload')} title='Upload file directly'><span>Upload</span></button>
               <button type='button' className='bttn-imagery-manual' onClick={() => this.addImageryLocation('manual')} title='Write url'><span>Url</span></button>
               <button type='button' className='bttn-imagery-dropbox' onClick={this.importDropboxClick} title='Import file from dropbox'><span>Dropbox</span></button>
               <button type='button' className='bttn-imagery-gdrive' onClick={this.importGDriveClick} title='Import file from Google Drive'><span>Drive</span></button>
