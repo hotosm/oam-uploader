@@ -45,10 +45,10 @@ input[type=submit] {
   &.hide-txt {
     &:before {
       margin-right: 0;
-    } 
+    }
     &:after {
       margin-left: 0;
-    } 
+    }
     > * {
       @extend .visually-hidden;
     }
@@ -62,7 +62,7 @@ input[type=submit] {
   }
   &::before { margin-right: 0.375rem; }
   &::after { margin-left: 0.375rem; }
- 
+
   &::before,
   &::after,
   > * {
@@ -269,24 +269,31 @@ input[type=submit] {
 
 .bttn-imagery-manual {
   @extend .bttn, .bttn-base-light, .bttn-s;
-  &::before {
-    @extend %collecticon-link;
-  }
+  // &::before {
+  //   @extend %collecticon-link;
+  // }
 }
 
 .bttn-imagery-dropbox {
   @extend .bttn, .bttn-base-light, .bttn-s;
-  &::before {
-    @extend %collecticon-dropbox;
-  }
+  // &::before {
+  //   @extend %collecticon-dropbox;
+  // }
 }
 
 .bttn-imagery-gdrive {
   @extend .bttn, .bttn-base-light, .bttn-s;
-  &::before {
-    @extend %collecticon-google-drive;
-  }
+  // &::before {
+  //   @extend %collecticon-google-drive;
+  // }
 }
+
+.bttn-imagery-upload {
+  @extend .bttn, .bttn-base-light, .bttn-s;
+  // &::before {
+  //   @extend %collecticon-arrow-up;
+  // }
+ }
 
 .bttn-remove-imagery {
   @extend .bttn, .bttn-base-light, .bttn-s, .delete, .bttn-notxt;
