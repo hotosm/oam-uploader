@@ -9,6 +9,7 @@ var Dropdown = require('../components/dropdown');
 var apiUrl = require('../config.js').OAMUploaderApi;
 var AppActions = require('../actions/app-actions');
 var $ = require('jquery');
+var _ = require('lodash');
 
 // Sanity note:
 // There are some places where the component state is being altered directly.
@@ -43,7 +44,8 @@ module.exports = React.createClass({
         'img-loc': Joi.array().min(1).items(
           Joi.object().keys({
             url: Joi.string().required().label('Imagery url'),
-            origin: Joi.string().required().label('Imagery file origin')
+            origin: Joi.string().required().label('Imagery file origin'),
+            file: Joi.label('File').when('origin', { is: 'upload', then: Joi.object().required() })
           })
         ).label('Imagery location'),
 
@@ -51,11 +53,12 @@ module.exports = React.createClass({
         'provider': Joi.string().required().label('Provider'),
         'contact-type': Joi.string().required().valid('uploader', 'other'),
         'contact-name': Joi.label('Name').when('contact-type', { is: 'other', then: Joi.string().required() }),
-        'contact-email': Joi.label('Email').when('contact-type', { is: 'other', then: Joi.string().email().required() })
+        'contact-email': Joi.label('Email').when('contact-type', { is: 'other', then: Joi.string().email().required() }),
+        'license': Joi.string().required().label('License'),
+        'tags': Joi.string().allow('').label('Tags')
       })
     )
   },
-
   getInitialState: function () {
     if (process.env.DS_DEBUG) {
       return {
@@ -67,7 +70,11 @@ module.exports = React.createClass({
         'uploader-email': 'zimmy@fake.com',
         scenes: [
           this.getSceneDataTemplate()
-        ]
+        ],
+        uploadActive: false,
+        uploadProgress: 0,
+        uploadError: false,
+        uploadStatus: ''
       };
     }
 
@@ -80,7 +87,11 @@ module.exports = React.createClass({
       'uploader-email': '',
       scenes: [
         this.getSceneDataTemplate()
-      ]
+      ],
+      uploadActive: false,
+      uploadProgress: 0,
+      uploadError: false,
+      uploadStatus: ''
     };
   },
 
@@ -104,7 +115,9 @@ module.exports = React.createClass({
         'provider': 'Mocks R Us',
         'contact-type': 'uploader',
         'contact-name': '',
-        'contact-email': ''
+        'contact-email': '',
+        'license': 'CC-BY 4.0',
+        'tags': 'tropical, paradise'
       };
     }
 
@@ -118,7 +131,9 @@ module.exports = React.createClass({
       'provider': '',
       'contact-type': 'uploader',
       'contact-name': '',
-      'contact-email': ''
+      'contact-email': '',
+      'license': 'CC-BY 4.0',
+      'tags': ''
     };
   },
 
@@ -185,6 +200,47 @@ module.exports = React.createClass({
     });
   },
 
+  uploadFile: function (file, token, callback) {
+    const fd = new FormData();
+    fd.append('file', file.data);
+    fd.append('newName', file.newName);
+
+    $.ajax({
+      xhr: function () {
+        let xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener('progress', function (evt) {
+          if (evt.lengthComputable) {
+            return callback(null, {
+              type: 'progress',
+              fileName: file.data.name,
+              val: evt.loaded
+            });
+          }
+        }, false);
+        return xhr;
+      },
+      url: url.resolve(apiUrl, '/direct-upload?access_token=' + token),
+      data: fd,
+      processData: false,
+      contentType: false,
+      type: 'POST',
+      error: (err) => {
+        return callback(err);
+      },
+      beforeSend: () => {
+        return callback(null, {
+          type: 'beforeSend'
+        });
+      },
+      success: (data) => {
+        return callback(null, {
+          type: 'success',
+          val: data
+        });
+      }
+    });
+  },
+
   onSubmit: function (event) {
     event.preventDefault();
 
@@ -237,6 +293,25 @@ module.exports = React.createClass({
             var tms = scene['tile-url'].trim();
             tms = tms.length === 0 ? undefined : tms;
 
+            // Generate random filenames, to avoid collisions at the API
+            const randomizeName = (filename) => {
+              const ext = filename.substr(filename.lastIndexOf('.'));
+              const basename = filename.replace(ext, '');
+              const randStr = Math.random().toString(36).substring(5);
+              return `${basename}-${randStr}${ext}`;
+            };
+            let files = [];
+            let urls = [];
+            scene['img-loc'].forEach((o) => {
+              if (o.file) {
+                const name = randomizeName(o.file.name);
+                files.push({newName: name, data: o.file});
+                urls.unshift('file://' + name);
+              } else {
+                urls.push(o.url);
+              }
+            });
+
             return {
               contact: contact,
               title: scene.title,
@@ -246,53 +321,111 @@ module.exports = React.createClass({
               acquisition_start: scene['date-start'],
               acquisition_end: scene['date-end'],
               tms: tms,
-              urls: scene['img-loc'].map(o => o.url)
+              license: scene.license,
+              tags: scene.tags,
+              urls: urls,
+              files: files
             };
           })
         };
-        console.log('valid', data);
 
-        nets({
-          url: url.resolve(apiUrl, '/uploads?access_token=' + token),
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: {
-            'Content-Type': 'application/json'
+        // Gather list of files to upload
+        let uploads = [];
+        let totalBytes = 0;
+        data.scenes.forEach((scene) => {
+          if (scene.files.length) {
+            scene.files.forEach((file) => {
+              totalBytes += file.data.size;
+              if (file.data) uploads.push(file);
+            });
           }
-        }, function (err, resp, body) {
-          if (err) {
-            console.error('error', err);
-          }
-          this.setState({loading: false});
+          // Remove file references from JSON data (not saved in database)
+          delete scene.files;
+        });
+        const totalFiles = uploads.length;
+        if (!totalFiles) {
+          // Submit the form now
+          this.submitData(data, token);
+        } else {
+          // Upload list of files before submitting the form
+          let progressStats = {};
+          uploads.forEach((file) => {
+            // Init progress status to 0
+            progressStats[file.data.name] = 0;
+            this.uploadFile(file, token, (err, result) => {
+              if (err) {
+                console.log('error', err);
+                this.setState({uploadError: true, uploadActive: false, loading: false});
+                AppActions.showNotification('alert', <span>There was a problem uploading the files.</span>);
+                return;
+              }
+              if (result.type === 'progress') {
+                const {fileName, val} = result;
+                // Update progress stats.
+                progressStats[fileName] = val;
+                let totalBytesComplete = _.reduce(progressStats, (sum, n) => sum + n, 0);
+                let percentComplete = totalBytesComplete / totalBytes * 100;
+                let percentDisplay = Math.round(percentComplete);
 
-          if (resp.statusCode >= 200 && resp.statusCode < 400) {
-            var id = JSON.parse(body.toString()).upload;
+                let uploadStatus = '';
+                if (totalFiles === 1) {
+                  uploadStatus = `Uploading image (${percentDisplay}%)...`;
+                } else {
+                  uploadStatus = `Uploading ${totalFiles} images (${percentDisplay}%)...`;
+                }
+                this.setState({uploadProgress: percentComplete, uploadStatus: uploadStatus});
+              } else if (result.type === 'beforeSend') {
+                this.setState({uploadError: false, uploadActive: true});
+              } else if (result.type === 'success' && this.state.uploadProgress >= 100) {
+                this.setState({uploadError: false, uploadActive: false, uploadStatus: 'Upload complete!'});
+                this.submitData(data, token);
+              }
+            });
+          });
+        }
+      }
+    }.bind(this));
+  },
 
-            AppActions.showNotification('success', (
-              <span>
-                Your upload request was successfully submitted and is being processed. <a href={'#/status/' + id}>Check upload status.</a>
-              </span>
-            ));
+  submitData: function (data, token) {
+    nets({
+      url: url.resolve(apiUrl, '/uploads?access_token=' + token),
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }, function (err, resp, body) {
+      if (err) {
+        console.error('error', err);
+      }
+      this.setState({loading: false});
 
-            this.resetForm();
-          } else {
-            var message = null;
-            if (resp.statusCode === 401) {
-              message = (
-                <span>The provided token is not valid.</span>
-              );
-            } else {
-              message = (
-                <span>
-                  There was a problem with the request.
-                </span>
-              );
-              console.log(body);
-            }
+      if (resp.statusCode >= 200 && resp.statusCode < 400) {
+        var id = JSON.parse(body.toString()).upload;
 
-            AppActions.showNotification('alert', message);
-          }
-        }.bind(this));
+        AppActions.showNotification('success', (
+          <span>
+            Your upload request was successfully submitted and is being processed. <a href={'#/status/' + id}>Check upload status.</a>
+          </span>
+        ));
+
+        this.resetForm();
+      } else {
+        var message = null;
+        if (resp.statusCode === 401) {
+          message = (
+            <span>The provided token is not valid.</span>
+          );
+        } else {
+          message = (
+            <span>
+              There was a problem with the request.
+            </span>
+          );
+        }
+
+        AppActions.showNotification('alert', message);
       }
     }.bind(this));
   },
@@ -350,8 +483,14 @@ module.exports = React.createClass({
             </div>
           </header>
           <div className='panel-body'>
+          <div className='meter'>
+            <span></span>
+          </div>
 
             <form id='upload-form' className='form-horizontal'>
+            <div className='meter'>
+              <span></span>
+            </div>
 
               <fieldset className='form-fieldset general'>
                 <legend className='form-legend'>General</legend>
@@ -390,6 +529,14 @@ module.exports = React.createClass({
 
               <div className='form-actions'>
                 <button type='submit' className='bttn-submit' onClick={this.onSubmit}><span>Submit</span></button>
+                <div id='upload-progress' className={this.state.uploadActive ? '' : 'upload-inactive'}>
+                  <div className='meter'>
+                    <span style={{width: this.state.uploadProgress + '%'}}></span>
+                  </div>
+                  <span className='upload-status'>
+                    {this.state.uploadStatus}
+                  </span>
+                </div>
               </div>
 
             </form>
@@ -399,6 +546,7 @@ module.exports = React.createClass({
         </section>
 
         {this.state.loading ? <p className='loading revealed'>Loading</p> : null}
+
       </div>
     );
   }
