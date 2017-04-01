@@ -313,7 +313,7 @@ a:active{
 
   &:before {
     display: block;
-    // @extend .icon-spinner;
+    @extend %collecticon-arrow-spin-clockwise;
     font-size: 2rem;
     width: 2rem;
     height: 2rem;

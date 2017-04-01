@@ -56,7 +56,14 @@ module.exports = React.createClass({
     // Update the imagery location array and then use onValueChange
     // function to send the new values to parent.
     let vals = this.props.data['img-loc'];
-    vals[fieldIndex][fieldName] = fieldValue;
+    // When dealing with a direct upload, we need to store the file info not
+    // the url. The url here is just to avoid errors.
+    if (fieldName === 'upload') {
+      vals[fieldIndex].file = fieldValue;
+      vals[fieldIndex].url = `file://${fieldValue.name}`;
+    } else {
+      vals[fieldIndex][fieldName] = fieldValue;
+    }
     // sceneIndex, fieldName, fieldValue
     this.props.onValueChange(this.props.index, 'img-loc', vals);
   },
@@ -288,6 +295,7 @@ Please check the instructions on how to use files from Google Drive.
               />
             ))}
             <div className='imagery-location-import'>
+              <button type='button' className='bttn-imagery-upload' onClick={() => this.addImageryLocation('upload')} title='Upload file directly'><span>Local File</span></button>
               <button type='button' className='bttn-imagery-manual' onClick={() => this.addImageryLocation('manual')} title='Write url'><span>Url</span></button>
               <button type='button' className='bttn-imagery-dropbox' onClick={this.importDropboxClick} title='Import file from dropbox'><span>Dropbox</span></button>
               <button type='button' className='bttn-imagery-gdrive' onClick={this.importGDriveClick} title='Import file from Google Drive'><span>Drive</span></button>
@@ -314,6 +322,14 @@ Please check the instructions on how to use files from Google Drive.
           </div>
         </div>
         <div className='form-group'>
+          <label className='form-label' htmlFor={this.getId('tags')}>Tags</label>
+          <div className='form-control-set'>
+            <input type='text' className='form-control' placeholder='Comma-separated tags' name={this.getName('tags')} id={this.getId('tags')} onBlur={this.props.handleValidation('scenes.' + i + '.tags')} onChange={this.onChange} value={this.props.data['tags']} aria-describedby={'help-tags-' + i} />
+            {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.tags')[0])}
+            <p id={'help-tags-' + i} className='form-help'>Any additional metadata tags applicable to the dataset.</p>
+          </div>
+        </div>
+        <div className='form-group'>
           <label className='form-label'>Contact</label>
           <div className='form-options-set'>
             <div className='radio'>
@@ -324,8 +340,15 @@ Please check the instructions on how to use files from Google Drive.
             </div>
           </div>
         </div>
-
         {this.renderContact()}
+        <div className='form-group'>
+          <label className='form-label'>License</label>
+          <div className='form-options-set'>
+            <div className='radio'>
+              <label><input type='radio' name={this.getRadioName('license')} onChange={this.onChange} value='CC-BY 4.0' checked={this.props.data['license'] === 'CC-BY 4.0'} /><a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a></label>
+            </div>
+          </div>
+        </div>
 
       </fieldset>
     );
