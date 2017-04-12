@@ -102,7 +102,14 @@ module.exports = React.createClass({
               <dd>{scene.tms}</dd>
             ] : '' }
             <dt>Contact</dt>
-            <dd><span className='name'>{scene.contact.name}</span> <span className='email'>{scene.contact.email}</span></dd>
+            <dd>
+              <span className='name'>
+                {scene.contact.name}
+              </span>
+              <span className='email'>
+                {scene.contact.email}
+              </span>
+            </dd>
           </dl>
 
           {scene.images.map(this.renderImage)}
@@ -121,7 +128,13 @@ module.exports = React.createClass({
       var url = constructUrl(imgData);
 
       status = 'status-success';
-      messages.unshift(<li><a href={url} title='View image on OpenAerialMap' className='bttn-view-image'>View image</a></li>);
+      messages.unshift(
+        <li>
+          <a href={url} title='View image on OpenAerialMap' className='bttn-view-image'>
+            View image
+          </a>
+        </li>
+      );
     } else if (image.status === 'processing') {
       status = 'status-processing';
       messages.unshift(<li>Upload in progress.</li>);
@@ -192,7 +205,14 @@ module.exports = React.createClass({
           <div className='panel-body'>
             <dl className='status-details'>
               <dt>Uploader</dt>
-              <dd><span className='name'>{data.uploader.name}</span> <span className='email'>{data.uploader.email}</span></dd>
+              <dd>
+                <span className='name'>
+                  {data.uploader.name}
+                </span>
+                <span className='email'>
+                  {data.uploader.email}
+                </span>
+              </dd>
               <dt>Date</dt>
               <dd>{dateFormat(data.createdAt)}</dd>
             </dl>

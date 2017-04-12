@@ -24,7 +24,13 @@ var Notifications = React.createClass({
     return (
       <div className={classes} role='alert'>
         <p>{this.props.children}</p>
-        <a href='#' className='notification-dismiss' title='Dismiss notification' onClick={this.dismissNotification}><span>Dismiss</span></a>
+        <a
+          href='#'
+          className='notification-dismiss'
+          title='Dismiss notification'
+          onClick={this.dismissNotification}>
+          <span>Dismiss</span>
+        </a>
       </div>
     );
   }

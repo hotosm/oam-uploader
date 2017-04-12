@@ -8,10 +8,13 @@ var Scene = require('../components/scene');
 var Dropdown = require('../components/dropdown');
 var apiUrl = require('../config.js').OAMUploaderApi;
 var AppActions = require('../actions/app-actions');
+var cookie = require('../utils/cookie.js');
 var $ = require('jquery');
 var _ = require('lodash');
 
 var config = require('../config');
+
+const cookieNamespace = 'oam-uploader';
 
 // Sanity note:
 // There are some places where the component state is being altered directly.
@@ -45,7 +48,7 @@ module.exports = React.createClass({
 
         'img-loc': Joi.array().min(1).items(
           Joi.object().keys({
-            url: Joi.string().required().label('Imagery url'),
+            url: Joi.string().uri().required().label('Imagery url'),
             origin: Joi.string().required().label('Imagery file origin'),
             file: Joi.label('File').when('origin', { is: 'upload', then: Joi.object().required() })
           })
@@ -55,12 +58,38 @@ module.exports = React.createClass({
         'provider': Joi.string().required().label('Provider'),
         'contact-type': Joi.string().required().valid('uploader', 'other'),
         'contact-name': Joi.label('Name').when('contact-type', { is: 'other', then: Joi.string().required() }),
-        'contact-email': Joi.label('Email').when('contact-type', { is: 'other', then: Joi.string().email().required() }),
+        'contact-email': Joi.label('Email').when('contact-type', {
+          is: 'other', then: Joi.string().email().required()
+        }),
         'license': Joi.string().required().label('License'),
         'tags': Joi.string().allow('').label('Tags')
       })
     )
   },
+
+  // Store entered values to these values in order to prepopulate the form on the next visit
+  fieldsToPrepopulate: {
+    parent: [
+      'uploader-token',
+      'uploader-name',
+      'uploader-email'
+    ],
+    scene: [
+      'title',
+      'platform-type',
+      'sensor',
+      'date-start',
+      'dte-end',
+      'tile-url',
+      'provider',
+      'contact-type',
+      'contact-name',
+      'contact-email',
+      'license',
+      'tags'
+    ]
+  },
+
   getInitialState: function () {
     if (process.env.DS_DEBUG) {
       return {
@@ -80,7 +109,7 @@ module.exports = React.createClass({
       };
     }
 
-    return {
+    let defaults = {
       loading: false,
 
       // Form properties.
@@ -95,6 +124,10 @@ module.exports = React.createClass({
       uploadError: false,
       uploadStatus: ''
     };
+
+    defaults = this.applyCookieValues(this.fieldsToPrepopulate.parent, defaults);
+
+    return defaults;
   },
 
   getSceneDataTemplate: function () {
@@ -123,7 +156,7 @@ module.exports = React.createClass({
       };
     }
 
-    return {
+    let defaults = {
       'platform-type': 'satellite',
       'sensor': '',
       'date-start': midnight.toISOString(),
@@ -137,6 +170,27 @@ module.exports = React.createClass({
       'license': 'CC-BY 4.0',
       'tags': ''
     };
+
+    defaults = this.applyCookieValues(this.fieldsToPrepopulate.scene, defaults);
+
+    return defaults;
+  },
+
+  cookieNameForFormField: function (field) {
+    return `${cookieNamespace}:${field}`;
+  },
+
+  applyCookieValues: function (fields, defaults) {
+    fields.map((field) => {
+      defaults[field] = cookie.read(this.cookieNameForFormField(field)) || defaults[field];
+    });
+    return defaults;
+  },
+
+  saveValuesToCookie: function (fields, source) {
+    fields.map((field) => {
+      cookie.create(this.cookieNameForFormField(field), source[field]);
+    });
   },
 
   getSceneImgLocTemplate: function () {
@@ -191,17 +245,6 @@ module.exports = React.createClass({
     this.setState(data);
   },
 
-  resetForm: function () {
-    this.setState({
-      'uploader-token': null,
-      'uploader-name': null,
-      'uploader-email': null,
-      scenes: [
-        this.getSceneDataTemplate()
-      ]
-    });
-  },
-
   uploadFile: function (file, token, callback) {
     fetch(url.resolve(apiUrl, '/uploads/url?access_token=' + token), {
       method: 'POST',
@@ -210,44 +253,44 @@ module.exports = React.createClass({
         type: file.data.type
       })
     })
-    .then((response) => response.json())
-    .then((data) => {
-      let presignedUrl = data.url;
-      $.ajax({
-        xhr: function () {
-          let xhr = new window.XMLHttpRequest();
-          xhr.upload.addEventListener('progress', function (evt) {
-            if (evt.lengthComputable) {
-              return callback(null, {
-                type: 'progress',
-                fileName: file.newName,
-                val: evt.loaded
-              });
-            }
-          }, false);
-          return xhr;
-        },
-        url: presignedUrl,
-        data: file.data,
-        processData: false,
-        contentType: file.data.type,
-        type: 'PUT',
-        error: (err) => {
-          return callback(err);
-        },
-        beforeSend: () => {
-          return callback(null, {
-            type: 'beforeSend'
-          });
-        },
-        success: (data) => {
-          return callback(null, {
-            type: 'success',
-            val: data
-          });
-        }
+      .then((response) => response.json())
+      .then((data) => {
+        let presignedUrl = data.url;
+        $.ajax({
+          xhr: function () {
+            let xhr = new window.XMLHttpRequest();
+            xhr.upload.addEventListener('progress', function (evt) {
+              if (evt.lengthComputable) {
+                return callback(null, {
+                  type: 'progress',
+                  fileName: file.newName,
+                  val: evt.loaded
+                });
+              }
+            }, false);
+            return xhr;
+          },
+          url: presignedUrl,
+          data: file.data,
+          processData: false,
+          contentType: file.data.type,
+          type: 'PUT',
+          error: (err) => {
+            return callback(err);
+          },
+          beforeSend: () => {
+            return callback(null, {
+              type: 'beforeSend'
+            });
+          },
+          success: (data) => {
+            return callback(null, {
+              type: 'success',
+              val: data
+            });
+          }
+        });
       });
-    });
   },
 
   onSubmit: function (event) {
@@ -282,7 +325,6 @@ module.exports = React.createClass({
         // 3 - Set form feedback with -- this.setFormFeedback(type, message);
         //   - TYPE can be: alert success warning info
         // 4 - Hide loading. -- this.setState({loading: false});
-        // 5 - Reset form when success. -- this.resetForm();
 
         var token = this.state['uploader-token'];
 
@@ -337,6 +379,11 @@ module.exports = React.createClass({
             };
           })
         };
+
+        // Keep these values to prepopulate the form for convenience on any future uploads
+        this.saveValuesToCookie(this.fieldsToPrepopulate.parent, this.state);
+        // Just use the values from the first dataset/scene to save for prepopulation
+        this.saveValuesToCookie(this.fieldsToPrepopulate.scene, this.state.scenes[0]);
 
         // Gather list of files to upload
         let uploads = [];
@@ -415,11 +462,12 @@ module.exports = React.createClass({
 
         AppActions.showNotification('success', (
           <span>
-            Your upload request was successfully submitted and is being processed. <a href={'#/status/' + id}>Check upload status.</a>
+            Your upload request was successfully submitted and is being
+            processed. <a href={'#/status/' + id} onClick={AppActions.clearNotification}>
+              Check upload status.
+            </a>
           </span>
         ));
-
-        this.resetForm();
       } else {
         var message = null;
         if (resp.statusCode === 401) {
@@ -474,13 +522,36 @@ module.exports = React.createClass({
   render: function () {
     return (
       <div>
-
         <div className='intro-block'>
-          <p>Welcome to the <a href='http://openaerialmap.org/' title='Visit OpenAerialMap'>OpenAerialMap</a> Imagery Uploader.<br /> Use the form below to submit your imagery - a valid upload token is needed. <a href='https://github.com/hotosm/oam-uploader' title='Go to the GitHub repo'>Read the documentation</a> to learn how to contribute.</p>
-          <Dropdown element='div' className='drop dropdown center' triggerTitle='Request a token' triggerClassName='bttn-request-token' triggerText='Request a token'>
+          <p>
+            Welcome to
+            the <a href='http://openaerialmap.org/' title='Visit OpenAerialMap'>
+              OpenAerialMap
+            </a> Imagery Uploader.
+            <br />
+
+            Use the form below to submit your imagery - a valid upload token is
+            needed. <a href='https://github.com/hotosm/oam-uploader' title='Go to the GitHub repo'>
+              Read the documentation
+            </a> to learn how to contribute.
+          </p>
+          <Dropdown
+            element='div'
+            className='drop dropdown center'
+            triggerTitle='Request a token'
+            triggerClassName='bttn-request-token'
+            triggerText='Request a token'>
             <ul className='drop-menu request-token-menu' role='menu'>
-              <li className='github has-icon-bef'><a href='https://github.com/hotosm/oam-uploader-admin/issues/new?title=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A' title='Open GitHub issue'><span>Open GitHub issue</span></a></li>
-              <li className='email has-icon-bef'><a href='mailto:info%40openaerialmap.org?subject=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A' title='Send email'><span>Send email</span></a></li>
+              <li className='github has-icon-bef'>
+                <a href='https://github.com/hotosm/oam-uploader-admin/issues/new?title=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A' title='Open GitHub issue'>
+                  <span>Open GitHub issue</span>
+                </a>
+              </li>
+              <li className='email has-icon-bef'>
+                <a href='mailto:info%40openaerialmap.org?subject=New%20Token--%5BNAME%5D&body=Name%3A%20%0AEmail%3A%20%0ALocation%20of%20imagery%3A%20%0ASource%20of%20imagery%3A%20%0AShort%20description%20of%20collection%3A%0AHave%20you%20received%20approval%20for%20making%20this%20imagery%20available%20(yes%2Fno)%3F%3A' title='Send email'>
+                  <span>Send email</span>
+                </a>
+              </li>
             </ul>
           </Dropdown>
         </div>
@@ -492,35 +563,67 @@ module.exports = React.createClass({
             </div>
           </header>
           <div className='panel-body'>
-          <div className='meter'>
-            <span></span>
-          </div>
-
-            <form id='upload-form' className='form-horizontal'>
             <div className='meter'>
               <span></span>
             </div>
+
+            <form id='upload-form' className='form-horizontal'>
+              <div className='meter'>
+                <span></span>
+              </div>
 
               <fieldset className='form-fieldset general'>
                 <legend className='form-legend'>General</legend>
                 <div className='form-group'>
                   <label className='form-label' htmlFor='uploader-token'>Token</label>
                   <div className='form-control-set'>
-                    <input type='password' className='form-control' placeholder='Key' name='uploader-token' id='uploader-token' onBlur={this.handleValidation('uploader-token')} onChange={this.onValueChange} value={this.state['uploader-token']} />
+                    <input
+                      type='password'
+                      className='form-control'
+                      placeholder='Key'
+                      name='uploader-token'
+                      id='uploader-token'
+                      onBlur={this.handleValidation('uploader-token')}
+                      onChange={this.onValueChange}
+                      value={this.state['uploader-token']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-token')[0])}
                   </div>
                 </div>
                 <div className='form-group'>
-                  <label className='form-label' htmlFor='uploader-name'>Uploader <span className='visually-hidden'>name</span></label>
+                  <label
+                    className='form-label'
+                    htmlFor='uploader-name'>
+                    Uploader <span className='visually-hidden'>name</span>
+                  </label>
                   <div className='form-control-set'>
-                    <input type='text' className='form-control' placeholder='Name' name='uploader-name' id='uploader-name' onBlur={this.handleValidation('uploader-name')} onChange={this.onValueChange} value={this.state['uploader-name']} />
+                    <input
+                      type='text'
+                      className='form-control'
+                      placeholder='Name'
+                      name='uploader-name'
+                      id='uploader-name'
+                      onBlur={this.handleValidation('uploader-name')}
+                      onChange={this.onValueChange}
+                      value={this.state['uploader-name']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-name')[0])}
                   </div>
                 </div>
                 <div className='form-group'>
-                <label className='form-label none' htmlFor='uploader-email'><span className='visually-hidden'>Uploader email</span></label>
+                  <label
+                    className='form-label none'
+                    htmlFor='uploader-email'>
+                    <span className='visually-hidden'>Uploader email</span>
+                  </label>
                   <div className='form-control-set'>
-                    <input type='email' className='form-control' placeholder='Email' name='uploader-email' id='uploader-email' onBlur={this.handleValidation('uploader-email')} onChange={this.onValueChange} value={this.state['uploader-email']} />
+                    <input
+                      type='email'
+                      className='form-control'
+                      placeholder='Email'
+                      name='uploader-email'
+                      id='uploader-email'
+                      onBlur={this.handleValidation('uploader-email')}
+                      onChange={this.onValueChange}
+                      value={this.state['uploader-email']} />
                     {this.renderErrorMessage(this.getValidationMessages('uploader-email')[0])}
                   </div>
                 </div>
@@ -529,15 +632,34 @@ module.exports = React.createClass({
               {this.state.scenes.map(this.renderScene)}
 
               <div className='form-extra-actions'>
-                <button type='button' className='bttn-add-scene' onClick={this.addScene} title='Add new dataset'><span>New dataset</span></button>
+                <button
+                  type='button'
+                  className='bttn-add-scene'
+                  onClick={this.addScene}
+                  title='Add new dataset'>
+                  <span>New dataset</span>
+                </button>
               </div>
 
               <div className='form-note'>
-                <p>By submitting imagery to OpenAerialMap, you agree to place your imagery into the <a href='https://github.com/openimagerynetwork/oin-register#open-imagery-network'>Open Imagery Network (OIN)</a>. All imagery contained in OIN is licensed <a href='https://creativecommons.org/licenses/by/4.0/'>CC-BY 4.0</a>, with attribution as contributors of Open Imagery Network. All imagery is available to be traced in OpenStreetMap.</p>
+                <p>
+                  By submitting imagery to OpenAerialMap, you agree to place your imagery into
+                  the <a href='https://github.com/openimagerynetwork/oin-register#open-imagery-network'>
+                    Open Imagery Network (OIN)
+                  </a>. All imagery contained in OIN is
+                  licensed <a href='https://creativecommons.org/licenses/by/4.0/'>CC-BY 4.0</a>,
+                  with attribution as contributors of Open Imagery Network. All imagery is
+                  available to be traced in OpenStreetMap.
+                </p>
               </div>
 
               <div className='form-actions'>
-                <button type='submit' className='bttn-submit' onClick={this.onSubmit}><span>Submit</span></button>
+                <button
+                  type='submit'
+                  className='bttn-submit'
+                  onClick={this.onSubmit}>
+                  <span>Submit</span>
+                </button>
                 <div id='upload-progress' className={this.state.uploadActive ? '' : 'upload-inactive'}>
                   <div className='meter'>
                     <span style={{width: this.state.uploadProgress + '%'}}></span>
