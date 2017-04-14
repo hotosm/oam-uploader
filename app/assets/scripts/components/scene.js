@@ -14,6 +14,9 @@ var gDrive = require('../utils/google');
 module.exports = React.createClass({
   displayName: 'Scene',
 
+  // Only allow a start date chage to trigger an end date change once
+  firstStartDateChange: true,
+
   propTypes: {
     onValueChange: React.PropTypes.func,
     removeScene: React.PropTypes.func,
@@ -50,6 +53,14 @@ module.exports = React.createClass({
   onDateChange: function (field, date, dateString) {
     var val = date === null ? null : date.toISOString();
     this.props.onValueChange(this.props.index, field, val);
+    // Try to be helpful by syncing the end date to the start date
+    // the first time the start date is changed. Most useful if you
+    // go a long way back in time.
+    if (field === 'date-start' && this.firstStartDateChange) {
+      date.setHours(date.getHours() + 1);
+      this.props.onValueChange(this.props.index, 'date-end', date.toISOString());
+      this.firstStartDateChange = false;
+    }
   },
 
   onImgLocValueChange: function (fieldIndex, fieldName, fieldValue) {
@@ -166,7 +177,13 @@ Please check the instructions on how to use files from Google Drive.
     var classes = 'bttn-remove-scene' + (this.props.total <= 1 ? ' disabled' : '');
     return (
       <div className='form-fieldset-actions'>
-        <button type='button' className={classes} onClick={this.props.removeScene.bind(null, this.props.index)} title='Remove dataset'><span>Remove dataset</span></button>
+        <button
+          type='button'
+          className={classes}
+          onClick={this.props.removeScene.bind(null, this.props.index)}
+          title='Remove dataset'>
+          <span>Remove dataset</span>
+        </button>
       </div>
     );
   },
@@ -181,16 +198,39 @@ Please check the instructions on how to use files from Google Drive.
     return (
       <div>
         <div className='form-group'>
-          <label className='form-label none' htmlFor={this.getId('contact-name')}><span className='visually-hidden'>Contact name</span></label>
+          <label
+            className='form-label none'
+            htmlFor={this.getId('contact-name')}>
+            <span className='visually-hidden'>Contact name</span>
+          </label>
           <div className='form-control-set'>
-            <input type='text' className='form-control' placeholder='Name' name={this.getName('contact-name')} id={this.getId('contact-name')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-name')} onChange={this.onChange} value={this.props.data['contact-name']} />
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Name'
+              name={this.getName('contact-name')}
+              id={this.getId('contact-name')}
+              onBlur={this.props.handleValidation('scenes.' + i + '.contact-name')}
+              onChange={this.onChange}
+              value={this.props.data['contact-name']} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.contact-name')[0])}
           </div>
         </div>
         <div className='form-group'>
-          <label className='form-label none' htmlFor={this.getId('contact-email')}><span className='visually-hidden'>Contact email</span></label>
+          <label
+            className='form-label none'
+            htmlFor={this.getId('contact-email')}>
+            <span className='visually-hidden'>Contact email</span>
+          </label>
           <div className='form-control-set'>
-            <input type='email' className='form-control' placeholder='Email' name={this.getName('contact-email')} id={this.getId('contact-email')} onBlur={this.props.handleValidation('scenes.' + i + '.contact-email')} onChange={this.onChange} value={this.props.data['contact-email']} />
+            <input
+              type='email'
+              className='form-control'
+              placeholder='Email'
+              name={this.getName('contact-email')}
+              id={this.getId('contact-email')}
+              onBlur={this.props.handleValidation('scenes.' + i + '.contact-email')}
+              onChange={this.onChange} value={this.props.data['contact-email']} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.contact-email')[0])}
           </div>
         </div>
@@ -209,7 +249,15 @@ Please check the instructions on how to use files from Google Drive.
         <div className='form-group'>
           <label className='form-label' htmlFor={this.getId('title')}>Title</label>
           <div className='form-control-set'>
-            <input type='text' className='form-control' placeholder='Dataset title' name={this.getName('title')} id={this.getId('title')} onBlur={this.props.handleValidation('scenes.' + i + '.title')} onChange={this.onChange} value={this.props.data.title} />
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Dataset title'
+              name={this.getName('title')}
+              id={this.getId('title')}
+              onBlur={this.props.handleValidation('scenes.' + i + '.title')}
+              onChange={this.onChange}
+              value={this.props.data.title} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.title')[0])}
           </div>
         </div>
@@ -217,34 +265,84 @@ Please check the instructions on how to use files from Google Drive.
           <label className='form-label'>Platform</label>
           <div className='form-options-set'>
             <div className='radio'>
-              <label><input type='radio' onChange={this.onChange} name={this.getRadioName('platform-type')} value='satellite' checked={this.props.data['platform-type'] === 'satellite'} /> Satellite</label>
+              <label>
+                <input
+                  type='radio'
+                  onChange={this.onChange}
+                  name={this.getRadioName('platform-type')}
+                  value='satellite'
+                  checked={this.props.data['platform-type'] === 'satellite'} />
+                Satellite
+              </label>
             </div>
             <div className='radio'>
-              <label><input type='radio' onChange={this.onChange} name={this.getRadioName('platform-type')} value='aircraft' checked={this.props.data['platform-type'] === 'aircraft'} /> Aircraft</label>
+              <label>
+                <input
+                  type='radio'
+                  onChange={this.onChange}
+                  name={this.getRadioName('platform-type')}
+                  value='aircraft'
+                  checked={this.props.data['platform-type'] === 'aircraft'} />
+                Aircraft
+              </label>
             </div>
             <div className='radio'>
-              <label><input type='radio' onChange={this.onChange} name={this.getRadioName('platform-type')} value='uav' checked={this.props.data['platform-type'] === 'uav'} /> UAV</label>
+              <label>
+                <input
+                  type='radio'
+                  onChange={this.onChange}
+                  name={this.getRadioName('platform-type')}
+                  value='uav'
+                  checked={this.props.data['platform-type'] === 'uav'} />
+                UAV
+              </label>
             </div>
             <div className='radio'>
-              <label><input type='radio' onChange={this.onChange} name={this.getRadioName('platform-type')} value='ballon' checked={this.props.data['platform-type'] === 'ballon'} /> Ballon</label>
+              <label>
+                <input
+                  type='radio'
+                  onChange={this.onChange}
+                  name={this.getRadioName('platform-type')}
+                  value='ballon'
+                  checked={this.props.data['platform-type'] === 'ballon'} />
+                Ballon
+              </label>
             </div>
             <div className='radio'>
-              <label><input type='radio' onChange={this.onChange} name={this.getRadioName('platform-type')} value='kite' checked={this.props.data['platform-type'] === 'kite'} /> Kite</label>
+              <label>
+                <input
+                  type='radio'
+                  onChange={this.onChange}
+                  name={this.getRadioName('platform-type')}
+                  value='kite'
+                  checked={this.props.data['platform-type'] === 'kite'} />
+                Kite
+              </label>
             </div>
           </div>
         </div>
         <div className='form-group'>
           <label className='form-label' htmlFor={this.getId('sensor')}>Sensor</label>
           <div className='form-control-set'>
-            <input type='text' className='form-control' placeholder='Type/model' name={this.getName('sensor')} id={this.getId('sensor')} onBlur={this.props.handleValidation('scenes.' + i + '.sensor')} onChange={this.onChange} value={this.props.data.sensor} aria-describedby={'help-sensor-' + i} />
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Type/model'
+              name={this.getName('sensor')}
+              id={this.getId('sensor')}
+              onBlur={this.props.handleValidation('scenes.' + i + '.sensor')}
+              onChange={this.onChange}
+              value={this.props.data.sensor}
+              aria-describedby={'help-sensor-' + i} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.sensor')[0])}
-            <p id={'help-sensor-' + i} className='form-help'>Type or model of image sensor or camera used (ex: Worldview-3).</p>
+            <p id={'help-sensor-' + i} className='form-help'>
+              Type or model of image sensor or camera used (ex: Worldview-3).
+            </p>
           </div>
         </div>
         <div className='form-group'>
           <label className='form-label'>Date start</label>
           <div className='form-control-set'>
-
             <DateTimePicker ref='dateStart'
               max={this.dateOrUndefined('date-end')}
               finalView='decade'
@@ -252,15 +350,15 @@ Please check the instructions on how to use files from Google Drive.
               timeFormat={'HH:mm'}
               value={this.getValueForDate('date-start')}
               onChange={this.onDateChange.bind(null, 'date-start')} />
-
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.date-start')[0])}
-            <p id={'help-date-start-' + i} className='form-help'>If the exact start time is unknown using 00:00:00 will suffice.</p>
+            <p id={'help-date-start-' + i} className='form-help'>
+              If the exact start time is unknown using 00:00:00 will suffice.
+            </p>
           </div>
         </div>
         <div className='form-group'>
           <label className='form-label'>Date end</label>
           <div className='form-control-set'>
-
             <DateTimePicker ref='dateEnd'
               min={this.dateOrUndefined('date-start')}
               max={new Date()}
@@ -269,12 +367,12 @@ Please check the instructions on how to use files from Google Drive.
               timeFormat={'HH:mm'}
               value={this.getValueForDate('date-end')}
               onChange={this.onDateChange.bind(null, 'date-end')} />
-
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.date-end')[0])}
-            <p id={'help-date-end-' + i} className='form-help'>If the exact end time is unknown using 23:59:59 will suffice.</p>
+            <p id={'help-date-end-' + i} className='form-help'>
+              If the exact end time is unknown using 23:59:59 will suffice.
+            </p>
           </div>
         </div>
-
         <div className='form-group'>
           <label className='form-label'>Imagery location</label>
           <div className='form-control-set'>
@@ -295,48 +393,126 @@ Please check the instructions on how to use files from Google Drive.
               />
             ))}
             <div className='imagery-location-import'>
-              <button type='button' className='bttn-imagery-upload' onClick={() => this.addImageryLocation('upload')} title='Upload file directly'><span>Local File</span></button>
-              <button type='button' className='bttn-imagery-manual' onClick={() => this.addImageryLocation('manual')} title='Write url'><span>Url</span></button>
-              <button type='button' className='bttn-imagery-dropbox' onClick={this.importDropboxClick} title='Import file from dropbox'><span>Dropbox</span></button>
-              <button type='button' className='bttn-imagery-gdrive' onClick={this.importGDriveClick} title='Import file from Google Drive'><span>Drive</span></button>
+              <button
+                type='button'
+                className='bttn-imagery-upload'
+                onClick={() => this.addImageryLocation('upload')}
+                title='Upload file directly'>
+                <span>Local File</span>
+              </button>
+              <button
+                type='button'
+                className='bttn-imagery-manual'
+                onClick={() => this.addImageryLocation('manual')}
+                title='Write url'>
+                <span>Url</span>
+              </button>
+              <button
+                type='button'
+                className='bttn-imagery-dropbox'
+                onClick={this.importDropboxClick}
+                title='Import file from dropbox'>
+                <span>Dropbox</span>
+              </button>
+              <button
+                type='button'
+                className='bttn-imagery-gdrive'
+                onClick={this.importGDriveClick}
+                title='Import file from Google Drive'>
+                <span>Drive</span>
+              </button>
               {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.img-loc')[0])}
-              <p className='form-help'>Select file source location.<br />Click <a href='https://docs.openaerialmap.org/uploader/uploader-form/#via-google-drive' title='How to select files from google drive'>here</a> for instructions on how to use Google Drive.</p>
+              <p className='form-help'>
+                Select file source location. <br />
+                Click <a href='https://docs.openaerialmap.org/uploader/uploader-form/#via-google-drive'
+                  title='How to select files from google drive'>
+                  here</a> for instructions on how to use Google Drive.
+              </p>
             </div>
           </div>
         </div>
-
         <div className='form-group'>
           <label className='form-label' htmlFor={this.getId('tile-url')}>Tile service</label>
           <div className='form-control-set'>
-            <input type='url' className='form-control' placeholder='URL (optional)' name={this.getName('tile-url')} id={this.getId('tile-url')} onBlur={this.props.handleValidation('scenes.' + i + '.tile-url')} onChange={this.onChange} value={this.props.data['tile-url']} aria-describedby={'help-tile-' + i} />
+            <input
+              type='url'
+              className='form-control'
+              placeholder='URL (optional)'
+              name={this.getName('tile-url')}
+              id={this.getId('tile-url')}
+              onBlur={this.props.handleValidation('scenes.' + i + '.tile-url')}
+              onChange={this.onChange}
+              value={this.props.data['tile-url']}
+              aria-describedby={'help-tile-' + i} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.tile-url')[0])}
-            <p id={'help-tile-' + i} className='form-help'>Enter a tile URL template. Valid tokens are {'{z}, {x}, {y} for Z/X/Y, and {u}'} for quadtile scheme.</p>
+            <p id={'help-tile-' + i} className='form-help'>
+              Enter a tile URL template.
+              Valid tokens are {'{z}, {x}, {y} for Z/X/Y, and {u}'} for quadtile scheme.
+            </p>
           </div>
         </div>
         <div className='form-group'>
           <label className='form-label' htmlFor={this.getId('provider')}>Provider</label>
           <div className='form-control-set'>
-            <input type='text' className='form-control' placeholder='Entity name' name={this.getName('provider')} id={this.getId('provider')} onBlur={this.props.handleValidation('scenes.' + i + '.provider')} onChange={this.onChange} value={this.props.data['provider']} aria-describedby={'help-provider-' + i} />
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Entity name'
+              name={this.getName('provider')}
+              id={this.getId('provider')}
+              onBlur={this.props.handleValidation('scenes.' + i + '.provider')}
+              onChange={this.onChange}
+              value={this.props.data['provider']}
+              aria-describedby={'help-provider-' + i} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.provider')[0])}
-            <p id={'help-provider-' + i} className='form-help'>Name of company or individual that collected or provided the imagery.</p>
+            <p id={'help-provider-' + i} className='form-help'>
+              Name of company or individual that collected or provided the imagery.
+            </p>
           </div>
         </div>
         <div className='form-group'>
           <label className='form-label' htmlFor={this.getId('tags')}>Tags</label>
           <div className='form-control-set'>
-            <input type='text' className='form-control' placeholder='Comma-separated tags' name={this.getName('tags')} id={this.getId('tags')} onBlur={this.props.handleValidation('scenes.' + i + '.tags')} onChange={this.onChange} value={this.props.data['tags']} aria-describedby={'help-tags-' + i} />
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Comma-separated tags'
+              name={this.getName('tags')}
+              id={this.getId('tags')}
+              onBlur={this.props.handleValidation('scenes.' + i + '.tags')}
+              onChange={this.onChange}
+              value={this.props.data['tags']}
+              aria-describedby={'help-tags-' + i} />
             {this.props.renderErrorMessage(this.props.getValidationMessages('scenes.' + i + '.tags')[0])}
-            <p id={'help-tags-' + i} className='form-help'>Any additional metadata tags applicable to the dataset.</p>
+            <p id={'help-tags-' + i} className='form-help'>
+              Any additional metadata tags applicable to the dataset.
+            </p>
           </div>
         </div>
         <div className='form-group'>
           <label className='form-label'>Contact</label>
           <div className='form-options-set'>
             <div className='radio'>
-              <label><input type='radio' name={this.getRadioName('contact-type')} onChange={this.onChange} value='uploader' checked={this.props.data['contact-type'] === 'uploader'} /> Same as uploader</label>
+              <label>
+                <input
+                  type='radio'
+                  name={this.getRadioName('contact-type')}
+                  onChange={this.onChange}
+                  value='uploader'
+                  checked={this.props.data['contact-type'] === 'uploader'} />
+                Same as uploader
+              </label>
             </div>
             <div className='radio'>
-              <label><input type='radio' name={this.getRadioName('contact-type')} onChange={this.onChange} value='other' checked={this.props.data['contact-type'] === 'other'} /> Other</label>
+              <label>
+                <input
+                  type='radio'
+                  name={this.getRadioName('contact-type')}
+                  onChange={this.onChange}
+                  value='other'
+                  checked={this.props.data['contact-type'] === 'other'} />
+                Other
+              </label>
             </div>
           </div>
         </div>
@@ -345,7 +521,15 @@ Please check the instructions on how to use files from Google Drive.
           <label className='form-label'>License</label>
           <div className='form-options-set'>
             <div className='radio'>
-              <label><input type='radio' name={this.getRadioName('license')} onChange={this.onChange} value='CC-BY 4.0' checked={this.props.data['license'] === 'CC-BY 4.0'} /><a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a></label>
+              <label>
+                <input
+                  type='radio'
+                  name={this.getRadioName('license')}
+                  onChange={this.onChange}
+                  value='CC-BY 4.0'
+                  checked={this.props.data['license'] === 'CC-BY 4.0'} />
+                <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>
+              </label>
             </div>
           </div>
         </div>
