@@ -47,7 +47,15 @@ module.exports = React.createClass({
           <header className='site-header' role='banner'>
             <div className='inner'>
               <div className='site-headline'>
-                <h1 className='site-title'><img src='assets/graphics/layout/oam-logo-h-pos.svg' width='167' height='32' alt='OpenAerialMap logo' /><span>OpenAerialMap</span> <small>Uploader</small></h1>
+                <h1 className='site-title'>
+                  <img
+                    src='assets/graphics/layout/oam-logo-h-pos.svg'
+                    width='167'
+                    height='32'
+                    alt='OpenAerialMap logo' />
+                    <span>OpenAerialMap</span>
+                    <small>Uploader</small>
+                </h1>
               </div>
             </div>
           </header>
@@ -57,7 +65,11 @@ module.exports = React.createClass({
             </div>
           </main>
         </div>
-        <Notifications type={this.state.notification.type} onNotificationDismiss={this.dismissNotification}>{this.state.notification.message}</Notifications>
+        <Notifications
+          type={this.state.notification.type}
+          onNotificationDismiss={this.dismissNotification}>
+          {this.state.notification.message}
+        </Notifications>
       </div>
     );
   }
